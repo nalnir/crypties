@@ -14,7 +14,7 @@ import { mainnet, polygon, optimism, arbitrum, localhost } from 'wagmi/chains';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
-import { MainPage } from './mainPage';
+import { MainPage } from '../views/mainPage';
 import Web3 from 'web3';
 import { RecoilRoot } from 'recoil';
 
