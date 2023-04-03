@@ -13,21 +13,21 @@ export function useGameActions() {
     };
 
     function handleGameOver() {
-        setGame((state) => ({
+        setGame((state: any) => ({
             ...state,
             gameOver: true
         }))
     }
 
     function restartGame() {
-        setGame((state) => ({
+        setGame((state: any) => ({
             ...state,
             gameOver: false
         }))
     }
 
     function doneInitialized() {
-        setGame((state) => ({
+        setGame((state: any) => ({
             ...state,
             initialized: true
         }))

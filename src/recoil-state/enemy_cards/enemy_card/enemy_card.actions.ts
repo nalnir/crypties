@@ -16,7 +16,7 @@ export function useEnemyCardActions() {
             left: coordinates.left,
             top: coordinates.top,
         }
-        setEnemyCard((state) => ({
+        setEnemyCard((state: any) => ({
             ...state,
             cardCoordinates: currentCoordinates,
             enemyCard: card,

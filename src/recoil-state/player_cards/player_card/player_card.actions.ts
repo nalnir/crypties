@@ -13,14 +13,14 @@ export function usePlayerCardActions() {
     };
 
     function pickCard(index: number | null) {
-        setPlayerCard((state) => ({
+        setPlayerCard((state: any) => ({
             ...state,
             isPicked: index
         }));
     }
 
     function attackCard(enemyPosition: null) {
-        setPlayerCard((state) => ({
+        setPlayerCard((state: any) => ({
             ...state,
             attackingCard: enemyPosition
         }))

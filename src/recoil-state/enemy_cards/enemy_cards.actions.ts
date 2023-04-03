@@ -15,21 +15,21 @@ export function useEnemyCardsActions() {
     };
 
     function placeCardsOnTheBoard(cards: PlayingCardModel[]) {
-        setEnemyCards((state) => ({
+        setEnemyCards((state: any) => ({
             ...state,
             enemyCardsOnTheBoard: [...cards]
         }))
     }
 
     function initializeFullDeck(cards: PlayingCardModel[]) {
-        setEnemyCards((state) => ({
+        setEnemyCards((state: any) => ({
             ...state,
             enemyCards: [...cards]
         }))
     }
 
     function placeCardsInTheDeck(cards: PlayingCardModel[]) {
-        setEnemyCards((state) => ({
+        setEnemyCards((state: any) => ({
             ...state,
             enemyCards: [...cards]
         }))

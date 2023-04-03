@@ -13,14 +13,14 @@ export function usePlayerCardsActions() {
     };
 
     function placeCardsOnTheBoard(cards: PlayingCardModel[]) {
-        setPlayerCards((state) => ({
+        setPlayerCards((state: any) => ({
             ...state,
             playerCardsOnTheBoard: [...cards]
         }))
     }
 
     function initializeFullDeck(cards: PlayingCardModel[]) {
-        setPlayerCards((state) => ({
+        setPlayerCards((state: any) => ({
             ...state,
             playerCards: [...cards]
         }))
