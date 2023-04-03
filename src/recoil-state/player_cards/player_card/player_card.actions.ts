@@ -1,5 +1,6 @@
 import { PlayingCardModel } from "@/utils/mocks/player_deck";
 import { useRecoilValue, useSetRecoilState } from "recoil";
+import { Vector3 } from "@react-three/fiber";
 import { playerCardAtom } from "./player_card.atom";
 
 export function usePlayerCardActions() {
@@ -19,7 +20,7 @@ export function usePlayerCardActions() {
         }));
     }
 
-    function attackCard(enemyPosition: null) {
+    function attackCard(enemyPosition: null | Vector3) {
         setPlayerCard((state: any) => ({
             ...state,
             attackingCard: enemyPosition
