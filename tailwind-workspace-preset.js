@@ -20,15 +20,19 @@ module.exports = {
 			white: '#FFFFFF',
 			transparent: 'transparent',
 			primary: {
-				400: "#409ECA",
-				500: "#1E6A8D"
+				400: '#409ECA',
+				500: '#1E6A8D',
 			},
 			secondary: {
-				400: "#FFDB58"
+				400: '#FFDB58',
 			},
 			green: {
-				300: "#51CF66"
-			}
+				300: '#51CF66',
+			},
+			purple: {
+				100: '#C9A0DC',
+				300: '#7D3C98',
+			},
 		},
 	},
 

@@ -1,27 +1,30 @@
-import { useEffect, useState } from 'react';
-import { Text } from '@react-three/drei';
-import { useTexture } from '@react-three/drei';
-import * as THREE from 'three';
-import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry';
-import { useSpring, animated, config } from '@react-spring/three';
-import { Vector3 } from '@react-three/fiber';
+import { useEffect, useState } from "react";
+import { Text } from "@react-three/drei";
+import { useTexture } from "@react-three/drei";
+import * as THREE from "three";
+import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry";
+import { useSpring, animated, config } from "@react-spring/three";
+import { Vector3 } from "@react-three/fiber";
+import { HealthComponent } from "../playerCard/components/health_component";
+import AttackPowerComponent from "../playerCard/components/attack_power_component";
+import { usePlayerCardActions } from "@/recoil-state/player_cards/player_card/player_card.actions";
 
 interface OpponentCardProps {
-  imageUrl?: string
+  imageUrl: string
   position: Vector3
-  handleCardAttack: (index: number) => void
   index: number
 }
 
-export const OpponentCard = ({ imageUrl, position, handleCardAttack, index }: OpponentCardProps) => {
-  const texture = useTexture('/textures/horse.png');
+export const OpponentCard = ({ imageUrl, position, index }: OpponentCardProps) => {
+  const texture = useTexture(imageUrl);
   const [fontLoaded, setFontLoaded] = useState(true);
   const [imageLoaded, setImageLoaded] = useState(true);
+  const playerCardActions = usePlayerCardActions();
 
-  const [isAttacking, setIsAttacking] = useState(0)
-  const [{ attack }] = useSpring({ attack: isAttacking, config: { mass: 5, tension: 1000, friction: 50, precision: 0.0001 } }, [isAttacking])
+  const [isAttacking, setIsAttacking] = useState(0);
+  const [{ attack }] = useSpring({ attack: isAttacking, config: { mass: 5, tension: 1000, friction: 50, precision: 0.0001 } }, [isAttacking]);
 
-  const pY = attack.to([0, 1], [2.5, -2.5])
+  const pY = attack.to([0, 1], [2.5, -2.5]);
 
   texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
   texture.repeat.set(1, 1);
@@ -67,19 +70,31 @@ export const OpponentCard = ({ imageUrl, position, handleCardAttack, index }: Op
   const cardBodyradius = 50; // Adjust the corner radius as needed
   const cardBodygeometry = new RoundedBoxGeometry(cardWidth, cardHeight, cardDepth, cardBodyradius);
 
+  const handleCardAttack = () => {
+    playerCardActions.attackCard(position);
+  };
+
 
   return (
-    <animated.mesh position-z={position instanceof THREE.Vector3 ? position.z : 0} position-x={position instanceof THREE.Vector3 ? position.x : 0} position-y={pY} castShadow scale={[0.5,0.5,0.5]} onClick={() => handleCardAttack(index)}>
+    <animated.mesh position-z={position instanceof THREE.Vector3 ? position.z : 0} position-x={position instanceof THREE.Vector3 ? position.x : 0} position-y={pY} castShadow scale={[0.5, 0.5, 0.5]} onClick={handleCardAttack}>
       {/* Card body */}
       <mesh position={[0, 0, 0.1]} castShadow>
-        <bufferGeometry attach="geometry" {...cardBodygeometry}/>
+        <bufferGeometry attach="geometry" {...cardBodygeometry} />
         <meshBasicMaterial attach="material" color={"#51CF66"} />
         <meshPhongMaterial attach="material" color="#51CF66" />
       </mesh>
 
+      <mesh position={[1.1, 1.4, 0.15]} scale={[0.3, 0.40, 0.1]} castShadow>
+        <HealthComponent cardHealth={7} />
+      </mesh>
+
+      <mesh position={[1.1, 0.6, 0.15]} scale={[0.3, 0.40, 0.1]} castShadow>
+        <AttackPowerComponent color='' attackPower={10} />
+      </mesh>
+
       {/* Rounded border */}
       {imageLoaded && (
-        <mesh position={[0, -1.04, 0]} castShadow>
+        <mesh position={[0, -1.04, 0.1]} scale-z={0.4} castShadow>
           <bufferGeometry attach="geometry" {...shapeGeometry} />
           <meshPhongMaterial attach="material" color={"#3D8F47"} />
         </mesh>
