@@ -28,6 +28,7 @@
 		"eslint-config-prettier": "^8.7.0",
 		"eslint-plugin-prettier": "^4.2.1",
 		"ethers": "^5.0.0",
+		"lint": "^0.8.19",
 		"next": "13.1.6",
 		"postcss": "^8.4.21",
 		"react": "18.2.0",

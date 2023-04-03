@@ -1,5 +1,5 @@
-import Head from 'next/head'
-import Image from 'next/image'
+import Head from "next/head"
+import Image from 'next/image';
 import { Inter } from '@next/font/google'
 import styles from '@/styles/Home.module.css'
 
@@ -25,12 +25,12 @@ const { chains, provider } = configureChains(
   //   alchemyProvider({ apiKey: process.env.ALCHEMY_ID! }),
   //   publicProvider()
   // ]
-    [localhost],
-    [jsonRpcProvider({
-      rpc: (chain) => ({
-        http: "HTTP://127.0.0.1:8545",
-      }),
-    })]
+  [localhost],
+  [jsonRpcProvider({
+    rpc: (chain) => ({
+      http: "HTTP://127.0.0.1:8545",
+    }),
+  })]
 );
 
 const { connectors } = getDefaultWallets({
@@ -49,11 +49,11 @@ const inter = Inter({ subsets: ['latin'] })
 export default function Landing() {
   return (
     <RecoilRoot>
-    <WagmiConfig client={wagmiClient}>
-      <RainbowKitProvider chains={chains}>
-        <MainPage />
-      </RainbowKitProvider>
-    </WagmiConfig>
+      <WagmiConfig client={wagmiClient}>
+        <RainbowKitProvider chains={chains}>
+          <MainPage />
+        </RainbowKitProvider>
+      </WagmiConfig>
     </RecoilRoot>
   )
 }
