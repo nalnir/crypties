@@ -43,7 +43,7 @@ export const EnemyCard = ({ cardIndex, card }: EnemyCardProps) => {
         className="relative p-3 space-y-3 bg-green-300 rounded-lg shadow-lg cursor-pointer grow max-h-80 h-80"
     >
         <div className="relative border-2 rounded-lg border-primary-500">
-            <img className="rounded-lg" src={'/textures/card_image_placeholders/imp.png'} />
+            <img className="rounded-lg" src={'/textures/card_image_placeholders/imp.png'} alt="Creature picture" />
             <div className="absolute top-0 right-0 space-y-5">
                 <div className="flex items-center justify-center w-10 h-10 transform rotate-45 bg-purple-100">
                     <div className="-rotate-45">{card.attackPower}</div>

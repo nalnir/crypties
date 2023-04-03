@@ -97,7 +97,7 @@ export const PlayerCard = ({ cardIndex, card }: PlayerCardProps) => {
         style={cardAnimation}
     >
         <div className="relative border-2 rounded-lg border-primary-500">
-            <img className="rounded-lg" src={'/textures/card_image_placeholders/imp.png'} />
+            <img className="rounded-lg" src={'/textures/card_image_placeholders/imp.png'} alt="Creature picture" />
             <div className="absolute top-0 right-0 space-y-5">
                 <div className="flex items-center justify-center w-10 h-10 transform rotate-45 bg-purple-100">
                     <div className="-rotate-45">{card.attackPower}</div>
