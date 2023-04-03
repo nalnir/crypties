@@ -1,17 +1,15 @@
-import { Canvas } from "@react-three/fiber"
-import { PlayerCard } from "../playerCard/player_card"
+import { Canvas } from '@react-three/fiber';
+import { PlayerCard } from "../playerCard/player_card";
 import * as THREE from 'three';
-import { PlayingTable } from "./playing_table";
+import { PlayingTable } from './playing_table';
 // import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { OpponentCard } from "../opponentCard/opponent_card";
-import { useState } from "react";
 import { OrbitControls } from "@react-three/drei"
 import { CardBox } from "./card_box";
 import { playerCardDeck } from "@/utils/mocks/player_deck";
 
 export const MainCanvas = () => {
-  const isBrowser = typeof window !== 'undefined';
-  const [attackOpponentCard, setAttackOpponentCard] = useState<THREE.Vector3 | null>(null)
+  const isBrowser = typeof window !== "undefined";
 
   const positionsPlayer = [
     new THREE.Vector3(-4, -1.5, 0.1),

@@ -2,9 +2,8 @@ import { useEnemyCardActions } from "@/recoil-state/enemy_cards/enemy_card/enemy
 import { usePlayerCardActions } from "@/recoil-state/player_cards/player_card/player_card.actions";
 import { playerCardAtom } from "@/recoil-state/player_cards/player_card/player_card.atom";
 import { PlayingCardModel } from "@/utils/mocks/player_deck";
-import { useEffect, useState } from "react";
-import { animated, config, useSpring } from "react-spring"
-import { useRecoilState, useRecoilValue } from "recoil";
+import { animated } from "react-spring"
+import { useRecoilValue } from "recoil";
 
 interface EnemyCardProps {
     cardIndex: number,

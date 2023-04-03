@@ -2,39 +2,54 @@ import { PlayingCardModel } from "../mocks/player_deck";
 
 export function handleAttackTargetCard(
     targetCard: PlayingCardModel | null,
-    playerCard: PlayingCardModel | null,
+    playerCard: PlayingCardModel | null
 ) {
     if (targetCard && playerCard) {
         const newCard: PlayingCardModel = JSON.parse(JSON.stringify(targetCard));
 
-        const damage = targetCard?.health - playerCard?.attackPower
-        newCard.health = damage
+        const damage = targetCard?.health - playerCard?.attackPower;
+        newCard.health = damage;
 
-        return newCard
+        return newCard;
     }
 }
 
-export function handleKillCard(targetCard: PlayingCardModel | null, enemyCardsOnBoard: PlayingCardModel[], enemyTotalCards: PlayingCardModel[]): { enemyCardsOnBoard: PlayingCardModel[], enemyTotalCards: PlayingCardModel[] } | undefined {
+export function handleKillCard(
+    targetCard: PlayingCardModel | null,
+    enemyCardsOnBoard: PlayingCardModel[],
+    enemyTotalCards: PlayingCardModel[]
+):
+    | {
+        enemyCardsOnBoard: PlayingCardModel[];
+        enemyTotalCards: PlayingCardModel[];
+    }
+    | undefined {
     if (targetCard && enemyCardsOnBoard && enemyTotalCards) {
-        const newEnemyCardsOnBoard = enemyCardsOnBoard.filter((card) => card.id !== targetCard.id)
-        const newEnemyTotalCards = enemyTotalCards.filter((card) => card.id !== targetCard.id)
+        const newEnemyCardsOnBoard = enemyCardsOnBoard.filter(
+            (card) => card.id !== targetCard.id
+        );
+        const newEnemyTotalCards = enemyTotalCards.filter(
+            (card) => card.id !== targetCard.id
+        );
 
         //Filtering cards from total card deck to not include cards on the board
-        const filtered = newEnemyTotalCards.filter(card1 => !newEnemyCardsOnBoard.some(card2 => card1.id === card2.id));
-        const newRandomCard = pickRandomCard(filtered)
+        const filtered = newEnemyTotalCards.filter(
+            (card1) => !newEnemyCardsOnBoard.some((card2) => card1.id === card2.id)
+        );
+        const newRandomCard = pickRandomCard(filtered);
 
         if (!newRandomCard) {
             return {
                 enemyCardsOnBoard: newEnemyCardsOnBoard,
-                enemyTotalCards: newEnemyTotalCards
+                enemyTotalCards: newEnemyTotalCards,
             };
         }
 
         newEnemyCardsOnBoard.push(newRandomCard);
         return {
             enemyCardsOnBoard: newEnemyCardsOnBoard,
-            enemyTotalCards: newEnemyTotalCards
-        }
+            enemyTotalCards: newEnemyTotalCards,
+        };
     }
     return;
 }
@@ -44,7 +59,9 @@ export function pickRandomCard(deck: PlayingCardModel[]): PlayingCardModel {
     return deck[randomIndex];
 }
 
-export function pickFirstFiveCards<PlayingCardModel>(objects: PlayingCardModel[]): PlayingCardModel[] {
+export function pickFirstFiveCards<PlayingCardModel>(
+    objects: PlayingCardModel[]
+): PlayingCardModel[] {
     const pickedCards: PlayingCardModel[] = [];
 
     // Select 5 random cards
@@ -64,5 +81,5 @@ export function pickFirstFiveCards<PlayingCardModel>(objects: PlayingCardModel[]
 }
 
 export function handleGameOver() {
-    prompt('GAME OVER BITCH!!!')
+    prompt("GAME OVER BITCH!!!");
 }

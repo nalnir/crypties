@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Text } from "@react-three/drei";
 import { useTexture } from "@react-three/drei";
 import * as THREE from "three";
 import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry";
-import { useSpring, animated, config } from "@react-spring/three";
+import { useSpring, animated } from "@react-spring/three";
 import { Vector3 } from "@react-three/fiber";
 import { HealthComponent } from "../playerCard/components/health_component";
 import AttackPowerComponent from "../playerCard/components/attack_power_component";

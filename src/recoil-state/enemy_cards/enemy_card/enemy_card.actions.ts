@@ -1,11 +1,9 @@
-import { useRecoilValue, useSetRecoilState } from "recoil";
-import { Vector3 } from '@react-three/fiber';
+import { useSetRecoilState } from "recoil";
 import { enemyCardAtom } from "./enemy_card.atom";
 import { PlayingCardModel } from "@/utils/mocks/player_deck";
 
 export function useEnemyCardActions() {
     const setEnemyCard = useSetRecoilState(enemyCardAtom);
-    const enemyCardState = useRecoilValue(enemyCardAtom)
 
     return {
         setTargetCard,

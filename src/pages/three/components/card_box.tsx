@@ -1,25 +1,33 @@
 import { PlayingCardModel } from "@/utils/mocks/player_deck";
-import { Box, Cylinder } from "@react-three/drei"
+import { Box } from "@react-three/drei";
 import { Vector3 } from "react-three-fiber";
-import * as THREE from "three";
-import { PlayerCard } from "../playerCard/player_card";
 
 interface CardBoxProps {
-    cards: PlayingCardModel[]
-    position: Vector3
+    cards: PlayingCardModel[];
+    position: Vector3;
 }
-export const CardBox = ({
-    cards,
-    position
-}: CardBoxProps) => {
+export const CardBox = ({ position }: CardBoxProps) => {
     return (
-        <group position={position} receiveShadow castShadow>
+        <group
+            position={position}
+            receiveShadow
+            castShadow>
             {/* Outer box */}
             <Box args={[1.5, 1, 0.1]}>
-                <meshStandardMaterial color={"#C9A0DC"} roughness={0.5} metalness={0.5} />
+                <meshStandardMaterial
+                    color={"#C9A0DC"}
+                    roughness={0.5}
+                    metalness={0.5}
+                />
             </Box>
-            <Box args={[0.1, 1.2, 2]} position={[-0.7, -0.05, 1]}>
-                <meshStandardMaterial color={"#C9A0DC"} roughness={0.5} metalness={0.5} />
+            <Box
+                args={[0.1, 1.2, 2]}
+                position={[-0.7, -0.05, 1]}>
+                <meshStandardMaterial
+                    color={"#C9A0DC"}
+                    roughness={0.5}
+                    metalness={0.5}
+                />
             </Box>
             <Box args={[0.1, 1.2, 2]} position={[0.7, -0.05, 1]}>
                 <meshStandardMaterial color={"#C9A0DC"} roughness={0.5} metalness={0.5} />
