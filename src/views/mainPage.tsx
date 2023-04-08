@@ -3,7 +3,6 @@ import { Button, Input } from "@mui/material"
 import { ConnectButton } from "@rainbow-me/rainbowkit"
 import { Suspense, useEffect, useState } from 'react'
 import io from 'socket.io-client'
-import { Board2D } from "./2D/board2D"
 import { MainCanvas } from "./3D/components/main_canvas"
 import dynamic from 'next/dynamic'
 import { DrawerCustom } from "@/shared/components/drawer_custom"
@@ -12,6 +11,7 @@ import { InjectedConnector } from 'wagmi/connectors/injected'
 import ClearIcon from '@mui/icons-material/Clear';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useAccount, useConnect } from "wagmi"
+import { Board2D } from "./2D/board2D"
 
 export type Room = {
     roomId: string;
