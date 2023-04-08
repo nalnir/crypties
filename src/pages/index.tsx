@@ -20,17 +20,17 @@ import { RecoilRoot } from 'recoil';
 
 const web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'));
 const { chains, provider } = configureChains(
-  // [mainnet, polygon, optimism, arbitrum],
-  // [
-  //   alchemyProvider({ apiKey: process.env.ALCHEMY_ID! }),
-  //   publicProvider()
-  // ]
-  [localhost],
-  [jsonRpcProvider({
-    rpc: (chain) => ({
-      http: "HTTP://127.0.0.1:8545",
-    }),
-  })]
+  [arbitrum],
+  [
+    alchemyProvider({ apiKey: process.env.ALCHEMY_ID! }),
+    publicProvider()
+  ]
+  // [localhost],
+  // [jsonRpcProvider({
+  //   rpc: (chain) => ({
+  //     http: "HTTP://127.0.0.1:8545",
+  //   }),
+  // })]
 );
 
 const { connectors } = getDefaultWallets({

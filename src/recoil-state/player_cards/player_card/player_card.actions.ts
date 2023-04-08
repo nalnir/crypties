@@ -32,7 +32,7 @@ export function usePlayerCardActions() {
             left: coordinates.left,
             top: coordinates.top,
         }
-        setPlayerCard((state) => ({
+        setPlayerCard((state: any) => ({
             ...state,
             cardCoordinates: currentCoordinates,
             card
