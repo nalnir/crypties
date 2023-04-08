@@ -1,10 +1,6 @@
-import { Loader } from "@/shared/components/loader"
-import { Button, Input } from "@mui/material"
 import { ConnectButton } from "@rainbow-me/rainbowkit"
-import { Suspense, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import io from 'socket.io-client'
-import { MainCanvas } from "./3D/components/main_canvas"
-import dynamic from 'next/dynamic'
 import { DrawerCustom } from "@/shared/components/drawer_custom"
 import { InjectedConnector } from 'wagmi/connectors/injected'
 
@@ -64,19 +60,7 @@ export const MainPage = () => {
 
             <div className="h-screen">
                 <Board2D />
-                {/* <Suspense fallback={<Loader />}>
-                    <MainCanvas />
-                </Suspense> */}
             </div>
-
-            {/* <Input
-                placeholder="Room Name"
-                value={room}
-                onChange={(e)=>setRoom(e.target.value)}
-            /> */}
-            {/* <Button 
-                onClick={enterRoom}
-            >Create room</Button> */}
         </div>
     </div>
 }
