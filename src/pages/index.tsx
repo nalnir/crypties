@@ -14,9 +14,9 @@ import { mainnet, polygon, optimism, arbitrum, localhost } from 'wagmi/chains';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
-import { MainPage } from '../views/mainPage';
 import Web3 from 'web3';
 import { RecoilRoot } from 'recoil';
+import MainPage from "@/views/mainPage";
 
 const web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'));
 const { chains, provider } = configureChains(

@@ -5,6 +5,7 @@ import { usePlayerCardsActions } from "@/recoil-state/player_cards/player_cards.
 import { playerCardsAtom } from "@/recoil-state/player_cards/player_cards.atom";
 import { EnemyCard } from "@/shared/components/enemy_card";
 import { PlayerCard } from "@/shared/components/player_card";
+import withAuth from "@/shared/functions/with_auth";
 import { pickFirstFiveCards } from "@/utils/functions/gameplay_mechanics";
 import { enemyCardDeck } from "@/utils/mocks/enemy_deck";
 import { PlayingCardModel } from "@/utils/mocks/player_deck";
@@ -12,7 +13,7 @@ import { useEffect } from "react";
 import { useRecoilValue } from "recoil";
 
 
-export const Board2D = () => {
+function Board2D() {
     const gameState = useRecoilValue(gameAtom);
 
     const playerCardsState = useRecoilValue(playerCardsAtom);
@@ -64,4 +65,6 @@ export const Board2D = () => {
             </div>
         </div>
     );
-};
+}
+
+export default Board2D

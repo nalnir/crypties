@@ -19,5 +19,8 @@
   "plugins": ["react"],
   "rules": {
     "no-unused-vars": "off"
+  },
+  "globals": {
+    "JSX": true
   }
 }

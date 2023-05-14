@@ -7,8 +7,13 @@ import { InjectedConnector } from 'wagmi/connectors/injected'
 import ClearIcon from '@mui/icons-material/Clear';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useAccount, useConnect } from "wagmi"
-import { Board2D } from "./2D/board2D"
 import { DrawerCustom } from "@/shared/components/drawer_custom";
+import { useUserActions } from "@/recoil-state/user/user.actions";
+import withAuth from "@/shared/functions/with_auth";
+import Board2D from "./2D/board2D";
+import { useRecoilValue } from "recoil";
+import { userAtom } from "@/recoil-state/user/user.atom";
+import Register from "@/views/register/register";
 
 export type Room = {
     roomId: string;
@@ -16,7 +21,9 @@ export type Room = {
 };
 
 const socket = io('http://localhost:3001');
-export const MainPage = () => {
+function MainPage() {
+    const userActions = useUserActions();
+    const userState = useRecoilValue(userAtom);
     const [rooms, setRooms] = useState<Room[] | undefined>();
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
@@ -25,29 +32,42 @@ export const MainPage = () => {
         connector: new InjectedConnector(),
     })
 
-    console.log('isConnected: ', isConnected)
-
     useEffect(() => {
-        socket.on('connect', () => {
-            console.log('Connected to server:', socket.id);
-        });
-
-        socket.on('room_joined', (roomId, numPlayers) => {
-            console.log(`Joined room ${roomId} with ${numPlayers} player(s)`);
-        });
-
-        return () => {
-            socket.disconnect();
-        };
-    }, []);
-
-    useEffect(() => {
-        if (!rooms) {
-            socket.on('rooms_list', (availableRooms: Room[]) => {
-                setRooms(availableRooms);
-            });
+        if(isConnected) {
+            handleLogin()
         }
-    }, [rooms])
+    }, [isConnected])
+
+    const handleLogin = async () => {
+        console.log('handleLogin()')
+        if(address) {
+            const user = await userActions.login(address)
+        } else {
+            console.log('Could not get the address. Try again please!')
+        }
+    }
+
+    // useEffect(() => {
+    //     socket.on('connect', () => {
+    //         console.log('Connected to server:', socket.id);
+    //     });
+
+    //     socket.on('room_joined', (roomId, numPlayers) => {
+    //         console.log(`Joined room ${roomId} with ${numPlayers} player(s)`);
+    //     });
+
+    //     return () => {
+    //         socket.disconnect();
+    //     };
+    // }, []);
+
+    // useEffect(() => {
+    //     if (!rooms) {
+    //         socket.on('rooms_list', (availableRooms: Room[]) => {
+    //             setRooms(availableRooms);
+    //         });
+    //     }
+    // }, [rooms])
 
     return <div className="flex">
         <div className={`${isDrawerOpen ? '' : 'hidden'} w-10/12 h-full bg-white`}><DrawerCustom /></div>
@@ -59,9 +79,11 @@ export const MainPage = () => {
                 <ConnectButton />
             </div>
 
-            <div className="h-screen">
-                <Board2D />
+            <div>
+                {userState.user ? <Board2D /> : <Register />}
             </div>
         </div>
     </div>
 }
+
+export default MainPage
