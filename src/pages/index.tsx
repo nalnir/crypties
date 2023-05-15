@@ -17,6 +17,8 @@ import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 import Web3 from 'web3';
 import { RecoilRoot } from 'recoil';
 import MainPage from "@/views/mainPage";
+import GlobalModal from "@/recoil-state/global_modal/global_modal";
+import ErrorSuccess from "@/recoil-state/error_success/error_success";
 
 const web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'));
 const { chains, provider } = configureChains(
@@ -52,6 +54,8 @@ export default function Landing() {
       <WagmiConfig client={wagmiClient}>
         <RainbowKitProvider chains={chains}>
           <MainPage />
+          <GlobalModal/>
+          <ErrorSuccess />
         </RainbowKitProvider>
       </WagmiConfig>
     </RecoilRoot>
