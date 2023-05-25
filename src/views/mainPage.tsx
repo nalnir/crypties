@@ -80,7 +80,7 @@ function MainPage() {
             </div>
 
             <div>
-                {userState.user ? <Board2D /> : <Register />}
+                <Register />
             </div>
         </div>
     </div>

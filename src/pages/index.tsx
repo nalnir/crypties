@@ -19,6 +19,7 @@ import { RecoilRoot } from 'recoil';
 import MainPage from "@/views/mainPage";
 import GlobalModal from "@/recoil-state/global_modal/global_modal";
 import ErrorSuccess from "@/recoil-state/error_success/error_success";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'));
 const { chains, provider } = configureChains(
@@ -48,16 +49,20 @@ const wagmiClient = createClient({
 
 const inter = Inter({ subsets: ['latin'] })
 
+const queryClient = new QueryClient()
+
 export default function Landing() {
   return (
     <RecoilRoot>
-      <WagmiConfig client={wagmiClient}>
-        <RainbowKitProvider chains={chains}>
-          <MainPage />
-          <GlobalModal/>
-          <ErrorSuccess />
-        </RainbowKitProvider>
-      </WagmiConfig>
+      <QueryClientProvider client={queryClient}>
+        <WagmiConfig client={wagmiClient}>
+          <RainbowKitProvider chains={chains}>
+            <MainPage />
+            <GlobalModal/>
+            <ErrorSuccess />
+          </RainbowKitProvider>
+        </WagmiConfig>
+      </QueryClientProvider>
     </RecoilRoot>
   )
 }
