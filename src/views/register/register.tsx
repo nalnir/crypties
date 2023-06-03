@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Step4 } from "./steps/step_4";
 import { useFormik } from "formik";
 import { RegisterUserFormik, registerUserValidationSchema } from "./validation_scheme";
-import { Step2 } from "./steps/step_2";
+import { Step2 } from "./steps/step_2/step_2";
 import { Stepper } from "@/shared/components/stepper";
 import { Step1 } from "./steps/step_1/step_1";
 import { Step3 } from "./steps/step_3";
@@ -34,7 +34,6 @@ function Register() {
                 })
                 queryClient.setQueryData(['user'], newUser);
             }
-
     }
 
     useEffect(() => {
@@ -44,6 +43,7 @@ function Register() {
             queryClient.removeQueries(['user']);
         }
     }, [isConnected])
+    
 
     const registerUserFormik = useFormik<RegisterUserFormik>({
         enableReinitialize: true,

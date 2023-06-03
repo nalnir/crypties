@@ -1,6 +1,6 @@
 import mongoose, { Model } from 'mongoose';
 
-const raceSchema = new mongoose.Schema({
+const playerClassSchema = new mongoose.Schema({
     creatorAddress: { type: String, unique: false, required: true },
     name: { type: String, unique: true, required: true },
     description: { type: String, required: true },
@@ -9,7 +9,7 @@ const raceSchema = new mongoose.Schema({
     nameCombinations: { type: [String], required: false }
 });
 
-export interface RaceDocument extends Document {
+export interface PlayerClassDocument extends Document {
     creatorAddress: string,
     name: string;
     description: string;
@@ -18,8 +18,8 @@ export interface RaceDocument extends Document {
     nameCombinations: string[];
 }
 
-interface RaceModel extends Model<RaceDocument> {}
+interface PlayerClassModel extends Model<PlayerClassDocument> {}
 
-const Race = mongoose.models.Race as RaceModel || mongoose.model<RaceDocument, RaceModel>('Race', raceSchema);
+const PlayerClass = mongoose.models.PlayerClass as PlayerClassModel || mongoose.model<PlayerClassModel, PlayerClassModel>('PlayerClass', playerClassSchema);
 
-export default Race;
+export default PlayerClass;

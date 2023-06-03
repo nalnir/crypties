@@ -2,6 +2,9 @@
 const nextConfig = {
   reactStrictMode: true,
   output: 'standalone',
+  images: {
+    domains: ['cdn.leonardo.ai'],
+  },
 }
 
 const withTM = require('next-transpile-modules')(['three'])

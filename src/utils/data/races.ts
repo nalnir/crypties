@@ -1,9 +1,9 @@
-interface Race {
+export interface RaceProps {
     name: string,
     description: string,
     img: string
 }
-export const racesList: Race[]  = [
+export const racesList: RaceProps[]  = [
     {
         name: "Human",
         description: "From the grand spires of their cities to the humblest of hamlets, humans, in their splendid diversity and indomitable spirit, weave tales of courage, ambition, and resilience under the ever-watchful gaze of the old gods and new.",
