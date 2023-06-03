@@ -6,6 +6,7 @@ import Race, { RaceDocument } from '@/pages/api/schemas/race_schema';
 import { REST } from 'discord.js';
 import { Configuration, OpenAIApi } from "openai";
 import { CreateGenerationResponseData, GeneratedImageVariationGenerics, GetGenerationByIdResponseData, LeonardoAPI } from '@/utils/types/leonardo';
+import PlayerClass, { PlayerClassDocument } from '@/pages/api/schemas/class_schema';
 
 const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_BOT_TOKEN ?? '');
 const chatpgptConfig = new Configuration({
@@ -39,13 +40,14 @@ export const appRouter = router({
     .mutation(async (opts) => {
         const db = await connectDB()
         const user = await User.create({ 
-            walletAddress: opts.input.walletAddress
+            walletAddress: opts.input.walletAddress,
+            hasCreatePower: true
         })
         return user
     }),
 
-  // HERO RACE PROCEDURES
-  checkIfAlreadyCreated: procedure
+  // HERO CREATION PROCEDURES
+  checkIfRaceAlreadyCreated: procedure
     .input(
       z.object({
         creatorAddress: z.union([z.string(), z.null(), z.undefined()]),
@@ -58,6 +60,27 @@ export const appRouter = router({
       }
       const db = await connectDB()
       const race = await Race.findOne({ 
+          creatorAddress: opts.input.creatorAddress
+      })
+      if(race) {
+        return true;
+      }
+      return false
+    }),
+  
+    checkIfPlayerClassAlreadyCreated: procedure
+    .input(
+      z.object({
+        creatorAddress: z.union([z.string(), z.null(), z.undefined()]),
+      })
+    )
+    .mutation(async (opts) => {
+      const walletAddress = opts.input.creatorAddress;
+      if(!walletAddress) {
+        return null;
+      }
+      const db = await connectDB()
+      const race = await PlayerClass.findOne({ 
           creatorAddress: opts.input.creatorAddress
       })
       if(race) {
@@ -83,6 +106,23 @@ export const appRouter = router({
       return false
     }),
 
+    checkIfPlayerClassExists: procedure
+    .input(
+      z.object({
+        name: z.string(),
+      })
+    )
+    .mutation(async (opts) => {
+      const db = await connectDB()
+      const playerClass = await PlayerClass.findOne({ 
+        nameCombinations: { $in: [new RegExp(`^${opts.input.name}$`, 'i')] }
+      })
+      if(playerClass) {
+        return true;
+      }
+      return false
+    }),
+
   createRace: procedure
     .input(
       z.object({
@@ -99,7 +139,7 @@ export const appRouter = router({
         walletAddress: inputs.creatorAddress
       })
       if(user) {
-        if(!user.createFantasyRaceTries) {
+        if(!user.createTries) {
           const race = await Race.create({ 
             creatorAddress: inputs.creatorAddress,
             name: inputs.name,
@@ -107,7 +147,7 @@ export const appRouter = router({
             image: inputs.image,
           })
           return { success: true, message: "Successfully created the race", data: race }
-        } else if(user.createFantasyRaceTries < 3) {
+        } else if(user.createTries < 3) {
           const race = await Race.create({ 
             creatorAddress: inputs.creatorAddress,
             name: inputs.name,
@@ -122,7 +162,7 @@ export const appRouter = router({
       return { success: false, message: "Could not find the user", data: null }
   }),
 
-  generateImages: procedure
+  generateFantasyRaceImages: procedure
     .input(
       z.object({
         text: z.string()
@@ -170,6 +210,54 @@ export const appRouter = router({
       }
     }),
 
+  generateFantasyPlayerClassImages: procedure
+    .input(
+      z.object({
+        text: z.string()
+      })
+    )
+    .mutation(async (opts) => {
+      try {
+        await leonardo.auth(process.env.LEONARDO_API_KEY ?? '');
+        const createGenerationRes = await leonardo.createGeneration({
+          prompt: `${opts.input.text}, portrait, fantasy, centered, 4k resolution, bright color, beautiful background, male or female, pixar style`,
+          negative_prompt: 'logo, watermark, signature, cropped, zoomed, abnormal, bizzare, double heads, minimalistic, lowpoly, distortion, blur, flat, matte, dead, loud, tension. Extra Arms, extra limbs, long neck,teeth, long head',
+          modelId: 'b7aa9939-abed-4d4e-96c4-140b8c65dd92',
+          sd_version: 'v1_5',
+          num_images: 2,
+          // width: 552, -> CARD DIMENSION
+          // height: 256, -> CARD DIMENSION
+          width: 1024,
+          height: 1024,
+          public: false,
+        })
+        const createGenerationResData: CreateGenerationResponseData = createGenerationRes.data
+        const generationID = createGenerationResData.sdGenerationJob.generationId
+
+        let getGenerationByIdRes = await leonardo.getGenerationById({id: generationID})
+        
+        if(getGenerationByIdRes.data) {
+          while(getGenerationByIdRes.data!.generations_by_pk!.status === 'PENDING') {
+            // Delay 5 seconds before each new status check
+            await new Promise(r => setTimeout(r, 5000));
+            const newGetGenerationByIdRes = await leonardo.getGenerationById({id: generationID});
+            getGenerationByIdRes = newGetGenerationByIdRes
+          }
+        } else {
+          throw new Error("Response is null");
+        }
+
+
+      if (getGenerationByIdRes.data!.generations_by_pk!.status === 'FAILED') {
+        throw new Error("Generation failed");
+      }
+      const images: GeneratedImageVariationGenerics[] = getGenerationByIdRes.data!.generations_by_pk!.generated_images
+      return images;
+      } catch(e) {
+        console.log(e);
+      }
+    }),
+
   isFantasyRace: procedure
     .input(
       z.object({
@@ -199,37 +287,65 @@ export const appRouter = router({
       }
     }),
 
-  correctedFantasyRace: procedure
-  .input(
-    z.object({
-      name: z.string()
-    })
-  )
-  .mutation(async (opts) => {
-    try {
-      const completion = await openai.createEdit({
-        "model": "text-davinci-edit-001",
-        "input": opts.input.name,
-        "instruction": "Separate the word correctly. Output ONLY corrected word. NO CODE, TEXT ONLY",
-        "temperature": 0,
-      });
+  isPlayerClass: procedure
+    .input(
+      z.object({
+        name: z.string()
+      })
+    )
+    .mutation(async (opts) => {
+      try {
+        const completion = await openai.createChatCompletion({
+          model: "gpt-3.5-turbo",
+          messages: [
+            { role: "user", content: `Only answer "true" or "false". ${opts.input.name} SOUNDS like a fantasy class?`},
+          ]
+        });
 
-      console.log('completion: ', completion.data.usage)
+        const message = completion.data.choices[0].message?.content
+        return message;
 
-      const message = completion.data.choices[0].text
-      return message;
-
-    } catch(e: any) {
-      if (e.response) {
-        console.log(e.response.status);
-        console.log(e.response.data);
-      } else {
-        console.log(e.message);
+      } catch(e: any) {
+        if (e.response) {
+          console.log(e.response.status);
+          console.log(e.response.data);
+        } else {
+          console.log(e.message);
+        }
       }
-    }
-  }),
+    }),
 
-  setCreateFantasyRaceCycle: procedure
+  correctName: procedure
+    .input(
+      z.object({
+        name: z.string()
+      })
+    )
+    .mutation(async (opts) => {
+      try {
+        const completion = await openai.createEdit({
+          "model": "text-davinci-edit-001",
+          "input": opts.input.name,
+          "instruction": "Separate the word correctly. Output ONLY corrected word. NO CODE, TEXT ONLY",
+          "temperature": 0,
+        });
+
+        console.log('completion: ', completion.data.usage)
+
+        const message = completion.data.choices[0].text
+        return message;
+
+      } catch(e: any) {
+        if (e.response) {
+          console.log(e.response.status);
+          console.log(e.response.data);
+        } else {
+          console.log(e.message);
+        }
+      }
+    }),
+
+  setCreateCycle: procedure
     .input(
       z.object({
         walletAddress: z.string()
@@ -237,22 +353,22 @@ export const appRouter = router({
     )
     .mutation(async (opts) => {
       const currentDate = new Date();
-      const updatedUser = await User.findOneAndUpdate({ walletAddress: opts.input.walletAddress }, { createFantasyRaceNextCycle: new Date(currentDate.getTime() + (1 * 60 * 60 * 1000)) }, { new: true })
+      const updatedUser = await User.findOneAndUpdate({ walletAddress: opts.input.walletAddress }, { createNextCycle: new Date(currentDate.getTime() + (1 * 60 * 60 * 1000)) }, { new: true })
       return updatedUser;
     }),
   
-  resetCreateFantasyRaceTries: procedure
+  resetCreateTries: procedure
     .input(
       z.object({
         walletAddress: z.string()
       })
     )
     .mutation(async (opts) => {
-      const updatedUser = await User.findOneAndUpdate({ walletAddress: opts.input.walletAddress }, { createFantasyRaceTries: 0, createFantasyRaceNextCycle: null }, { new: true })
+      const updatedUser = await User.findOneAndUpdate({ walletAddress: opts.input.walletAddress }, { createTries: 0, createNextCycle: null }, { new: true })
       return updatedUser;
     }),
 
-  bumpCreateFantasyRaceTry: procedure
+  bumpCreateTry: procedure
     .input(
       z.object({
         walletAddress: z.string()
@@ -260,7 +376,20 @@ export const appRouter = router({
     )
     .mutation(async (opts) => {
       const updatedUser = await User.findOneAndUpdate({ walletAddress: opts.input.walletAddress },
-        { $inc: { createFantasyRaceTries: 1 } }, { new: true }
+        { $inc: { createTries: 1 } }, { new: true }
+      )
+      return updatedUser;
+    }),
+
+  setUseCreatePower: procedure
+    .input(
+      z.object({
+        walletAddress: z.string()
+      })
+    )
+    .mutation(async (opts) => {
+      const updatedUser = await User.findOneAndUpdate({ walletAddress: opts.input.walletAddress },
+        { hasCreatePower: false }
       )
       return updatedUser;
     }),
@@ -348,8 +477,8 @@ export const appRouter = router({
   )
   .mutation(async (opts) => {
     try {
-      const userRace: RaceDocument[] | null = await Race.find({ creatorAddress: { $ne: opts.input.walletAddress } })
-      return userRace;
+      const userRaces: RaceDocument[] | null = await Race.find({ creatorAddress: { $ne: opts.input.walletAddress } })
+      return userRaces;
     } catch(e: any) {
       if (e.response) {
         console.log(e.response.status);
@@ -359,6 +488,28 @@ export const appRouter = router({
       }
     }
   }),
+
+  getOtherPlayerClasses: procedure
+    .input(
+      z.object({
+        page: z.number(),
+        walletAddress: z.string(),
+      })
+    )
+    .mutation(async (opts) => {
+      try {
+        const userClasses: PlayerClassDocument[] | null = await PlayerClass.find({ creatorAddress: { $ne: opts.input.walletAddress } })
+        return userClasses;
+      } catch(e: any) {
+        if (e.response) {
+          console.log(e.response.status);
+          console.log(e.response.data);
+        } else {
+          console.log(e.message);
+        }
+      }
+    }),
+
 });
 
 export type AppRouter = typeof appRouter;
