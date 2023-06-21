@@ -1,5 +1,3 @@
-import { FormikProps } from "formik";
-import { RegisterUserFormik } from "../../validation_scheme";
 import { RaceProps, racesList } from "@/utils/data/races";
 import { PText } from "@/shared/components/p_text";
 import { useEffect, useState } from "react";
@@ -17,21 +15,17 @@ import useStateCallback from "@/utils/hooks/use_state_callback";
 import { useOnboardingHeroActions } from "@/recoil-state/onboarding_hero/onboarding_hero.actions";
 import { otherPlayersRacesAtom } from "@/recoil-state/other_players_races/other_players_races.atom";
 import { useOtherPlayersRacesActions } from "@/recoil-state/other_players_races/other_players_races.actions";
+import { onboardingHeroAtom } from "@/recoil-state/onboarding_hero/onboarding_hero.atom";
 
-interface Step1Props {
-    formik: FormikProps<RegisterUserFormik>;
-    nextStep: () => void;
-}
-export const Step1 = ({
-    formik,
-    nextStep
-}: Step1Props) => {
+export const Step1 = () => {
     const globalModal = useGlobalModalActions();
     const otherPlayersRacesState = useRecoilValue(otherPlayersRacesAtom)
     const otherPlayersRacesActions = useOtherPlayersRacesActions();
     const playerFantasyRaceState = useRecoilValue(playerFantasyRaceAtom)
     const playerFantasyRaceActions = usePlayerFantasyRaceActions();
     const onboardingHeroActions = useOnboardingHeroActions();
+    const onboardingHeroState = useRecoilValue(onboardingHeroAtom);
+    
     const queryClient = useQueryClient();
 
     const [activeRace, setActiveRace] = useState(0)
@@ -43,6 +37,12 @@ export const Step1 = ({
 
     const { data: user, isLoading, isError } = useQuery<UserDocument>(['user']);
 
+    useEffect(() => {
+        const existingHeroFantasyRaceIndex = copyRaceList.findIndex((heroFantasyRace: RaceProps) => heroFantasyRace.name === onboardingHeroState.fantasyRace)
+        if(existingHeroFantasyRaceIndex > -1) {
+            setActiveRace(existingHeroFantasyRaceIndex)
+        }
+    },[onboardingHeroState.class])
 
     useEffect(() => {
         if(otherPlayersRacesState.races.length > 0) {
@@ -54,7 +54,6 @@ export const Step1 = ({
                     description: race.description
                 })
             })
-            console.log('together: ', [...copyRaceList, ...newRaces])
             setCopyRaceList([...copyRaceList, ...newRaces])
         }
     },[otherPlayersRacesState])
@@ -63,7 +62,7 @@ export const Step1 = ({
         playerFantasyRaceActions.setImageChoice(image)
         globalModal.closeGlobalModal()
         const generatedDescription = await generateDescription.mutateAsync({
-            name: playerFantasyRaceState.name
+            prompt: `Describe ${playerFantasyRaceState.name} in epic fantasy. Less then 40 words.`
         })
         playerFantasyRaceActions.setDescription(generatedDescription ?? '')
 

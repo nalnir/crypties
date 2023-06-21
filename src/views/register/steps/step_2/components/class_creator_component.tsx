@@ -31,7 +31,7 @@ export const ClassCreatorComponent = () => {
     const isPlayerClass = trpc.isPlayerClass.useMutation();
     const bumpCreateTry = trpc.bumpCreateTry.useMutation();
     const setUseCreatePower = trpc.setUseCreatePower.useMutation();
-    const generateFantasyPlayerClassImages = trpc.generateFantasyPlayerClassImages.useMutation();
+    const generateFantasyPlayerClassImages = trpc.generateImages.useMutation();
     
     const [name, setName] = useState('')
     const [loading, setLoading] = useState(false)
@@ -62,16 +62,16 @@ export const ClassCreatorComponent = () => {
                 const resPlayerClassAlreadyCreated = await checkIfPlayerClassAlreadyCreated.mutateAsync({
                     creatorAddress: user?.walletAddress
                 })
-                if(resPlayerClassAlreadyCreated) {
-                    return handleError('This user already created a class')
-                }
+                // if(resPlayerClassAlreadyCreated) {
+                //     return handleError('This user already created a class')
+                // }
 
-                const resRaceAlreadyCreated = await checkIfRaceAlreadyCreated.mutateAsync({
-                    creatorAddress: user?.walletAddress
-                })
-                if(resRaceAlreadyCreated) {
-                    return handleError('This user already used his creation power.')
-                }
+                // const resRaceAlreadyCreated = await checkIfRaceAlreadyCreated.mutateAsync({
+                //     creatorAddress: user?.walletAddress
+                // })
+                // if(resRaceAlreadyCreated) {
+                //     return handleError('This user already used his creation power.')
+                // }
 
                 const resCorrectName = await correctName.mutateAsync({
                     name: adjustedName
@@ -100,8 +100,8 @@ export const ClassCreatorComponent = () => {
                 }
 
                 // CHECK IF USER CAN GENERATE
-                if(user?.createTries) {
-                    if(user?.createTries > 2) {
+                if(user?.createTriesUsed) {
+                    if(user?.createTriesUsed > 2) {
                         if(user.createNextCycle) {
                             
                             const currentDate = new Date();
@@ -124,15 +124,15 @@ export const ClassCreatorComponent = () => {
                     }
                 }
 
-                // CHECK IF RACE IS FANTASY NAME
-                console.log('isFantayRace => ()')
-                const resIsFantayRace = await isPlayerClass.mutateAsync({
+                // CHECK IF CLASS IS FANTASY CLASS
+                console.log('isPlayerClass => ()')
+                const resIsPlayerClass = await isPlayerClass.mutateAsync({
                     name: correctedName
                 })
-                if(!resIsFantayRace) {
+                if(!resIsPlayerClass) {
                     return handleError('Somethign went worng with the ChatGPT check')
                 } else {
-                    if(resIsFantayRace.toLowerCase().includes('false')) {
+                    if(resIsPlayerClass.toLowerCase().includes('false')) {
                         console.log('bumpCreateFantasyRaceTry => ()')
                         const updatedUser = await bumpCreateTry.mutateAsync({
                             walletAddress: user.walletAddress
@@ -143,7 +143,10 @@ export const ClassCreatorComponent = () => {
 
                         console.log('generateImages => ()')
                         const images = await generateFantasyPlayerClassImages.mutateAsync({
-                            text: correctedName
+                            prompt: `${correctedName} logo face, epic fantasy, perfectly centered image, image in the center, flawless center shot, colourful, highly detailed, vibrant color, high detail, epic background`,
+                            negative_prompt: 'watermark, signature, cropped, zoomed, abnormal, bizzare, double heads, lowpoly, distortion, blur, flat, matte, dead, loud, tension. Extra Arms, extra limbs, long neck,teeth, long head',
+                            modelId: 'b820ea11-02bf-4652-97ae-9ac0cc00593d',
+                            num_images: 2
                         })
                         const urls: string[] = []
                         if(images) {
@@ -197,7 +200,7 @@ export const ClassCreatorComponent = () => {
              <div className="flex items-start space-x-3">
                  <div className="space-y-1">
                      <Input value={name} onChange={handleSetName} placeholder="Name your race"/>
-                 <PText>{user?.createTries ? 3 - user?.createTries : 3} tries remain</PText>
+                 <PText>{user?.createTriesUsed ? 3 - user?.createTriesUsed : 3} tries remain</PText>
                  </div>
                  <Button disabled={loading} startIcon={loading ? <CircularProgress className="w-5 h-5 text-secondary-400"/> : <></>} onClick={handleCreate}>Create</Button>
              </div>

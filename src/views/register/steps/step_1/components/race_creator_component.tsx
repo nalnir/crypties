@@ -26,7 +26,7 @@ export const RaceCreatorComponent = () => {
     const checkIfRaceAlreadyCreated = trpc.checkIfRaceAlreadyCreated.useMutation()
     const checkIfPlayerClassAlreadyCreated = trpc.checkIfPlayerClassAlreadyCreated.useMutation()
     const checkIfRaceExists = trpc.checkIfRaceExists.useMutation()
-    const generateFantasyRaceImages = trpc.generateFantasyRaceImages.useMutation()
+    const generateFantasyRaceImages = trpc.generateImages.useMutation()
     const isFantayRace = trpc.isFantasyRace.useMutation();
     const bumpCreateTry = trpc.bumpCreateTry.useMutation()
     const setUseCreatePower = trpc.setUseCreatePower.useMutation()
@@ -112,8 +112,8 @@ export const RaceCreatorComponent = () => {
                 }
 
                 // CHECK IF USER CAN GENERATE
-                if(user?.createTries) {
-                    if(user?.createTries > 2) {
+                if(user?.createTriesUsed) {
+                    if(user?.createTriesUsed > 2) {
                         if(user.createNextCycle) {
                             
                             const currentDate = new Date();
@@ -155,7 +155,8 @@ export const RaceCreatorComponent = () => {
 
                         console.log('generateFantasyRaceImages => ()')
                         const images = await generateFantasyRaceImages.mutateAsync({
-                            text: correctedName
+                            prompt: `${correctedName} portrait, fantasy, centered, 4k resolution, bright color, beautiful background, male or female, pixar style`,
+                            negative_prompt: 'logo, watermark, signature, cropped, zoomed, abnormal, bizzare, double heads, minimalistic, lowpoly, distortion, blur, flat, matte, dead, loud, tension. Extra Arms, extra limbs, long neck,teeth, long head',
                         })
                         const urls: string[] = []
                         if(images) {
@@ -199,7 +200,7 @@ export const RaceCreatorComponent = () => {
                 <div className="flex items-start space-x-3">
                     <div className="space-y-1">
                         <Input value={name} onChange={handleSetName} placeholder="Name your race"/>
-                    <PText>{user?.createTries ? 3 - user?.createTries : 3} tries remain</PText>
+                    <PText>{user?.createTriesUsed ? 3 - user?.createTriesUsed : 3} tries remain</PText>
                     </div>
                     <Button disabled={loading} startIcon={loading ? <CircularProgress className="w-5 h-5 text-secondary-400"/> : <></>} onClick={handleCreate}>Create</Button>
                 </div>

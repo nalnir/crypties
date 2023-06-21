@@ -33,7 +33,7 @@ export function useOnboardingHeroActions() {
         }))
     }
 
-    function setDescription(description: string) {
+    function setDescription(description: string[]) {
         setOnboardingHero((state: any) => ({
             ...state,
             description: description

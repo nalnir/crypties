@@ -162,21 +162,29 @@ export const appRouter = router({
       return { success: false, message: "Could not find the user", data: null }
   }),
 
-  generateFantasyRaceImages: procedure
+  generateImages: procedure
     .input(
       z.object({
-        text: z.string()
+        prompt: z.string(),
+        negative_prompt: z.string().nullish(),
+        num_images: z.number().nullish(),
+        modelId: z.string().nullish()
       })
     )
     .mutation(async (opts) => {
+      if(opts.input.num_images) {
+        if(opts.input.num_images > 4) {
+          throw new Error("Maximum 4 images");
+        }
+      }
       try {
         await leonardo.auth(process.env.LEONARDO_API_KEY ?? '');
         const createGenerationRes = await leonardo.createGeneration({
-          prompt: `${opts.input.text}, portrait, fantasy, centered, 4k resolution, bright color, beautiful background, male or female, pixar style`,
-          negative_prompt: 'logo, watermark, signature, cropped, zoomed, abnormal, bizzare, double heads, minimalistic, lowpoly, distortion, blur, flat, matte, dead, loud, tension. Extra Arms, extra limbs, long neck,teeth, long head',
-          modelId: 'b7aa9939-abed-4d4e-96c4-140b8c65dd92',
+          prompt: opts.input.prompt,
+          negative_prompt: opts.input.negative_prompt ?? '',
+          modelId: opts.input.modelId ?? 'b7aa9939-abed-4d4e-96c4-140b8c65dd92',
           sd_version: 'v1_5',
-          num_images: 2,
+          num_images: opts.input.num_images ?? 2,
           // width: 552, -> CARD DIMENSION
           // height: 256, -> CARD DIMENSION
           width: 1024,
@@ -200,54 +208,6 @@ export const appRouter = router({
         }
 
   
-      if (getGenerationByIdRes.data!.generations_by_pk!.status === 'FAILED') {
-        throw new Error("Generation failed");
-      }
-      const images: GeneratedImageVariationGenerics[] = getGenerationByIdRes.data!.generations_by_pk!.generated_images
-      return images;
-      } catch(e) {
-        console.log(e);
-      }
-    }),
-
-  generateFantasyPlayerClassImages: procedure
-    .input(
-      z.object({
-        text: z.string()
-      })
-    )
-    .mutation(async (opts) => {
-      try {
-        await leonardo.auth(process.env.LEONARDO_API_KEY ?? '');
-        const createGenerationRes = await leonardo.createGeneration({
-          prompt: `${opts.input.text}, portrait, fantasy, centered, 4k resolution, bright color, beautiful background, male or female, pixar style`,
-          negative_prompt: 'logo, watermark, signature, cropped, zoomed, abnormal, bizzare, double heads, minimalistic, lowpoly, distortion, blur, flat, matte, dead, loud, tension. Extra Arms, extra limbs, long neck,teeth, long head',
-          modelId: 'b7aa9939-abed-4d4e-96c4-140b8c65dd92',
-          sd_version: 'v1_5',
-          num_images: 2,
-          // width: 552, -> CARD DIMENSION
-          // height: 256, -> CARD DIMENSION
-          width: 1024,
-          height: 1024,
-          public: false,
-        })
-        const createGenerationResData: CreateGenerationResponseData = createGenerationRes.data
-        const generationID = createGenerationResData.sdGenerationJob.generationId
-
-        let getGenerationByIdRes = await leonardo.getGenerationById({id: generationID})
-        
-        if(getGenerationByIdRes.data) {
-          while(getGenerationByIdRes.data!.generations_by_pk!.status === 'PENDING') {
-            // Delay 5 seconds before each new status check
-            await new Promise(r => setTimeout(r, 5000));
-            const newGetGenerationByIdRes = await leonardo.getGenerationById({id: generationID});
-            getGenerationByIdRes = newGetGenerationByIdRes
-          }
-        } else {
-          throw new Error("Response is null");
-        }
-
-
       if (getGenerationByIdRes.data!.generations_by_pk!.status === 'FAILED') {
         throw new Error("Generation failed");
       }
@@ -298,7 +258,7 @@ export const appRouter = router({
         const completion = await openai.createChatCompletion({
           model: "gpt-3.5-turbo",
           messages: [
-            { role: "user", content: `Only answer "true" or "false". ${opts.input.name} SOUNDS like a fantasy class?`},
+            { role: "user", content: `Only answer "true" or "false". ${opts.input.name} SOUNDS like a fantasy rpg class?`},
           ]
         });
 
@@ -397,7 +357,7 @@ export const appRouter = router({
   generateDescription: procedure
     .input(
       z.object({
-        name: z.string()
+        prompt: z.string(),
       })
     )
     .mutation(async (opts) => {
@@ -405,8 +365,7 @@ export const appRouter = router({
         const completion = await openai.createChatCompletion({
           model: "gpt-3.5-turbo",
           messages: [
-            // { role: "system", content: "Describe in epic fantasy in less then 40 words." },
-            { role: "user", content: `Describe ${opts.input.name} in epic fantasy. Less then 40 words.`},
+            { role: "user", content: opts.input.prompt},
           ]
         });
 
@@ -488,6 +447,53 @@ export const appRouter = router({
       }
     }
   }),
+
+  // PLAYER CLASS PROCEDURES
+
+  saveUserPlayerClass: procedure
+    .input(
+      z.object({
+        name: z.string(),
+        description: z.string(),
+        creatorAddress: z.string(),
+        image: z.string(),
+        nameCombinations: z.array(z.string())
+      })
+    )
+    .mutation(async (opts) => {
+      console.log('nameCombinations: ', opts.input.nameCombinations)
+      try {
+        const newPlayerClass = await PlayerClass.create(opts.input)
+        return newPlayerClass;
+      } catch(e: any) {
+        if (e.response) {
+          console.log(e.response.status);
+          console.log(e.response.data);
+        } else {
+          console.log(e.message);
+        }
+      }
+    }),
+
+  getUserClass: procedure
+    .input(
+      z.object({
+        walletAddress: z.string(),
+      })
+    )
+    .mutation(async (opts) => {
+      try {
+        const userPlaerClass: RaceDocument | null = await PlayerClass.findOne({ creatorAddress: opts.input.walletAddress })
+        return userPlaerClass;
+      } catch(e: any) {
+        if (e.response) {
+          console.log(e.response.status);
+          console.log(e.response.data);
+        } else {
+          console.log(e.message);
+        }
+      }
+    }),
 
   getOtherPlayerClasses: procedure
     .input(
