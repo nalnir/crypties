@@ -16,6 +16,7 @@ import { useOnboardingHeroActions } from "@/recoil-state/onboarding_hero/onboard
 import { otherPlayersRacesAtom } from "@/recoil-state/other_players_races/other_players_races.atom";
 import { useOtherPlayersRacesActions } from "@/recoil-state/other_players_races/other_players_races.actions";
 import { onboardingHeroAtom } from "@/recoil-state/onboarding_hero/onboarding_hero.atom";
+import { Input } from "@mui/material";
 
 export const Step1 = () => {
     const globalModal = useGlobalModalActions();
@@ -29,6 +30,7 @@ export const Step1 = () => {
     const queryClient = useQueryClient();
 
     const [activeRace, setActiveRace] = useState(0)
+    const [playerName, setPlayerName] = useState('');
     const [copyRaceList, setCopyRaceList] = useState<RaceProps[]>(JSON.parse(JSON.stringify(racesList)));
 
     const generateDescription = trpc.generateDescription.useMutation()
@@ -147,6 +149,7 @@ export const Step1 = () => {
 
         <div className="flex flex-col justify-between col-span-4 p-3 bg-primary-500">
             <div className="space-y-5">
+                <Input value={onboardingHeroState.playerName} onChange={(e) => onboardingHeroActions.setPlayerName(e.target.value)} placeholder="Player name"/>
                 <div className="space-y-3">
                     {copyRaceList.map((race, index) => <div key={index} className="cursor-pointer" onClick={() => {
                         onboardingHeroActions.setFantasyRace(race.name)

@@ -354,6 +354,27 @@ export const appRouter = router({
       return updatedUser;
     }),
 
+  onboardUser: procedure
+    .input(
+      z.object({
+        walletAddress: z.string(),
+        profilePicture: z.string(),
+        generatedName: z.string(),
+        playerName: z.string()
+      })
+    )
+    .mutation(async (opts) => {
+      const updatedUser = await User.findOneAndUpdate({ walletAddress: opts.input.walletAddress },
+        { 
+          profilePicture: opts.input.profilePicture,
+          generatedName: opts.input.generatedName,
+          playerName: opts.input.playerName,
+          onboarded: true
+        }, {new: true}
+      )
+      return updatedUser;
+    }),
+
   generateDescription: procedure
     .input(
       z.object({

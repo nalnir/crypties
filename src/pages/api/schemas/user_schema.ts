@@ -7,7 +7,9 @@ const userSchema = new mongoose.Schema({
     createTriesUsed: { type: Number, required: false },
     createNextCycle: { type: Date, required: false },
     onboarded: { type: Boolean, required: false },
-    hasCreatePower: { type: Boolean, required: true }
+    hasCreatePower: { type: Boolean, required: true },
+    playerName: { type: String, required: false },
+    generatedName: { type: String, required: false }
 });
 
 export interface UserDocument extends Document {
@@ -18,6 +20,8 @@ export interface UserDocument extends Document {
     createNextCycle?: Date;
     onboarded: boolean;
     hasCreatePower: boolean;
+    playerName: string;
+    generatedName: string;
 }
 
 interface UserModel extends Model<UserDocument> {}

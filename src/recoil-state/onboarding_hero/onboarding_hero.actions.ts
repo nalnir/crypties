@@ -6,11 +6,20 @@ export function useOnboardingHeroActions() {
     const onboardingHeroState = useRecoilValue(onboardingHeroAtom)
 
     return {
+        setPlayerName,
         setFantasyRace,
         setClass,
         setAlignment,
         setDescription,
+        setImageOptions
     };
+
+    function setPlayerName(playerName: string) {
+        setOnboardingHero((state: any) => ({
+            ...state,
+            playerName: playerName
+        }))
+    }
 
     function setFantasyRace(fantasyRace: string) {
         setOnboardingHero((state: any) => ({
@@ -37,6 +46,13 @@ export function useOnboardingHeroActions() {
         setOnboardingHero((state: any) => ({
             ...state,
             description: description
+        }))
+    }
+
+    function setImageOptions(images: string[]) {
+        setOnboardingHero((state: any) => ({
+            ...state,
+            imageOptions: images
         }))
     }
 

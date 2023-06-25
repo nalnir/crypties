@@ -7,6 +7,8 @@ interface OnboardingHeroAtom {
     class: string;
     description: string[];
     alignment: Alignment;
+    imageOptions: string[];
+    playerName: string;
 }
 
 export const InitialOnboardingHeroState: OnboardingHeroAtom = {
@@ -14,6 +16,8 @@ export const InitialOnboardingHeroState: OnboardingHeroAtom = {
     class: '',
     description: [],
     alignment: 'light',
+    imageOptions: [],
+    playerName: ''
 }
 export const onboardingHeroAtom = atom<OnboardingHeroAtom>({
     key: 'onboardingHeroState', // unique ID (with respect to other atoms/selectors)
