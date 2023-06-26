@@ -37,6 +37,8 @@ function Register() {
     const getUser = trpc.getUser.useMutation()
     const registerUser = trpc.register.useMutation()
     const generateUserAvatarImages = trpc.generateImages.useMutation()
+    const bumpPlayedByAmountFantasyRace = trpc.bumpPlayedByAmountFantasyRace.useMutation();
+    const bumpPlayedByAmoungPlayerClass = trpc.bumpPlayedByAmoungPlayerClass.useMutation();
     const onboardFuture = trpc.onboardUser.useMutation()
 
     useEffect(() => {
@@ -60,6 +62,15 @@ function Register() {
     const handlePlayerChoice = async (image: string) => {
         globalModal.closeGlobalModal()
         if(user) {
+
+            const bumpPlayedByAmountFantasyRaceRes = await bumpPlayedByAmountFantasyRace.mutateAsync({
+                fantasyRaceID: onboardingHeroState.fantasyRace.id
+            })
+
+            const bumpPlayedByAmoungPlayerClassRes = await bumpPlayedByAmoungPlayerClass.mutateAsync({
+                playerClassID: onboardingHeroState.class.id
+            })
+
             const generatedFantasyName = generateFantasyName(user.walletAddress)
             const updatedUser = await onboardFuture.mutateAsync({
                 walletAddress: user.walletAddress,
@@ -89,7 +100,7 @@ function Register() {
     const submit = async () => {
         setLoading(true)
         const images = await generateUserAvatarImages.mutateAsync({
-            prompt: `ONE PERSON, ${onboardingHeroState.alignment === "darkness" ? 'Evil' : 'Good'}, ${onboardingHeroState.description}, ${onboardingHeroState.fantasyRace}, ${onboardingHeroState.class}, portrait, fantasy, centered, 4k resolution, bright color, ${onboardingHeroState.alignment === "darkness" ? 'dark gloomy' : 'beautiful bright'} background, pixar style`,
+            prompt: `ONE PERSON, ${onboardingHeroState.alignment === "darkness" ? 'Evil' : 'Good'}, ${onboardingHeroState.description}, ${onboardingHeroState.fantasyRace.name}, ${onboardingHeroState.class.name}, portrait, fantasy, centered, 4k resolution, bright color, ${onboardingHeroState.alignment === "darkness" ? 'dark gloomy' : 'beautiful bright'} background, pixar style`,
             negative_prompt: 'HALF FACE,CROPED IMAGE,watermark, ugly, weird face, double head, double face, multiple face, multiple head, multiple body, disfigured hand, disproportion body, incorrect hands, extra limbs, extra fingers, fused fingers, missing facial features, low quality, bad quality, bad anatomy, Missing limbs, missing fingers, ugly',
             modelId: 'a097c2df-8f0c-4029-ae0f-8fd349055e61'
         })
@@ -135,9 +146,6 @@ function Register() {
             function: () => submit()
         }
     ]
-
-
-    console.log('USER REGISTER: ', user)
 
     if(!user) {
         return <div className="flex-col items-center justify-center w-screen h-screen p-3 bg-primary-400">

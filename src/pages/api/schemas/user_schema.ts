@@ -1,6 +1,7 @@
-import mongoose, { Model } from 'mongoose';
+import mongoose, { Model, Schema } from 'mongoose';
 
 const userSchema = new mongoose.Schema({
+    _id: { type: Schema.Types.ObjectId, auto: true, transform: (value: mongoose.Types.ObjectId) => value.toString(), },
     walletAddress: { type: String, unique: true, required: true },
     profilePicture: { type: String, required: false },
     alignment: { type: String, required: false },
@@ -13,6 +14,7 @@ const userSchema = new mongoose.Schema({
 });
 
 export interface UserDocument extends Document {
+    _id: string;
     walletAddress: string;
     profilePicture?: string;
     alignment: "ligth" | "darkness";

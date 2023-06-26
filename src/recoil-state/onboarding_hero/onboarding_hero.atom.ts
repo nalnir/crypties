@@ -2,9 +2,19 @@ import { atom } from 'recoil';
 
 export type Alignment = 'light' | 'darkness';
 
+export interface IFantasyRace {
+    name: string;
+    id: string;
+}
+
+export interface IClass {
+    name: string;
+    id: string
+}
+
 interface OnboardingHeroAtom {
-    fantasyRace: string;
-    class: string;
+    fantasyRace: IFantasyRace;
+    class: IClass;
     description: string[];
     alignment: Alignment;
     imageOptions: string[];
@@ -12,8 +22,14 @@ interface OnboardingHeroAtom {
 }
 
 export const InitialOnboardingHeroState: OnboardingHeroAtom = {
-    fantasyRace: 'Human',
-    class: '',
+    fantasyRace: {
+        name: '',
+        id: ''
+    },
+    class: {
+        name: '',
+        id: ''
+    },
     description: [],
     alignment: 'light',
     imageOptions: [],

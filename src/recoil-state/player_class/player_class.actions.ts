@@ -11,7 +11,8 @@ export function usePlayerClassActions() {
         setImageChoice,
         setDescription,
         setFetched,
-        setNameCombinations
+        setNameCombinations,
+        setID
     };
 
     function setName(name: string) {
@@ -53,6 +54,13 @@ export function usePlayerClassActions() {
         setPlayerClass((state: any) => ({
             ...state,
             nameCombinations: nameCombinations
+        }))
+    }
+
+    function setID(id: string) {
+        setPlayerClass((state: any) => ({
+            ...state,
+            _id: id
         }))
     }
 }

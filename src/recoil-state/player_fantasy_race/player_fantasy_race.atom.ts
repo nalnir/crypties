@@ -1,6 +1,7 @@
 import { atom } from 'recoil';
 
 interface PlayerFantasyRaceAtom {
+    _id: string;
     imageOptions: string[];
     imageChoice: string;
     description: string;
@@ -10,6 +11,7 @@ interface PlayerFantasyRaceAtom {
 }
 
 export const InitialPlayerFantasyRaceState = {
+    _id: '',
     imageOptions: [],
     imageChoice: '',
     description: '',

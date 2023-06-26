@@ -139,7 +139,7 @@ export const appRouter = router({
         walletAddress: inputs.creatorAddress
       })
       if(user) {
-        if(!user.createTries) {
+        if(!user.createTriesUsed) {
           const race = await Race.create({ 
             creatorAddress: inputs.creatorAddress,
             name: inputs.name,
@@ -147,7 +147,7 @@ export const appRouter = router({
             image: inputs.image,
           })
           return { success: true, message: "Successfully created the race", data: race }
-        } else if(user.createTries < 3) {
+        } else if(user.createTriesUsed < 3) {
           const race = await Race.create({ 
             creatorAddress: inputs.creatorAddress,
             name: inputs.name,
@@ -536,6 +536,46 @@ export const appRouter = router({
         }
       }
     }),
+
+  bumpPlayedByAmountFantasyRace: procedure
+    .input(
+      z.object({
+        fantasyRaceID: z.string(),
+      })
+    )
+    .mutation(async (opts) => {
+      try {
+        const fantasyRace = await Race.updateOne({ _id: opts.input.fantasyRaceID }, { $inc: { playedByAmount: 1 } },)
+        return fantasyRace;
+      } catch(e: any) {
+        if (e.response) {
+          console.log(e.response.status);
+          console.log(e.response.data);
+        } else {
+          console.log(e.message);
+        }
+      }
+    }),
+
+    bumpPlayedByAmoungPlayerClass: procedure
+      .input(
+        z.object({
+          playerClassID: z.string(),
+        })
+      )
+      .mutation(async (opts) => {
+        try {
+          const playerClass = await PlayerClass.updateOne({ _id: opts.input.playerClassID }, { $inc: { playedByAmount: 1 } },)
+          return playerClass;
+        } catch(e: any) {
+          if (e.response) {
+            console.log(e.response.status);
+            console.log(e.response.data);
+          } else {
+            console.log(e.message);
+          }
+        }
+      })
 
 });
 

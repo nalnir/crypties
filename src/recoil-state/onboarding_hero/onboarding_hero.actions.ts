@@ -1,5 +1,5 @@
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { Alignment, onboardingHeroAtom } from "./onboarding_hero.atom";
+import { Alignment, IClass, IFantasyRace, onboardingHeroAtom } from "./onboarding_hero.atom";
 
 export function useOnboardingHeroActions() {
     const setOnboardingHero = useSetRecoilState(onboardingHeroAtom);
@@ -21,14 +21,14 @@ export function useOnboardingHeroActions() {
         }))
     }
 
-    function setFantasyRace(fantasyRace: string) {
+    function setFantasyRace(fantasyRace: IFantasyRace) {
         setOnboardingHero((state: any) => ({
             ...state,
             fantasyRace: fantasyRace
         }))
     }
 
-    function setClass(fantasyClass: string) {
+    function setClass(fantasyClass: IClass) {
         setOnboardingHero((state: any) => ({
             ...state,
             class: fantasyClass

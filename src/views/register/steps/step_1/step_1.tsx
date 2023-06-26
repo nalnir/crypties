@@ -40,7 +40,7 @@ export const Step1 = () => {
     const { data: user, isLoading, isError } = useQuery<UserDocument>(['user']);
 
     useEffect(() => {
-        const existingHeroFantasyRaceIndex = copyRaceList.findIndex((heroFantasyRace: RaceProps) => heroFantasyRace.name === onboardingHeroState.fantasyRace)
+        const existingHeroFantasyRaceIndex = copyRaceList.findIndex((heroFantasyRace: RaceProps) => heroFantasyRace.name === onboardingHeroState.fantasyRace.name)
         if(existingHeroFantasyRaceIndex > -1) {
             setActiveRace(existingHeroFantasyRaceIndex)
         }
@@ -51,6 +51,7 @@ export const Step1 = () => {
             const newRaces: RaceProps[] = []
             otherPlayersRacesState.races.forEach((race) => {
                 newRaces.push({
+                    _id: race._id,
                     name: race.name,
                     img: race.image,
                     description: race.description
@@ -80,9 +81,10 @@ export const Step1 = () => {
 
         setCopyRaceList([...copyRaceList,
             {
-              img: image,
-              description: generatedDescription ?? '',
-              name: playerFantasyRaceState.name
+                _id: playerFantasyRaceState._id,
+                img: image,
+                description: generatedDescription ?? '',
+                name: playerFantasyRaceState.name
             }
         ])
         setActiveRace(copyRaceList.length)
@@ -110,16 +112,18 @@ export const Step1 = () => {
             const newRaces: RaceProps[] = [];
             otherPlayersRacesState.races.forEach((race) => {
                 newRaces.push({
-                name: race.name,
-                img: race.image,
-                description: race.description
+                    _id: race._id,
+                    name: race.name,
+                    img: race.image,
+                    description: race.description
                 });
             });
           setCopyRaceList([...copyRaceList, ...newRaces,
             {
-              img: playerFantasyRaceState.imageChoice,
-              description: playerFantasyRaceState.description,
-              name: playerFantasyRaceState.name
+                _id: playerFantasyRaceState._id,
+                img: playerFantasyRaceState.imageChoice,
+                description: playerFantasyRaceState.description,
+                name: playerFantasyRaceState.name
             }
         ]);
 
@@ -137,6 +141,7 @@ export const Step1 = () => {
             playerFantasyRaceActions.setName(currentRace.name)
             playerFantasyRaceActions.setImageChoice(currentRace.image)
             playerFantasyRaceActions.setFetched(true)
+            playerFantasyRaceActions.setID(currentRace._id)
         }
     }
 
@@ -152,7 +157,11 @@ export const Step1 = () => {
                 <Input value={onboardingHeroState.playerName} onChange={(e) => onboardingHeroActions.setPlayerName(e.target.value)} placeholder="Player name"/>
                 <div className="space-y-3">
                     {copyRaceList.map((race, index) => <div key={index} className="cursor-pointer" onClick={() => {
-                        onboardingHeroActions.setFantasyRace(race.name)
+                        console.log('race: ', race)
+                        onboardingHeroActions.setFantasyRace({
+                            id: race._id,
+                            name: race.name
+                        })
                         setActiveRace(index)
                     }}>
                         <PText className={`text-xl ${activeRace === index ? 'text-secondary-400' : 'text-white'}`}>{race.name}</PText>

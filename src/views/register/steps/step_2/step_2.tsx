@@ -31,7 +31,7 @@ export const Step2 = () => {
     const getUserClass = trpc.getUserClass.useMutation();
 
     useEffect(() => {
-        const existingHeroClassIndex = copyClassList.findIndex((heroClass: ClassProps) => heroClass.name === onboardingHeroState.class)
+        const existingHeroClassIndex = copyClassList.findIndex((heroClass: ClassProps) => heroClass.name === onboardingHeroState.class.id)
         if(existingHeroClassIndex > -1) {
             setActiveClass(existingHeroClassIndex)
         }
@@ -52,6 +52,7 @@ export const Step2 = () => {
             const newRaces: ClassProps[] = []
             otherPlayerClassesState.classes.forEach((playerClass) => {
                 newRaces.push({
+                    _id: playerClass._id,
                     name: playerClass.name,
                     img: playerClass.image,
                     description: playerClass.description
@@ -81,9 +82,10 @@ export const Step2 = () => {
 
         setCopyClassList([...copyClassList,
             {
-              img: image,
-              description: generatedDescription ?? '',
-              name: playerClassState.name
+                _id: playerClassState._id,
+                img: image,
+                description: generatedDescription ?? '',
+                name: playerClassState.name
             }
         ])
         setActiveClass(copyClassList.length)
@@ -95,16 +97,18 @@ export const Step2 = () => {
             const newPlayerClasses: ClassProps[] = [];
             otherPlayerClassesState.classes.forEach((playerClass) => {
                 newPlayerClasses.push({
-                name: playerClass.name,
-                img: playerClass.image,
-                description: playerClass.description
+                    _id: playerClass._id,
+                    name: playerClass.name,
+                    img: playerClass.image,
+                    description: playerClass.description
                 });
             });
           setCopyClassList([...copyClassList, ...newPlayerClasses,
             {
-              img: playerClassState.imageChoice,
-              description: playerClassState.description,
-              name: playerClassState.name
+                _id: playerClassState._id,
+                img: playerClassState.imageChoice,
+                description: playerClassState.description,
+                name: playerClassState.name
             }
         ]);
 
@@ -126,6 +130,7 @@ export const Step2 = () => {
             playerClassActions.setName(currentClass.name)
             playerClassActions.setImageChoice(currentClass.image)
             playerClassActions.setFetched(true)
+            playerClassActions.setID(currentClass._id)
         }
     }
 
@@ -140,7 +145,10 @@ export const Step2 = () => {
         <div className="space-y-5">
             <div className="space-y-3">
                 {copyClassList.map((fantasyClass, index) => <div key={index} className="cursor-pointer" onClick={() => {
-                    onboardingHeroActions.setClass(fantasyClass.name)
+                    onboardingHeroActions.setClass({
+                        id: fantasyClass._id,
+                        name: fantasyClass.name
+                    })
                     setActiveClass(index)
                 }}>
                     <PText className={`text-xl ${activeClass === index ? 'text-secondary-400' : 'text-white'}`}>{fantasyClass.name}</PText>

@@ -1,6 +1,7 @@
 import { atom } from 'recoil';
 
 interface PlayerClassAtom {
+    _id: string;
     imageOptions: string[];
     imageChoice: string;
     description: string;
@@ -10,6 +11,7 @@ interface PlayerClassAtom {
 }
 
 export const InitialPlayerClassState = {
+    _id: '',
     imageOptions: [],
     imageChoice: '',
     description: '',

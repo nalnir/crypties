@@ -56,6 +56,7 @@ export const RaceCreatorComponent = () => {
             page: 0
         })
         if(races) {
+            console.log('RACES: ', races)
             otherPlayersRacesActions.setRaces(races)
         }
     }

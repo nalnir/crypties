@@ -11,7 +11,8 @@ export function usePlayerFantasyRaceActions() {
         setImageChoice,
         setDescription,
         setFetched,
-        setNameCombinations
+        setNameCombinations,
+        setID
     };
 
     function setName(name: string) {
@@ -53,6 +54,13 @@ export function usePlayerFantasyRaceActions() {
         setPlayerFantasyRace((state: any) => ({
             ...state,
             nameCombinations: nameCombinations
+        }))
+    }
+
+    function setID(id: string) {
+        setPlayerFantasyRace((state: any) => ({
+            ...state,
+            _id: id
         }))
     }
 
