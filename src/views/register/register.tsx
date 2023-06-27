@@ -20,11 +20,13 @@ import { useErrorSuccessActions } from '@/recoil-state/error_success/error_succe
 import { ErrorSuccessType } from '@/recoil-state/error_success/error_success.atom';
 import { generateFantasyName } from '@/utils/functions/generate_fantasy_name';
 import { useOnboardingHeroActions } from '@/recoil-state/onboarding_hero/onboarding_hero.actions';
+import { useProgressiveLoaderActions } from '@/recoil-state/progressive_loader/progressive_loader.actions';
 
 function Register() {
     const [activeStep, setActiveStep] = useState(0)
     const [loading, setLoading] = useState(false)
 
+    const progressiveLoaderActions = useProgressiveLoaderActions();
     const globalModal = useGlobalModalActions();
     const errorSuccessActions = useErrorSuccessActions();
     const queryClient = useQueryClient();
@@ -63,15 +65,18 @@ function Register() {
         globalModal.closeGlobalModal()
         if(user) {
 
+            progressiveLoaderActions.setActiveStep({ position: 2, description: 'Bumping fantasy race playedBy amount'})
             const bumpPlayedByAmountFantasyRaceRes = await bumpPlayedByAmountFantasyRace.mutateAsync({
                 fantasyRaceID: onboardingHeroState.fantasyRace.id
             })
 
+            progressiveLoaderActions.setActiveStep({ position: 3, description: 'Bumping class playedBy amount'})
             const bumpPlayedByAmoungPlayerClassRes = await bumpPlayedByAmoungPlayerClass.mutateAsync({
                 playerClassID: onboardingHeroState.class.id
             })
 
             const generatedFantasyName = generateFantasyName(user.walletAddress)
+            progressiveLoaderActions.setActiveStep({ position: 4, description: 'Finalizing hero creation'})
             const updatedUser = await onboardFuture.mutateAsync({
                 walletAddress: user.walletAddress,
                 profilePicture: image,
@@ -79,6 +84,7 @@ function Register() {
                 playerName: onboardingHeroState.playerName.length > 0 ? onboardingHeroState.playerName : generatedFantasyName
             })
             queryClient.setQueryData(['user'], updatedUser);
+            progressiveLoaderActions.closeProgressiveLoader()
             errorSuccessActions.openErrorSuccess('User onboarded', ErrorSuccessType.SUCCESS)
         } else {
             errorSuccessActions.openErrorSuccess('Could not get the user', ErrorSuccessType.ERROR)
@@ -99,9 +105,10 @@ function Register() {
     
     const submit = async () => {
         setLoading(true)
+        progressiveLoaderActions.openProgressiveLoader(4, { position: 1, description: 'Generating avatar images' })
         const images = await generateUserAvatarImages.mutateAsync({
             prompt: `ONE PERSON, ${onboardingHeroState.alignment === "darkness" ? 'Evil' : 'Good'}, ${onboardingHeroState.description}, ${onboardingHeroState.fantasyRace.name}, ${onboardingHeroState.class.name}, portrait, fantasy, centered, 4k resolution, bright color, ${onboardingHeroState.alignment === "darkness" ? 'dark gloomy' : 'beautiful bright'} background, pixar style`,
-            negative_prompt: 'HALF FACE,CROPED IMAGE,watermark, ugly, weird face, double head, double face, multiple face, multiple head, multiple body, disfigured hand, disproportion body, incorrect hands, extra limbs, extra fingers, fused fingers, missing facial features, low quality, bad quality, bad anatomy, Missing limbs, missing fingers, ugly',
+            negative_prompt: 'HALF FACE,CROPED IMAGE, watermark, ugly, weird face, double head, double face, multiple face, multiple head, multiple body, disfigured hand, disproportion body, incorrect hands, extra limbs, extra fingers, fused fingers, missing facial features, low quality, bad quality, bad anatomy, Missing limbs, missing fingers, ugly',
             modelId: 'a097c2df-8f0c-4029-ae0f-8fd349055e61'
         })
         const urls: string[] = []

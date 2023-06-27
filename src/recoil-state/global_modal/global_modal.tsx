@@ -9,7 +9,6 @@ export function GlobalModal() {
 	const globalModalActions = useGlobalModalActions();
 	const [ isOpened, setIsOpened ] = useState<boolean>(false)
 
-
 	useEffect(() => {
 		if (globalModalState.open) {
 			setIsOpened(true)
@@ -25,7 +24,7 @@ export function GlobalModal() {
             aria-labelledby="basic-modal-title"
             aria-describedby="basic-modal-description"
         >
-            <div className="absolute top-1/2 left-1/3 w-[400px] bg-white rounded-lg shadow-lg p-3 ">
+            <div className="absolute top-1/3 left-1/3 w-[500px] bg-white rounded-lg shadow-lg p-3 ">
                 {globalModalState.component ? globalModalState.component : <></>}
             </div>
         </Modal>

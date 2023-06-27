@@ -16,9 +16,11 @@ import { RaceDocument } from "@/pages/api/schemas/race_schema";
 import { useOtherPlayersRacesActions } from "@/recoil-state/other_players_races/other_players_races.actions";
 import { useRecoilValue } from "recoil";
 import { otherPlayersRacesAtom } from "@/recoil-state/other_players_races/other_players_races.atom";
+import { useProgressiveLoaderActions } from "@/recoil-state/progressive_loader/progressive_loader.actions";
 
 export const RaceCreatorComponent = () => {
     const errorSuccessActions = useErrorSuccessActions();
+    const progressiveLoaderActions = useProgressiveLoaderActions();
     const playerFantasyRaceActions = usePlayerFantasyRaceActions();
     const otherPlayersRacesActions = useOtherPlayersRacesActions();
     const otherPlayersRacesState = useRecoilValue(otherPlayersRacesAtom);
@@ -63,6 +65,7 @@ export const RaceCreatorComponent = () => {
 
     const handleError = (errorMessage: string) => {
         errorSuccessActions.openErrorSuccess(errorMessage, ErrorSuccessType.ERROR)
+        progressiveLoaderActions.closeProgressiveLoader();
         setLoading(false);
     }
 
@@ -72,6 +75,7 @@ export const RaceCreatorComponent = () => {
                 const adjustedName = capitalizeFirstLetter(removeSingleWhiteSpace(name.toLowerCase()))
                 setLoading(true)
 
+                progressiveLoaderActions.openProgressiveLoader(10, { position: 1, description: 'Checking if player used the creation power'  })
                 const resRaceAlreadyCreated = await checkIfRaceAlreadyCreated.mutateAsync({
                     creatorAddress: user?.walletAddress
                 })
@@ -79,17 +83,18 @@ export const RaceCreatorComponent = () => {
                     return handleError('This user already created a race')
                 }
 
+                progressiveLoaderActions.setActiveStep({ position: 2, description: 'Checking if player used the creation power'  })
                 const resPlayerClassAlreadyCreated = await checkIfPlayerClassAlreadyCreated.mutateAsync({
                     creatorAddress: user?.walletAddress
                 })
                 if(resPlayerClassAlreadyCreated) {
-                    return handleError('This user already used his creation power.')
+                    return handleError('This user already used the creation power.')
                 }
 
+                progressiveLoaderActions.setActiveStep({ position: 3, description: 'Correcting fantasy race name'  })
                 const resCorrectName = await correctName.mutateAsync({
                     name: adjustedName
                 })
-
                 let correctedName = resCorrectName;
                 if(!correctedName) {
                     return handleError('Correct fantasy race name failed!')
@@ -97,7 +102,7 @@ export const RaceCreatorComponent = () => {
                 correctedName = correctedName.trim()
                 
 
-                console.log('checkIfRaceExists => ()')
+                progressiveLoaderActions.setActiveStep({ position: 4, description: 'Checking if fantasy race exists'  })
                 const resRaceExists = await checkIfRaceExists.mutateAsync({
                     name: correctedName
                 })
@@ -119,7 +124,7 @@ export const RaceCreatorComponent = () => {
                             
                             const currentDate = new Date();
                             if(new Date(user.createNextCycle) < currentDate) {
-                                console.log('resetCreateTries => ()')
+                                progressiveLoaderActions.setActiveStep({ position: 5, description: 'Reseting create tries'  })
                                 const updatedUser = await resetCreateTries.mutateAsync({ walletAddress: user.walletAddress})
                                 queryClient.setQueryData(['user'], updatedUser);
                             } else {
@@ -128,7 +133,7 @@ export const RaceCreatorComponent = () => {
                                 return handleError(`Please wait for ${minutesRemaining} minutes to try again`)
                             }
                         } else {
-                            console.log('setCreateCycle => ()')
+                            progressiveLoaderActions.setActiveStep({ position: 6, description: 'Setting creation cycle'  })
                             const updatedUser = await setCreateCycle.mutateAsync({ walletAddress: user.walletAddress})
                             queryClient.setQueryData(['user'], updatedUser);
                             return handleError('Please wait for 1 hour to try again')
@@ -138,7 +143,7 @@ export const RaceCreatorComponent = () => {
                 }
 
                 // CHECK IF RACE IS FANTASY NAME
-                console.log('isFantayRace => ()')
+                progressiveLoaderActions.setActiveStep({ position: 7, description: 'Checking if fantasy race is relevant'  })
                 const resIsFantayRace = await isFantayRace.mutateAsync({
                     name: correctedName
                 })
@@ -146,7 +151,7 @@ export const RaceCreatorComponent = () => {
                     return handleError('Somethign went worng with the ChatGPT check')
                 } else {
                     if(resIsFantayRace.toLowerCase().includes('false')) {
-                        console.log('bumpCreateFantasyRaceTry => ()')
+                        progressiveLoaderActions.setActiveStep({ position: 8, description: 'Bumping player creation power try'  })
                         const updatedUser = await bumpCreateTry.mutateAsync({
                             walletAddress: user.walletAddress
                         })
@@ -154,7 +159,7 @@ export const RaceCreatorComponent = () => {
                         return handleError('The name does not sound like a fantasy race.')
                     } else {
 
-                        console.log('generateFantasyRaceImages => ()')
+                        progressiveLoaderActions.setActiveStep({ position: 9, description: 'Generating images'  })
                         const images = await generateFantasyRaceImages.mutateAsync({
                             prompt: `${correctedName} portrait, fantasy, centered, 4k resolution, bright color, beautiful background, male or female, pixar style`,
                             negative_prompt: 'logo, watermark, signature, cropped, zoomed, abnormal, bizzare, double heads, minimalistic, lowpoly, distortion, blur, flat, matte, dead, loud, tension. Extra Arms, extra limbs, long neck,teeth, long head',
@@ -170,7 +175,7 @@ export const RaceCreatorComponent = () => {
                         playerFantasyRaceActions.setImageOptions(urls)
                         playerFantasyRaceActions.setName(correctedName)
                         playerFantasyRaceActions.setNameCombinations(nameCombinations)
-                        console.log('bumpCreateTry => ()')
+                        progressiveLoaderActions.setActiveStep({ position: 10, description: 'Bumping user create power try'  })
                         await bumpCreateTry.mutateAsync({
                             walletAddress: user.walletAddress
                         })
@@ -179,6 +184,7 @@ export const RaceCreatorComponent = () => {
                         })
                         queryClient.setQueryData(['user'], updatedUser);
                         setLoading(false);
+                        progressiveLoaderActions.closeProgressiveLoader();
                         return
                     }
                 }

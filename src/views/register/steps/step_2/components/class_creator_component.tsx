@@ -14,9 +14,11 @@ import { removeSingleWhiteSpace } from "@/utils/functions/remove_single_white_sp
 import { ErrorSuccessType } from "@/recoil-state/error_success/error_success.atom";
 import { isSingleWord } from "@/utils/functions/is_single_word";
 import { stringCombinations } from "@/utils/functions/string_combinations";
+import { useProgressiveLoaderActions } from "@/recoil-state/progressive_loader/progressive_loader.actions";
 
 export const ClassCreatorComponent = () => {
     const errorSuccessActions = useErrorSuccessActions();
+    const progressiveLoaderActions = useProgressiveLoaderActions();
     const playerFantasyClassActions = usePlayerClassActions();
     const otherPlayersClassesActions = useOtherPlayersClassesActions();
     const otherPlayersClassesState = useRecoilValue(otherPlayersClassesAtom);
@@ -50,6 +52,7 @@ export const ClassCreatorComponent = () => {
 
     const handleError = (errorMessage: string) => {
         errorSuccessActions.openErrorSuccess(errorMessage, ErrorSuccessType.ERROR)
+        progressiveLoaderActions.closeProgressiveLoader();
         setLoading(false);
     }
 
@@ -59,20 +62,23 @@ export const ClassCreatorComponent = () => {
                 const adjustedName = capitalizeFirstLetter(removeSingleWhiteSpace(name.toLowerCase()))
                 setLoading(true)
 
+                progressiveLoaderActions.openProgressiveLoader(10, { position: 1, description: 'Checking if player used the creation power'  })
                 const resPlayerClassAlreadyCreated = await checkIfPlayerClassAlreadyCreated.mutateAsync({
                     creatorAddress: user?.walletAddress
                 })
-                // if(resPlayerClassAlreadyCreated) {
-                //     return handleError('This user already created a class')
-                // }
+                if(resPlayerClassAlreadyCreated) {
+                    return handleError('This user already created a class')
+                }
 
-                // const resRaceAlreadyCreated = await checkIfRaceAlreadyCreated.mutateAsync({
-                //     creatorAddress: user?.walletAddress
-                // })
-                // if(resRaceAlreadyCreated) {
-                //     return handleError('This user already used his creation power.')
-                // }
+                progressiveLoaderActions.setActiveStep({ position: 2, description: 'Checking if player used the creation power'  })
+                const resRaceAlreadyCreated = await checkIfRaceAlreadyCreated.mutateAsync({
+                    creatorAddress: user?.walletAddress
+                })
+                if(resRaceAlreadyCreated) {
+                    return handleError('This user already used his creation power.')
+                }
 
+                progressiveLoaderActions.setActiveStep({ position: 3, description: 'Correcting the name for the class'  })
                 const resCorrectName = await correctName.mutateAsync({
                     name: adjustedName
                 })
@@ -83,8 +89,7 @@ export const ClassCreatorComponent = () => {
                 }
                 correctedName = correctedName.trim()
                 
-
-                console.log('checkIfPlayerClassExists => ()')
+                progressiveLoaderActions.setActiveStep({ position: 4, description: 'Checking if class exists'  })
                 const resPlayerClassExists = await checkIfPlayerClassExists.mutateAsync({
                     name: correctedName
                 })
@@ -106,7 +111,7 @@ export const ClassCreatorComponent = () => {
                             
                             const currentDate = new Date();
                             if(new Date(user.createNextCycle) < currentDate) {
-                                console.log('resetCreateTries => ()')
+                                progressiveLoaderActions.setActiveStep({ position: 5, description: 'Reseting creation power'  })
                                 const updatedUser = await resetCreateTries.mutateAsync({ walletAddress: user.walletAddress})
                                 queryClient.setQueryData(['user'], updatedUser);
                             } else {
@@ -115,7 +120,7 @@ export const ClassCreatorComponent = () => {
                                 return handleError(`Please wait for ${minutesRemaining} minutes to try again`)
                             }
                         } else {
-                            console.log('setCreateCycle => ()')
+                            progressiveLoaderActions.setActiveStep({ position: 6, description: 'Setting creation cycle'  })
                             const updatedUser = await setCreateCycle.mutateAsync({ walletAddress: user.walletAddress})
                             queryClient.setQueryData(['user'], updatedUser);
                             return handleError('Please wait for 1 hour to try again')
@@ -125,7 +130,7 @@ export const ClassCreatorComponent = () => {
                 }
 
                 // CHECK IF CLASS IS FANTASY CLASS
-                console.log('isPlayerClass => ()')
+                progressiveLoaderActions.setActiveStep({ position: 7, description: 'Checking if fantasy class is relevant'  })
                 const resIsPlayerClass = await isPlayerClass.mutateAsync({
                     name: correctedName
                 })
@@ -133,7 +138,7 @@ export const ClassCreatorComponent = () => {
                     return handleError('Somethign went worng with the ChatGPT check')
                 } else {
                     if(resIsPlayerClass.toLowerCase().includes('false')) {
-                        console.log('bumpCreateFantasyRaceTry => ()')
+                        progressiveLoaderActions.setActiveStep({ position: 8, description: 'Bumping creation power tries'  })
                         const updatedUser = await bumpCreateTry.mutateAsync({
                             walletAddress: user.walletAddress
                         })
@@ -141,7 +146,7 @@ export const ClassCreatorComponent = () => {
                         return handleError('The name does not sound like a fantasy race.')
                     } else {
 
-                        console.log('generateImages => ()')
+                        progressiveLoaderActions.setActiveStep({ position: 9, description: 'Generating images'  })
                         const images = await generateFantasyPlayerClassImages.mutateAsync({
                             prompt: `${correctedName} logo face, epic fantasy, perfectly centered image, image in the center, flawless center shot, colourful, highly detailed, vibrant color, high detail, epic background`,
                             negative_prompt: 'watermark, signature, cropped, zoomed, abnormal, bizzare, double heads, lowpoly, distortion, blur, flat, matte, dead, loud, tension. Extra Arms, extra limbs, long neck,teeth, long head',
@@ -159,7 +164,7 @@ export const ClassCreatorComponent = () => {
                         playerFantasyClassActions.setImageOptions(urls)
                         playerFantasyClassActions.setName(correctedName)
                         playerFantasyClassActions.setNameCombinations(nameCombinations)
-                        console.log('bumpCreateTry => ()')
+                        progressiveLoaderActions.setActiveStep({ position: 10, description: 'Bumping creation power tries'  })
                         await bumpCreateTry.mutateAsync({
                             walletAddress: user.walletAddress
                         })
@@ -167,6 +172,7 @@ export const ClassCreatorComponent = () => {
                             walletAddress: user.walletAddress
                         })
                         queryClient.setQueryData(['user'], updatedUser);
+                        progressiveLoaderActions.closeProgressiveLoader();
                         setLoading(false);
                         return
                     }

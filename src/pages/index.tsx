@@ -20,6 +20,7 @@ import MainPage from "@/views/mainPage";
 import GlobalModal from "@/recoil-state/global_modal/global_modal";
 import ErrorSuccess from "@/recoil-state/error_success/error_success";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ProgressiveLoader } from "@/recoil-state/progressive_loader/progressive_loader";
 
 // const web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'));
 const { chains, provider } = configureChains(
@@ -60,6 +61,7 @@ export default function Landing() {
             <MainPage />
             <GlobalModal/>
             <ErrorSuccess />
+            <ProgressiveLoader />
           </RainbowKitProvider>
         </WagmiConfig>
       </QueryClientProvider>
