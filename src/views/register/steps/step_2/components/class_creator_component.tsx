@@ -148,9 +148,9 @@ export const ClassCreatorComponent = () => {
 
                         progressiveLoaderActions.setActiveStep({ position: 9, description: 'Generating images'  })
                         const images = await generateFantasyPlayerClassImages.mutateAsync({
-                            prompt: `${correctedName} logo face, epic fantasy, perfectly centered image, image in the center, flawless center shot, colourful, highly detailed, vibrant color, high detail, epic background`,
+                            prompt: `PORTRAIT, CUTE PIXAR ANIMATION STYLE, ${correctedName} logo face, epic fantasy, perfectly centered image, image in the center, flawless center shot, colourful, highly detailed, vibrant color, high detail, epic background`,
                             negative_prompt: 'watermark, signature, cropped, zoomed, abnormal, bizzare, double heads, lowpoly, distortion, blur, flat, matte, dead, loud, tension. Extra Arms, extra limbs, long neck,teeth, long head',
-                            modelId: 'b820ea11-02bf-4652-97ae-9ac0cc00593d',
+                            modelId: '6c95de60-a0bc-4f90-b637-ee8971caf3b0',
                             num_images: 2
                         })
                         const urls: string[] = []

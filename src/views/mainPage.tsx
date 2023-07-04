@@ -14,6 +14,7 @@ import Board2D from "./2D/board2D";
 import { useRecoilValue } from "recoil";
 import { userAtom } from "@/recoil-state/user/user.atom";
 import Register from "@/views/register/register";
+import { ImmutableXClient, Link } from "@imtbl/imx-sdk";
 
 export type Room = {
     roomId: string;
@@ -31,6 +32,23 @@ function MainPage() {
     const { connect } = useConnect({
         connector: new InjectedConnector(),
     })
+    // Mainnet
+    // const linkAddress = 'https://link.x.immutable.com';
+    // const apiAddress = 'https://api.x.immutable.com/v1';
+
+    // Goerli Testnet
+    const linkAddress = 'https://link.sandbox.x.immutable.com';
+    const apiAddress = 'https://api.sandbox.x.immutable.com/v1';
+
+    useEffect(() => {
+    connectImmutableX()
+    },[])
+
+    const connectImmutableX = async () => {
+        const link = new Link(linkAddress, null, 'v3');
+        const client = await ImmutableXClient.build({ publicApiUrl: apiAddress });
+    }
+
 
     useEffect(() => {
         if(isConnected) {

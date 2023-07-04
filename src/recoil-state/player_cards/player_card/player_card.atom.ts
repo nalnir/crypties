@@ -1,10 +1,10 @@
 import { atom } from 'recoil';
-import { Vector3 } from '@react-three/fiber';
 import { PlayingCardModel } from '@/utils/mocks/player_deck';
+import { CardPosition } from '@/views/3D/main_canvas';
 
 interface PlayerCardAtom {
     isPicked: number | null;
-    attackingCard: Vector3 | null;
+    attackingCard: CardPosition | null;
     cardCoordinates: {
         left: number,
         top: number,

@@ -43,7 +43,7 @@ export const racesList: RaceProps[]  = [
     },
     {
         _id: "007",
-        name: "Mer",
+        name: "Merman",
         description: "Amidst the serenade of the seafaring winds and the symphony of the deep, the Merfolk, poised and graceful, glide through the emerald depths, their luminous eyes holding the secrets of the vast, uncharted oceans, their hearts beating in rhythm with the ebb and flow of the tides.",
         img: "/images/races/merman_race.png"
     },

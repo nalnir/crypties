@@ -2,6 +2,7 @@ import { PlayingCardModel } from "@/utils/mocks/player_deck";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { Vector3 } from "@react-three/fiber";
 import { playerCardAtom } from "./player_card.atom";
+import { CardPosition } from "@/views/3D/main_canvas";
 
 export function usePlayerCardActions() {
     const setPlayerCard = useSetRecoilState(playerCardAtom);
@@ -20,7 +21,7 @@ export function usePlayerCardActions() {
         }));
     }
 
-    function attackCard(enemyPosition: null | Vector3) {
+    function attackCard(enemyPosition: null | CardPosition) {
         setPlayerCard((state: any) => ({
             ...state,
             attackingCard: enemyPosition

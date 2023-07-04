@@ -4,45 +4,39 @@ import { useMemo, useRef } from 'react';
 import { useTexture } from '@react-three/drei';
 import { BufferGeometry, Material, Mesh } from 'three';
 import { TextMesh } from './health_component';
+import { motion } from 'framer-motion-3d';
+import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
 
 interface AttackPowerComponentProps {
     color: string;
     attackPower: number;
+    shape: THREE.IcosahedronGeometry;
 }
-const AttackPowerComponent = ({ color, attackPower }: AttackPowerComponentProps) => {
-  // rotate the orb on every frame render
-  const meshRef = useRef<Mesh<BufferGeometry, Material | Material[]>>(null);
+const AttackPowerComponent = ({ color, attackPower, shape }: AttackPowerComponentProps) => {
 
-  useFrame((state, delta) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.y += 0.03;
-      meshRef.current.rotation.x += 0.02;
-    }
-  });
-
-  const geometry = useMemo(() => {
-    const geo = new THREE.IcosahedronGeometry(1, 1);
+  const currentGeometry = useMemo(() => {
+    const geo = shape;
     const edges = new THREE.EdgesGeometry(geo, 1);
     edges.rotateY(Math.PI / 4); // rotate edges by 45 degrees
     return { geo, edges };
   }, []);
 
   return (
-    <group>
-      <mesh ref={meshRef}>
-        <sphereBufferGeometry args={[1, 32, 32]} attach="geometry" />
-        <meshStandardMaterial color={"#1D72A3"} metalness={3} roughness={5} transparent opacity={0.4} attach="material" />
-      </mesh>
-      {geometry.edges && (
-        <lineSegments args={[geometry.edges]}>
-          <lineBasicMaterial attach="material" color={color} linewidth={2} />
-        </lineSegments>
+    <motion.group>
+      <motion.mesh>
+        <motion.sphereBufferGeometry args={[1, 32, 32]} attach="geometry" />
+        <motion.meshStandardMaterial color={"#1D72A3"} metalness={3} roughness={5} transparent opacity={0.4} attach="material" />
+      </motion.mesh>
+      {currentGeometry.edges && (
+        <motion.lineSegments args={[currentGeometry.edges]}>
+          <motion.lineBasicMaterial attach="material" color={color} linewidth={2} />
+        </motion.lineSegments>
       )}
-      <mesh position={[-0.75,-0.6,0.5]}>
+      <motion.mesh position={[-0.75,-0.6,0.5]}>
         <TextMesh fontPath={'https://threejs.org/examples/fonts/helvetiker_regular.typeface.json'} text={attackPower.toString()} />
-        <meshPhysicalMaterial color="white" attach="material" />
-      </mesh>
-    </group>
+        <motion.meshPhysicalMaterial color="white" attach="material" />
+      </motion.mesh>
+    </motion.group>
   );
 };
 

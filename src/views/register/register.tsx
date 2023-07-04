@@ -21,6 +21,7 @@ import { ErrorSuccessType } from '@/recoil-state/error_success/error_success.ato
 import { generateFantasyName } from '@/utils/functions/generate_fantasy_name';
 import { useOnboardingHeroActions } from '@/recoil-state/onboarding_hero/onboarding_hero.actions';
 import { useProgressiveLoaderActions } from '@/recoil-state/progressive_loader/progressive_loader.actions';
+import { MainCanvas } from '../3D/main_canvas';
 
 function Register() {
     const [activeStep, setActiveStep] = useState(0)
@@ -107,9 +108,10 @@ function Register() {
         setLoading(true)
         progressiveLoaderActions.openProgressiveLoader(4, { position: 1, description: 'Generating avatar images' })
         const images = await generateUserAvatarImages.mutateAsync({
-            prompt: `ONE PERSON, ${onboardingHeroState.alignment === "darkness" ? 'Evil' : 'Good'}, ${onboardingHeroState.description}, ${onboardingHeroState.fantasyRace.name}, ${onboardingHeroState.class.name}, portrait, fantasy, centered, 4k resolution, bright color, ${onboardingHeroState.alignment === "darkness" ? 'dark gloomy' : 'beautiful bright'} background, pixar style`,
-            negative_prompt: 'HALF FACE,CROPED IMAGE, watermark, ugly, weird face, double head, double face, multiple face, multiple head, multiple body, disfigured hand, disproportion body, incorrect hands, extra limbs, extra fingers, fused fingers, missing facial features, low quality, bad quality, bad anatomy, Missing limbs, missing fingers, ugly',
-            modelId: 'a097c2df-8f0c-4029-ae0f-8fd349055e61'
+            prompt: `PORTRAIT, CUTE PIXAR ANIMATION STYLE ${onboardingHeroState.alignment === "darkness" ? 'Evil' : 'Good'}, ${onboardingHeroState.description}, ${onboardingHeroState.fantasyRace.name}, ${onboardingHeroState.class.name}, portrait, fantasy, centered, 4k resolution, bright color, ${onboardingHeroState.alignment === "darkness" ? 'dark gloomy' : 'beautiful bright'} background, pixar style`,
+            negative_prompt: 'HALF FACE, CROPED IMAGE, watermark, ugly, weird face, double head, double face, multiple face, multiple head, multiple body, disfigured hand, disproportion body, incorrect hands, extra limbs, extra fingers, fused fingers, missing facial features, low quality, bad quality, bad anatomy, Missing limbs, missing fingers, ugly',
+            modelId: '6c95de60-a0bc-4f90-b637-ee8971caf3b0',
+            promptMagic: true
         })
         const urls: string[] = []
         if(images) {
@@ -168,7 +170,10 @@ function Register() {
             </div>
         </div>
     } else if(user.onboarded) {
-        return <Board2D/>
+        // return <Board2D />
+        return <div className='w-screen h-screen'>
+            <MainCanvas/>
+        </div>
     }
     return <div></div>
 }

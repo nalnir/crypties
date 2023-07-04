@@ -8,20 +8,22 @@ extend({ TextGeometry })
 import { useLoader } from '@react-three/fiber';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
 import { useTexture } from '@react-three/drei';
+import { motion } from 'framer-motion-3d';
 
 interface HealthComponentProps {
   cardHealth: number;
+  shape: THREE.Shape;
 }
 
-export const HealthComponent = ({ cardHealth }: HealthComponentProps) => {
+export const HealthComponent = ({ cardHealth, shape }: HealthComponentProps) => {
   const diamondShape = useMemo(() => {
-    const shape = new THREE.Shape()
-    shape.moveTo(0, 1)
-    shape.lineTo(1, 0)
-    shape.lineTo(0, -1)
-    shape.lineTo(-1, 0)
-    shape.lineTo(0, 1)
-    return shape
+    const currentShape = shape
+    currentShape.moveTo(0, 1)
+    currentShape.lineTo(1, 0)
+    currentShape.lineTo(0, -1)
+    currentShape.lineTo(-1, 0)
+    currentShape.lineTo(0, 1)
+    return currentShape
   }, [])
 
   const extrudeSettings = useMemo(() => {
@@ -37,16 +39,16 @@ export const HealthComponent = ({ cardHealth }: HealthComponentProps) => {
   }, [])
 
   return (
-    <group>
-      <mesh>
-        <extrudeBufferGeometry args={[diamondShape, extrudeSettings]} attach="geometry" />
-        <meshStandardMaterial color={"#E61E25"} metalness={3} roughness={5} transparent opacity={0.5} attach="material" />
-      </mesh>
-      <mesh position={[-0.3, -0.6, 0.8]}>
+    <motion.group>
+      <motion.mesh>
+        <motion.extrudeBufferGeometry args={[diamondShape, extrudeSettings]} attach="geometry" />
+        <motion.meshStandardMaterial color={"#E61E25"} metalness={3} roughness={5} transparent opacity={0.5} attach="material" />
+      </motion.mesh>
+      <motion.mesh position={[-0.3, -0.6, 0.8]}>
         <TextMesh fontPath={'https://threejs.org/examples/fonts/helvetiker_regular.typeface.json'} text={cardHealth.toString()} />
-        <meshPhysicalMaterial color="white" attach="material" />
-      </mesh>
-    </group>
+        <motion.meshPhysicalMaterial color="white" attach="material" />
+      </motion.mesh>
+    </motion.group>
   )
 };
 
@@ -68,9 +70,9 @@ export function TextMesh({ text, fontPath }: TextMeshProps) {
   });
   geometry.computeBoundingBox();
   return (
-    <mesh>
-      <bufferGeometry attach="geometry" {...geometry} />
-      <meshStandardMaterial attach="material" />
-    </mesh>
+    <motion.mesh>
+      <motion.bufferGeometry attach="geometry" {...geometry} />
+      <motion.meshStandardMaterial attach="material" />
+    </motion.mesh>
   );
 }
