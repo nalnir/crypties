@@ -7,14 +7,14 @@ export const Lights = () => {
     const ligthRef = useRef<THREE.DirectionalLight>()
     
 
-    useHelper(ligthRef, THREE.DirectionalLightHelper, 2, "red");
+    // useHelper(ligthRef, THREE.DirectionalLightHelper, 2, "red");
 
     return (
         <>
             <ambientLight intensity={0.15} />
             <directionalLight 
                 scale={[10,10,20]}
-                ref={ligthRef} 
+                // ref={ligthRef} 
                 color="white" 
                 position={[5, 6, 7]} 
                 intensity={1} 

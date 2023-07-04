@@ -6,7 +6,6 @@ import { OpponentCard } from "./opponentCard/opponent_card";
 import { OrbitControls, PerspectiveCamera, Stats } from "@react-three/drei"
 import { CardBox } from "./components/card_box";
 import { playerCardDeck } from "@/utils/mocks/player_deck";
-import { CameraOrbitController } from './components/camera_orbit_controller';
 import { useEffect, useRef } from 'react';
 import { Lights } from './components/lights';
 import { cardBodygeometry, shapeGeometry } from './playerCard/components/geometry';
