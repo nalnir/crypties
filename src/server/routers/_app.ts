@@ -12,6 +12,7 @@ import { bumpCreateTry, checkIfPlayerClassAlreadyCreated, checkIfPlayerClassExis
 import { correctName, generateDescription, generateImages, isFantasyRace, isPlayerClass } from './procedures/ai_procedures';
 import { bumpPlayedByAmountFantasyRace, getOtherFantasyRaces } from './procedures/fantasy_race_procedures';
 import { bumpPlayedByAmoungPlayerClass, getOtherPlayerClasses } from './procedures/player_class_procedures';
+import { getAuthToken, invalidateAuthToken, registerAuthToken } from './procedures/auth_procedures';
 
 const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_BOT_TOKEN ?? '');
 const chatpgptConfig = new Configuration({
@@ -20,6 +21,11 @@ const chatpgptConfig = new Configuration({
 const openai = new OpenAIApi(chatpgptConfig);
 
 export const appRouter = router({
+
+  // AUTH PROCEDURES
+  getAuthToken,
+  registerAuthToken,
+  invalidateAuthToken,
 
   // USER PROCEDURES
   getUser,
@@ -55,7 +61,6 @@ export const appRouter = router({
   // PLAYER CLASS PROCEDURES
   getOtherPlayerClasses,
   bumpPlayedByAmoungPlayerClass,
-
 });
 
 export type AppRouter = typeof appRouter;

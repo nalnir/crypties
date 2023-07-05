@@ -7,11 +7,9 @@ import { Stepper } from "@/shared/components/stepper";
 import { Step1 } from "./steps/step_1/step_1";
 import { Step3 } from "./steps/step_3/step_3";
 import { trpc } from "@/utils/trpc";
-import { useAccount } from "wagmi";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { UserDocument } from "@/pages/api/schemas/user_schema";
 import Board2D from "../2D/board2D";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useRecoilValue } from "recoil";
 import { onboardingHeroAtom } from "@/recoil-state/onboarding_hero/onboarding_hero.atom";
 import { useGlobalModalActions } from "@/recoil-state/global_modal/global_modal.actions";
@@ -35,8 +33,6 @@ function Register() {
     const onboardingHeroActions = useOnboardingHeroActions();
     const { data: user, isLoading, isError } = useQuery<UserDocument>(['user']);
 
-    const { address, isConnected } = useAccount()
-
     const getUser = trpc.getUser.useMutation()
     const registerUser = trpc.register.useMutation()
     const generateUserAvatarImages = trpc.generateImages.useMutation()
@@ -44,13 +40,23 @@ function Register() {
     const bumpPlayedByAmoungPlayerClass = trpc.bumpPlayedByAmoungPlayerClass.useMutation();
     const onboardFuture = trpc.onboardUser.useMutation()
 
+    const imxWallet = localStorage.getItem('WALLET_ADDRESS')
+
+    // useEffect(() => {
+    //     if(isConnected && address) {
+    //         handleGetUser(address)
+    //     } else if(!isConnected) {
+    //         queryClient.removeQueries(['user']);
+    //     }
+    // }, [isConnected])
+
     useEffect(() => {
-        if(isConnected && address) {
-            handleGetUser(address)
-        } else if(!isConnected) {
+        if(imxWallet) {
+            handleGetUser(imxWallet)
+        } else {
             queryClient.removeQueries(['user']);
         }
-    }, [isConnected])
+    },[imxWallet])
 
     useEffect(() => {
         if(onboardingHeroState.imageOptions.length > 0) {
@@ -156,11 +162,7 @@ function Register() {
         }
     ]
 
-    if(!user) {
-        return <div className="flex-col items-center justify-center w-screen h-screen p-3 bg-primary-400">
-            <ConnectButton />
-        </div>
-    } else if(!user.onboarded) {
+    if(user?.onboarded) {
         return <div className="flex-col">
         <Stepper totalSteps={steps.length} activeStep={activeStep} selectStep={(index: number) => setActiveStep(index)}/>
             {steps[activeStep].component}
@@ -169,13 +171,12 @@ function Register() {
                 <div onClick={steps[activeStep].function} className="flex items-center justify-center cursor-pointer"><PText>{(steps.length - 1) === activeStep ? "CREATE": "NEXT"}</PText></div>
             </div>
         </div>
-    } else if(user.onboarded) {
+    } else {
         // return <Board2D />
         return <div className='w-screen h-screen'>
             <MainCanvas/>
         </div>
     }
-    return <div></div>
 }
 
 export default Register;

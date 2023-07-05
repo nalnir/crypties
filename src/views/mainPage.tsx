@@ -1,4 +1,3 @@
-import { ConnectButton } from "@rainbow-me/rainbowkit"
 import { useEffect, useState } from 'react'
 import io from 'socket.io-client'
 
@@ -15,6 +14,12 @@ import { useRecoilValue } from "recoil";
 import { userAtom } from "@/recoil-state/user/user.atom";
 import Register from "@/views/register/register";
 import { ImmutableXClient, Link } from "@imtbl/imx-sdk";
+import { useAuthActions } from "@/recoil-state/auth/auth.actions";
+import { authAtom } from "@/recoil-state/auth/auth.atom";
+import { ButtonCustom } from "@/shared/components";
+import { disconnect } from "process";
+import { AuthGuard } from "@/recoil-state/auth/auth.guard";
+import { useRouter } from 'next/router';
 
 export type Room = {
     roomId: string;
@@ -23,46 +28,18 @@ export type Room = {
 
 const socket = io('http://localhost:3001');
 function MainPage() {
+    const router = useRouter()
     const userActions = useUserActions();
+    const authActions = useAuthActions();
+    const authState = useRecoilValue(authAtom);
     const userState = useRecoilValue(userAtom);
     const [rooms, setRooms] = useState<Room[] | undefined>();
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-    const { address, isConnected } = useAccount()
-    const { connect } = useConnect({
-        connector: new InjectedConnector(),
-    })
-    // Mainnet
-    // const linkAddress = 'https://link.x.immutable.com';
-    // const apiAddress = 'https://api.x.immutable.com/v1';
 
-    // Goerli Testnet
-    const linkAddress = 'https://link.sandbox.x.immutable.com';
-    const apiAddress = 'https://api.sandbox.x.immutable.com/v1';
-
-    useEffect(() => {
-    connectImmutableX()
-    },[])
-
-    const connectImmutableX = async () => {
-        const link = new Link(linkAddress, null, 'v3');
-        const client = await ImmutableXClient.build({ publicApiUrl: apiAddress });
-    }
-
-
-    useEffect(() => {
-        if(isConnected) {
-            handleLogin()
-        }
-    }, [isConnected])
-
-    const handleLogin = async () => {
-        console.log('handleLogin()')
-        if(address) {
-            const user = await userActions.login(address)
-        } else {
-            console.log('Could not get the address. Try again please!')
-        }
+    const disconnectIMX = async () => {
+        await authActions.logout()
+        router.push('/')
     }
 
     // useEffect(() => {
@@ -87,21 +64,22 @@ function MainPage() {
     //     }
     // }, [rooms])
 
-    return <div className="flex">
-        <div className={`${isDrawerOpen ? '' : 'hidden'} w-10/12 h-full bg-white`}><DrawerCustom /></div>
-        <div>
-            <div className="flex items-center justify-between p-5 bg-primary-500">
-                {isDrawerOpen ?
-                    <div onClick={() => setIsDrawerOpen(false)} className="cursor-pointer"><ClearIcon /></div> :
-                    <div onClick={() => setIsDrawerOpen(true)} className="cursor-pointer"><MenuIcon /></div>}
-                <ConnectButton />
-            </div>
-
+    return <AuthGuard>
+        <div className="flex">
+            <div className={`${isDrawerOpen ? '' : 'hidden'} w-10/12 h-full bg-white`}><DrawerCustom /></div>
             <div>
-                <Register />
+                <div className="flex items-center justify-between p-5 bg-primary-500">
+                    {isDrawerOpen ?
+                        <div onClick={() => setIsDrawerOpen(false)} className="cursor-pointer"><ClearIcon /></div> :
+                        <div onClick={() => setIsDrawerOpen(true)} className="cursor-pointer"><MenuIcon /></div>}
+                        <ButtonCustom title="Disconnect" onClick={() => disconnectIMX()}/>
+                </div>
+                <div>
+                    <Register />
+                </div>
             </div>
         </div>
-    </div>
+    </AuthGuard>
 }
 
 export default MainPage
