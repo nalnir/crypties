@@ -3,7 +3,6 @@ import { ErrorSuccessType } from "@/recoil-state/error_success/error_success.ato
 import { trpc } from "@/utils/trpc";
 import { Button, CircularProgress, Input } from "@mui/material"
 import { useState } from "react"
-import { useAccount } from "wagmi";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { UserDocument } from "@/pages/api/schemas/user_schema";
 import { usePlayerFantasyRaceActions } from "@/recoil-state/player_fantasy_race/player_fantasy_race.actions";
