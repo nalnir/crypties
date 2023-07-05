@@ -1,23 +1,17 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import io from 'socket.io-client'
-
-import { InjectedConnector } from 'wagmi/connectors/injected'
 
 import ClearIcon from '@mui/icons-material/Clear';
 import MenuIcon from '@mui/icons-material/Menu';
-import { useAccount, useConnect } from "wagmi"
 import { DrawerCustom } from "@/shared/components/drawer_custom";
 import { useUserActions } from "@/recoil-state/user/user.actions";
-import withAuth from "@/shared/functions/with_auth";
 import Board2D from "./2D/board2D";
 import { useRecoilValue } from "recoil";
 import { userAtom } from "@/recoil-state/user/user.atom";
 import Register from "@/views/register/register";
-import { ImmutableXClient, Link } from "@imtbl/imx-sdk";
 import { useAuthActions } from "@/recoil-state/auth/auth.actions";
 import { authAtom } from "@/recoil-state/auth/auth.atom";
 import { ButtonCustom } from "@/shared/components";
-import { disconnect } from "process";
 import { AuthGuard } from "@/recoil-state/auth/auth.guard";
 import { useRouter } from 'next/router';
 
