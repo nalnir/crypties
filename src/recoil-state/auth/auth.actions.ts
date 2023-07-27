@@ -32,8 +32,8 @@ export function useAuthActions() {
 
         const linkAddress = 'https://link.sandbox.x.immutable.com';
         const apiAddress = 'https://api.sandbox.x.immutable.com/v1';
-        if(!authState.imxLink) {
-            if(linkAddress && apiAddress) {
+        if (!authState.imxLink) {
+            if (linkAddress && apiAddress) {
                 const link = new Link(linkAddress, null, 'v3');
                 const client = await ImmutableXClient.build({ publicApiUrl: apiAddress });
                 setAuth((state: any) => ({
@@ -50,16 +50,16 @@ export function useAuthActions() {
 
     async function setupAccount() {
         let imxLink = authState.imxLink;
-        if(!imxLink) {
+        if (!imxLink) {
             imxLink = await connectIMX()
-        } 
+        }
         try {
             const { address, starkPublicKey } = await imxLink.setup({});
             console.log('address: ', address)
             localStorage.setItem('WALLET_ADDRESS', address);
             localStorage.setItem('STARK_PUBLIC_KEY', starkPublicKey);
             return address
-        } catch(e) {
+        } catch (e) {
             console.log('error: ', e)
             return;
         }
@@ -69,22 +69,23 @@ export function useAuthActions() {
         let currentUser: any = await getUser.mutateAsync({
             walletAddress: address
         })
-        if(!currentUser) {
+        console.log('HERE: ', currentUser)
+        if (!currentUser) {
             currentUser = await registerUser.mutateAsync({
-                walletAddress: address 
+                walletAddress: address
             })
         }
         const currentDate = new Date();
         let authToken: any = await getAuthToken.mutateAsync({
             walletAddress: address
         })
-        if(!authToken) {
+        if (!authToken) {
             authToken = await registerAuthToken.mutateAsync({
                 walletAddress: address,
                 userId: currentUser._id
             })
         }
-        if(currentDate > authToken.validUntil) {
+        if (currentDate > authToken.validUntil) {
             await invalidateAuthToken.mutateAsync({
                 walletAddress: address
             })
@@ -115,37 +116,37 @@ export function useAuthActions() {
 
     async function loadFromStorage(): Promise<string | undefined> {
         if (authState.isLocalStorageLoaded) {
-          return authState.auth?.userWalletAddress;
+            return authState.auth?.userWalletAddress;
         }
         const storedAuth = LocalStorage.get(LOCAL_CRYPTIES_STORAGE_KEY.AUTH);
         if (storedAuth) {
-          if (new Date(storedAuth.validUntil) < new Date()) {
-            setAuth((state) => ({
-              ...state,
-              isLocalStorageLoaded: true,
-              isLoggedIn: false,
-              auth: null,
-            }));
-            LocalStorage.remove(LOCAL_CRYPTIES_STORAGE_KEY.AUTH);
-            return undefined;
-          } else {
-            setAuth((state) => ({
-              ...state,
-              isLocalStorageLoaded: true,
-              isLoggedIn: true,
-              auth: storedAuth,
-            }));
-          }
-    
-          return storedAuth?.userWalletAddress;
+            if (new Date(storedAuth.validUntil) < new Date()) {
+                setAuth((state) => ({
+                    ...state,
+                    isLocalStorageLoaded: true,
+                    isLoggedIn: false,
+                    auth: null,
+                }));
+                LocalStorage.remove(LOCAL_CRYPTIES_STORAGE_KEY.AUTH);
+                return undefined;
+            } else {
+                setAuth((state) => ({
+                    ...state,
+                    isLocalStorageLoaded: true,
+                    isLoggedIn: true,
+                    auth: storedAuth,
+                }));
+            }
+
+            return storedAuth?.userWalletAddress;
         } else {
-          setAuth((state) => ({
-            ...state,
-            isLocalStorageLoaded: true,
-            isLoggedIn: false,
-            auth: null,
-          }));
-          return undefined;
+            setAuth((state) => ({
+                ...state,
+                isLocalStorageLoaded: true,
+                isLoggedIn: false,
+                auth: null,
+            }));
+            return undefined;
         }
-      }
+    }
 }

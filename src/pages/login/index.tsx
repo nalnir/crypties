@@ -28,7 +28,7 @@ export default function LoginPage() {
             const currentUser = await getUser.mutateAsync({
                 walletAddress: userWalletAddress
             })
-            if(currentUser) {
+            if (currentUser) {
                 router.push('/');
             } else {
                 errorSuccessActions.openErrorSuccess('User does not exist', ErrorSuccessType.ERROR)
@@ -38,8 +38,8 @@ export default function LoginPage() {
 
     const connect = async () => {
         const address = await useAuth.setupAccount()
-        if(address) {
-            const user = await useAuth.login(address) 
+        if (address) {
+            const user = await useAuth.login(address)
             queryClient.setQueryData(['user'], user);
             router.push('/');
         } else {
@@ -48,10 +48,10 @@ export default function LoginPage() {
     }
 
     if (!authState.isLocalStorageLoaded || authState.isLoggedIn) {
-        return <div></div>;
+        return <div></div>
     }
 
     return <div className="w-screen h-screen bg-primary-400">
-        <ButtonCustom title="Connect" onClick={connect}/>
+        <ButtonCustom title="Connect" onClick={connect} />
     </div>
 }

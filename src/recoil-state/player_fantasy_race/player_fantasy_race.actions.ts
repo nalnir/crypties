@@ -1,19 +1,26 @@
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { playerFantasyRaceAtom } from "./player_fantasy_race.atom";
+import { RaceDocument } from "@/pages/api/schemas/race_schema";
 
 export function usePlayerFantasyRaceActions() {
     const setPlayerFantasyRace = useSetRecoilState(playerFantasyRaceAtom);
     const playerFantasyRaceState = useRecoilValue(playerFantasyRaceAtom)
 
     return {
-        setName,
         setImageOptions,
         setImageChoice,
-        setDescription,
         setFetched,
-        setNameCombinations,
-        setID
+        setRace,
+        setName,
+        setNameCombinations
     };
+
+    function setRace(race: RaceDocument) {
+        setPlayerFantasyRace((state: any) => ({
+            ...state,
+            race: race
+        }))
+    }
 
     function setName(name: string) {
         setPlayerFantasyRace((state: any) => ({
@@ -21,6 +28,14 @@ export function usePlayerFantasyRaceActions() {
             name: name
         }))
     }
+
+    function setNameCombinations(nameCombinations: string[]) {
+        setPlayerFantasyRace((state: any) => ({
+            ...state,
+            nameCombinations: nameCombinations
+        }))
+    }
+
 
     function setImageOptions(images: string[]) {
         setPlayerFantasyRace((state: any) => ({
@@ -36,12 +51,6 @@ export function usePlayerFantasyRaceActions() {
         }))
     }
 
-    function setDescription(description: string) {
-        setPlayerFantasyRace((state: any) => ({
-            ...state,
-            description: description
-        }))
-    }
 
     function setFetched(fetched: boolean) {
         setPlayerFantasyRace((state: any) => ({
@@ -50,18 +59,5 @@ export function usePlayerFantasyRaceActions() {
         }))
     }
 
-    function setNameCombinations(nameCombinations: string[]) {
-        setPlayerFantasyRace((state: any) => ({
-            ...state,
-            nameCombinations: nameCombinations
-        }))
-    }
-
-    function setID(id: string) {
-        setPlayerFantasyRace((state: any) => ({
-            ...state,
-            _id: id
-        }))
-    }
 
 }

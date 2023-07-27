@@ -8,8 +8,9 @@ const raceSchema = new mongoose.Schema({
     image: { type: String, required: true },
     playedBy: { type: Number, required: false },
     nameCombinations: { type: [String], required: false },
-    playedByAmount: { type: Number, required: false }
-});
+    playedByAmount: { type: Number, required: false },
+    default: { type: Boolean, required: false }
+}, { timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' } });
 
 export interface RaceDocument extends Document {
     _id: string;
@@ -20,9 +21,12 @@ export interface RaceDocument extends Document {
     playedBy: number;
     nameCombinations: string[];
     playedByAmount: number;
+    createdAt?: Date;
+    updatedAt?: Date;
+    default: boolean;
 }
 
-interface RaceModel extends Model<RaceDocument> {}
+interface RaceModel extends Model<RaceDocument> { }
 
 const Race = mongoose.models.Race as RaceModel || mongoose.model<RaceDocument, RaceModel>('Race', raceSchema);
 

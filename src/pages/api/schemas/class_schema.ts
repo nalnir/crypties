@@ -8,8 +8,9 @@ const playerClassSchema = new mongoose.Schema({
     image: { type: String, required: true },
     playedBy: { type: Number, required: false },
     nameCombinations: { type: [String], required: false },
-    playedByAmount: { type: Number, required: false }
-});
+    playedByAmount: { type: Number, required: false },
+    default: { type: Boolean, required: false }
+}, { timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' } });
 
 export interface PlayerClassDocument extends Document {
     _id: string;
@@ -20,9 +21,12 @@ export interface PlayerClassDocument extends Document {
     playedBy: number;
     nameCombinations: string[];
     playedByAmount: number;
+    createdAt?: Date;
+    updatedAt?: Date;
+    default: boolean
 }
 
-interface PlayerClassModel extends Model<PlayerClassDocument> {}
+interface PlayerClassModel extends Model<PlayerClassDocument> { }
 
 const PlayerClass = mongoose.models.PlayerClass as PlayerClassModel || mongoose.model<PlayerClassModel, PlayerClassModel>('PlayerClass', playerClassSchema);
 

@@ -1,5 +1,6 @@
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { playerClassAtom } from "./player_class.atom";
+import { PlayerClassDocument } from "@/pages/api/schemas/class_schema";
 
 export function usePlayerClassActions() {
     const setPlayerClass = useSetRecoilState(playerClassAtom);
@@ -12,8 +13,16 @@ export function usePlayerClassActions() {
         setDescription,
         setFetched,
         setNameCombinations,
-        setID
+        setID,
+        setClass
     };
+
+    function setClass(playerClass: PlayerClassDocument) {
+        setPlayerClass((state: any) => ({
+            ...state,
+            playerClass: playerClass
+        }))
+    }
 
     function setName(name: string) {
         setPlayerClass((state: any) => ({

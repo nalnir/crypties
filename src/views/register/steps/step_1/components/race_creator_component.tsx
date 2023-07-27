@@ -45,9 +45,9 @@ export const RaceCreatorComponent = () => {
 
     const handleSetName = (e: any) => {
         const input: string = e.target.value
-        if(input.length > 15) {
+        if (input.length > 15) {
             return
-        } 
+        }
         setName(input)
     }
 
@@ -56,7 +56,7 @@ export const RaceCreatorComponent = () => {
             walletAddress: user?.walletAddress ?? '',
             page: 0
         })
-        if(races) {
+        if (races) {
             console.log('RACES: ', races)
             otherPlayersRacesActions.setRaces(races)
         }
@@ -70,61 +70,61 @@ export const RaceCreatorComponent = () => {
 
     const handleCreate = async () => {
         try {
-            if(user?.walletAddress) {
+            if (user?.walletAddress) {
                 const adjustedName = capitalizeFirstLetter(removeSingleWhiteSpace(name.toLowerCase()))
                 setLoading(true)
 
-                progressiveLoaderActions.openProgressiveLoader(10, { position: 1, description: 'Checking if player used the creation power'  })
-                const resRaceAlreadyCreated = await checkIfRaceAlreadyCreated.mutateAsync({
-                    creatorAddress: user?.walletAddress
-                })
-                if(resRaceAlreadyCreated) {
-                    return handleError('This user already created a race')
-                }
+                progressiveLoaderActions.openProgressiveLoader(10, { position: 1, description: 'Checking if player used the creation power' })
+                // const resRaceAlreadyCreated = await checkIfRaceAlreadyCreated.mutateAsync({
+                //     creatorAddress: user?.walletAddress
+                // })
+                // if (resRaceAlreadyCreated) {
+                //     return handleError('This user already created a race')
+                // }
 
-                progressiveLoaderActions.setActiveStep({ position: 2, description: 'Checking if player used the creation power'  })
-                const resPlayerClassAlreadyCreated = await checkIfPlayerClassAlreadyCreated.mutateAsync({
-                    creatorAddress: user?.walletAddress
-                })
-                if(resPlayerClassAlreadyCreated) {
-                    return handleError('This user already used the creation power.')
-                }
+                // progressiveLoaderActions.setActiveStep({ position: 2, description: 'Checking if player used the creation power' })
+                // const resPlayerClassAlreadyCreated = await checkIfPlayerClassAlreadyCreated.mutateAsync({
+                //     creatorAddress: user?.walletAddress
+                // })
+                // if (resPlayerClassAlreadyCreated) {
+                //     return handleError('This user already used the creation power.')
+                // }
 
-                progressiveLoaderActions.setActiveStep({ position: 3, description: 'Correcting fantasy race name'  })
+                progressiveLoaderActions.setActiveStep({ position: 3, description: 'Correcting fantasy race name' })
                 const resCorrectName = await correctName.mutateAsync({
                     name: adjustedName
                 })
                 let correctedName = resCorrectName;
-                if(!correctedName) {
+                if (!correctedName) {
                     return handleError('Correct fantasy race name failed!')
                 }
-                correctedName = correctedName.trim()
-                
+                correctedName = correctedName.trim().replace(/\\n/g, '')
 
-                progressiveLoaderActions.setActiveStep({ position: 4, description: 'Checking if fantasy race exists'  })
+
+                progressiveLoaderActions.setActiveStep({ position: 4, description: 'Checking if fantasy race exists' })
                 const resRaceExists = await checkIfRaceExists.mutateAsync({
                     name: correctedName
                 })
-                if(resRaceExists) {
+                if (resRaceExists) {
                     return handleError('Race already exists')
                 }
 
                 let nameCombinations = []
-                if(isSingleWord(correctedName)) {
+                if (isSingleWord(correctedName)) {
                     nameCombinations.push(correctedName)
                 } else {
                     nameCombinations = stringCombinations(correctedName)
                 }
 
                 // CHECK IF USER CAN GENERATE
-                if(user?.createTriesUsed) {
-                    if(user?.createTriesUsed > 2) {
-                        if(user.createNextCycle) {
-                            
+                if (user?.createTriesUsed) {
+                    if (user?.createTriesUsed > 2) {
+                        if (user.createNextCycle) {
+
                             const currentDate = new Date();
-                            if(new Date(user.createNextCycle) < currentDate) {
-                                progressiveLoaderActions.setActiveStep({ position: 5, description: 'Reseting create tries'  })
-                                const updatedUser = await resetCreateTries.mutateAsync({ walletAddress: user.walletAddress})
+                            if (new Date(user.createNextCycle) < currentDate) {
+                                progressiveLoaderActions.setActiveStep({ position: 5, description: 'Reseting create tries' })
+                                const updatedUser = await resetCreateTries.mutateAsync({ walletAddress: user.walletAddress })
                                 queryClient.setQueryData(['user'], updatedUser);
                             } else {
                                 const timeDifference = new Date(user.createNextCycle).getTime() - currentDate.getTime();
@@ -132,8 +132,8 @@ export const RaceCreatorComponent = () => {
                                 return handleError(`Please wait for ${minutesRemaining} minutes to try again`)
                             }
                         } else {
-                            progressiveLoaderActions.setActiveStep({ position: 6, description: 'Setting creation cycle'  })
-                            const updatedUser = await setCreateCycle.mutateAsync({ walletAddress: user.walletAddress})
+                            progressiveLoaderActions.setActiveStep({ position: 6, description: 'Setting creation cycle' })
+                            const updatedUser = await setCreateCycle.mutateAsync({ walletAddress: user.walletAddress })
                             queryClient.setQueryData(['user'], updatedUser);
                             return handleError('Please wait for 1 hour to try again')
 
@@ -142,15 +142,15 @@ export const RaceCreatorComponent = () => {
                 }
 
                 // CHECK IF RACE IS FANTASY NAME
-                progressiveLoaderActions.setActiveStep({ position: 7, description: 'Checking if fantasy race is relevant'  })
+                progressiveLoaderActions.setActiveStep({ position: 7, description: 'Checking if fantasy race is relevant' })
                 const resIsFantayRace = await isFantayRace.mutateAsync({
                     name: correctedName
                 })
-                if(!resIsFantayRace) {
+                if (!resIsFantayRace) {
                     return handleError('Somethign went worng with the ChatGPT check')
                 } else {
-                    if(resIsFantayRace.toLowerCase().includes('false')) {
-                        progressiveLoaderActions.setActiveStep({ position: 8, description: 'Bumping player creation power try'  })
+                    if (resIsFantayRace.toLowerCase().includes('false')) {
+                        progressiveLoaderActions.setActiveStep({ position: 8, description: 'Bumping player creation power try' })
                         const updatedUser = await bumpCreateTry.mutateAsync({
                             walletAddress: user.walletAddress
                         })
@@ -158,15 +158,17 @@ export const RaceCreatorComponent = () => {
                         return handleError('The name does not sound like a fantasy race.')
                     } else {
 
-                        progressiveLoaderActions.setActiveStep({ position: 9, description: 'Generating images'  })
+                        progressiveLoaderActions.setActiveStep({ position: 9, description: 'Generating images' })
                         const images = await generateFantasyRaceImages.mutateAsync({
                             prompt: `${correctedName} portrait, fantasy, centered, 4k resolution, bright color, beautiful background, male or female, pixar style`,
                             negative_prompt: 'logo, watermark, signature, cropped, zoomed, abnormal, bizzare, double heads, minimalistic, lowpoly, distortion, blur, flat, matte, dead, loud, tension. Extra Arms, extra limbs, long neck,teeth, long head',
+                            modelId: 'd69c8273-6b17-4a30-a13e-d6637ae1c644',
+                            promptMagic: true
                         })
                         const urls: string[] = []
-                        if(images) {
+                        if (images) {
                             images.forEach((image) => {
-                                if(image.url) {
+                                if (image.url) {
                                     urls.push(image.url)
                                 }
                             })
@@ -174,11 +176,11 @@ export const RaceCreatorComponent = () => {
                         playerFantasyRaceActions.setImageOptions(urls)
                         playerFantasyRaceActions.setName(correctedName)
                         playerFantasyRaceActions.setNameCombinations(nameCombinations)
-                        progressiveLoaderActions.setActiveStep({ position: 10, description: 'Bumping user create power try'  })
+                        progressiveLoaderActions.setActiveStep({ position: 10, description: 'Bumping user create power try' })
                         await bumpCreateTry.mutateAsync({
                             walletAddress: user.walletAddress
                         })
-                        const updatedUser = setUseCreatePower.mutateAsync({
+                        const updatedUser = await setUseCreatePower.mutateAsync({
                             walletAddress: user.walletAddress
                         })
                         queryClient.setQueryData(['user'], updatedUser);
@@ -188,27 +190,27 @@ export const RaceCreatorComponent = () => {
                     }
                 }
             }
-          } catch (error) {
+        } catch (error) {
             setLoading(false);
-          }
+        }
     }
 
     return <div className="space-y-3">
-       { !otherPlayersRacesState.fetched ? 
-        <div className="flex items-center space-x-3">
-            <PText>See races created by other players</PText>
-            <Button disabled={loadingFetchOtherFantasyRaces} startIcon={loadingFetchOtherFantasyRaces ? <CircularProgress className="w-5 h-5 text-secondary-400"/> : <></>} onClick={handleGetOtherFantasyRaces}>Get</Button>
-        </div> : <></>
+        {!otherPlayersRacesState.fetched ?
+            <div className="flex items-center space-x-3">
+                <PText>See races created by other players</PText>
+                <Button disabled={loadingFetchOtherFantasyRaces} startIcon={loadingFetchOtherFantasyRaces ? <CircularProgress className="w-5 h-5 text-secondary-400" /> : <></>} onClick={handleGetOtherFantasyRaces}>Get</Button>
+            </div> : <></>
         }
-        { user?.hasCreatePower ? 
+        {user?.hasCreatePower ?
             <div>
                 <PText>Or create your own</PText>
                 <div className="flex items-start space-x-3">
                     <div className="space-y-1">
-                        <Input value={name} onChange={handleSetName} placeholder="Name your race"/>
-                    <PText>{user?.createTriesUsed ? 3 - user?.createTriesUsed : 3} tries remain</PText>
+                        <Input value={name} onChange={handleSetName} placeholder="Name your race" />
+                        <PText>{user?.createTriesUsed ? 3 - user?.createTriesUsed : 3} tries remain</PText>
                     </div>
-                    <Button disabled={loading} startIcon={loading ? <CircularProgress className="w-5 h-5 text-secondary-400"/> : <></>} onClick={handleCreate}>Create</Button>
+                    <Button disabled={loading} startIcon={loading ? <CircularProgress className="w-5 h-5 text-secondary-400" /> : <></>} onClick={handleCreate}>Create</Button>
                 </div>
             </div> : <></>
         }

@@ -6,5 +6,5 @@ interface PTextProps {
 }
 
 export const PText: React.FC<PTextProps> = ({ children, className }) => {
-  return <p className={`${className} `}>{children}</p>;
+  return <p className={`${className} `}>{children}</p>
 };

@@ -1,12 +1,13 @@
+import { PlayerClassDocument } from '@/pages/api/schemas/class_schema';
 import { atom } from 'recoil';
 
 interface PlayerClassAtom {
     _id: string;
     imageOptions: string[];
     imageChoice: string;
-    description: string;
     name: string;
-    nameCombinations: string[]
+    nameCombinations: string[];
+    playerClass?: PlayerClassDocument;
     fetched: boolean;
 }
 
@@ -14,9 +15,9 @@ export const InitialPlayerClassState = {
     _id: '',
     imageOptions: [],
     imageChoice: '',
-    description: '',
     name: '',
     nameCombinations: [],
+    playerClass: undefined,
     fetched: false
 }
 export const playerClassAtom = atom<PlayerClassAtom>({

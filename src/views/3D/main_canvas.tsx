@@ -31,12 +31,12 @@ export const MainCanvas = () => {
 
   const cardShape = shapeGeometry
   const cardBody = cardBodygeometry
-  const initialPlayerPosition: CardPosition = {x: 0, y: 0, z: 0}
-  const initialEnemyPosition: CardPosition = { x: 0, y: -1.5, z: 0}
-  const instancedPlayerCardRef = useRef(<PlayerCard  imageUrl="/textures/card_image_placeholders/imp.png" cardBody={cardBody} cardShape={cardShape} cardIndex={0} key={0} position={initialPlayerPosition}/>)
-  const instancedEnemyCardRef = useRef(<OpponentCard  imageUrl="/textures/card_image_placeholders/imp.png" cardBody={cardBody} cardShape={cardShape} cardIndex={0} key={0} position={initialEnemyPosition}/>)
+  const initialPlayerPosition: CardPosition = { x: 0, y: 0, z: 0 }
+  const initialEnemyPosition: CardPosition = { x: 0, y: -1.5, z: 0 }
+  const instancedPlayerCardRef = useRef(<PlayerCard imageUrl="/textures/card_image_placeholders/imp.png" cardBody={cardBody} cardShape={cardShape} cardIndex={0} key={0} position={initialPlayerPosition} />)
+  const instancedEnemyCardRef = useRef(<OpponentCard imageUrl="/textures/card_image_placeholders/imp.png" cardBody={cardBody} cardShape={cardShape} cardIndex={0} key={0} position={initialEnemyPosition} />)
 
-  const playerCardsOnTheTable : CardPosition[] = [
+  const playerCardsOnTheTable: CardPosition[] = [
     {
       x: -4, y: -1.5, z: 0
     },
@@ -54,7 +54,7 @@ export const MainCanvas = () => {
     }
   ]
 
-  const enemyCardsOnTheTable : CardPosition[] = [
+  const enemyCardsOnTheTable: CardPosition[] = [
     {
       x: -4, y: 1.5, z: 0
     },
@@ -79,37 +79,55 @@ export const MainCanvas = () => {
       cardIndex: index,
       key: index
     };
-  
+
     const newPlayerCardInstance = React.cloneElement(
       instancedPlayerCardRef.current,
       updatedProps
     );
-  
+
     return newPlayerCardInstance;
     // return <PlayerCard imageUrl="/textures/card_image_placeholders/imp.png" cardBody={cardBody} cardShape={cardShape} cardIndex={index} key={index} position={position} />
   });
 
   const opponentCards = enemyCardsOnTheTable.map((position, index) => {
-      const updatedProps = {
-        ...instancedEnemyCardRef.current.props,
-        position: position,
-        cardIndex: index,
-        key: index
-      };
-    
-      const newEnemyCardInstance = React.cloneElement(
-        instancedEnemyCardRef.current,
-        updatedProps
-      );
-  
+    const updatedProps = {
+      ...instancedEnemyCardRef.current.props,
+      position: position,
+      cardIndex: index,
+      key: index
+    };
+
+    const newEnemyCardInstance = React.cloneElement(
+      instancedEnemyCardRef.current,
+      updatedProps
+    );
+
     return newEnemyCardInstance;
   });
 
-  return <Canvas shadows camera={{ position: [0, 0, 10], fov: 75}}>
+  // const getCards = async () => {
+  //     const cards = await getUserCards.mutateAsync({
+  //         walletAddress: user?.walletAddress ?? ''
+  //     });
+  //     const playerCardCollection: OriginalCard[] = []
+  //     cards.result.forEach((card) => {
+  //         if (card) {
+  //             playerCardCollection.push({
+  //                 name: card.name ?? '',
+  //                 description: card.description ?? '',
+  //                 image_url: card.image_url ?? '',
+  //                 metadata: card.metadata as any,
+  //             })
+  //         }
+  //     })
+  //     console.log('CARDS: ', cards)
+  // }
+
+  return <Canvas shadows camera={{ position: [0, 0, 10], fov: 75 }}>
     <Stats />
-    
-    <motion.axesHelper args={[2]}/>
-    <motion.gridHelper args={[30, 30]} rotation={[20.427,0,0]}/>
+
+    <motion.axesHelper args={[2]} />
+    <motion.gridHelper args={[30, 30]} rotation={[20.427, 0, 0]} />
 
     <OrbitControls enableZoom={false} />
     <Lights />

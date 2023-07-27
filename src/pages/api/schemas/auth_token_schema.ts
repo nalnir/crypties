@@ -6,7 +6,7 @@ const authTokenSchema = new mongoose.Schema({
     validUntil: { type: String, unique: true, required: true },
     userId: { type: Schema.Types.ObjectId, transform: (value: mongoose.Types.ObjectId) => value.toString(), },
     userWalletAddress: { type: String, required: true },
-});
+}, { timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' } });
 
 export interface AuthTokenDocument extends Document {
     _id: string;
@@ -14,9 +14,11 @@ export interface AuthTokenDocument extends Document {
     validUntil: string;
     userId: string;
     userWalletAddress: string;
+    createdAt?: Date;
+    updatedAt?: Date;
 }
 
-interface AuthTokenModel extends Model<AuthTokenDocument> {}
+interface AuthTokenModel extends Model<AuthTokenDocument> { }
 
 const AuthToken = mongoose.models.AuthToken as AuthTokenModel || mongoose.model<AuthTokenModel, AuthTokenModel>('AuthToken', authTokenSchema);
 

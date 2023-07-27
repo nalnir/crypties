@@ -22,13 +22,13 @@ function Board2D() {
     const enemyCardsState = useRecoilValue(enemyCardsAtom);
     const enemyCardsAction = useEnemyCardsActions();
 
-    useEffect(() => {
-        const currentPlayerCards = playerCardsState.playerCards;
-        if (currentPlayerCards.length < 1 && !gameState.gameOver) {
-            playerCardsAction.initializeFullDeck(enemyCardDeck)
-            playerCardsAction.placeCardsOnTheBoard(pickFirstFiveCards(enemyCardDeck))
-        }
-    }, [playerCardsState.playerCards])
+    // useEffect(() => {
+    //     const currentPlayerCards = playerCardsState.playerCards;
+    //     if (currentPlayerCards.length < 1 && !gameState.gameOver) {
+    //         playerCardsAction.initializeFullDeck(enemyCardDeck)
+    //         playerCardsAction.placeCardsOnTheBoard(pickFirstFiveCards(enemyCardDeck))
+    //     }
+    // }, [playerCardsState.playerCards])
 
     useEffect(() => {
         const currentEnemyCards = enemyCardsState.enemyCards;

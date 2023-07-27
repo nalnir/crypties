@@ -83,5 +83,5 @@ export const Loader = () => {
             </svg>
             {Math.floor(progress)}% loaded
         </div>
-    </div>;
+    </div>
 }
