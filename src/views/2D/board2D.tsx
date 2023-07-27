@@ -51,7 +51,7 @@ function Board2D() {
                         />
                     )}
                 </div>
-
+                {/* 
                 <div className="grid items-start grid-cols-5 gap-x-3">
                     {playerCardsState.playerCardsOnTheBoard.map((card: PlayingCardModel, index: number) =>
                         <PlayerCard
@@ -60,7 +60,7 @@ function Board2D() {
                             card={card}
                         />
                     )}
-                </div>
+                </div> */}
 
             </div>
         </div>
