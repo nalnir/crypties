@@ -138,7 +138,7 @@ export const correctName = procedure
       const completion = await openai.createEdit({
         "model": "text-davinci-edit-001",
         "input": opts.input.name,
-        "instruction": "IF NEEDED Separate the word correctly. Output ONLY corrected word. NO ESCAPE CHARACTERS, NO CODE, TEXT ONLY",
+        "instruction": "IF NEEDED Separate the word correctly. Output ONLY corrected word. NO ESCAPE CHARACTERS, NO NEW LINES, NO CODE, TEXT ONLY",
         "temperature": 0,
       });
 

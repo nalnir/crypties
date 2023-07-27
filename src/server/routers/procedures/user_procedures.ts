@@ -24,7 +24,10 @@ export const getUser = procedure
     })
   )
   .mutation(async (opts) => {
+    console.log('HELLO')
     const db = await connectDB();
+    console.log('CONNECTED')
+    console.log('FETCHING USER!')
     const user = await User.findOne({
       walletAddress: opts.input.walletAddress,
     });
