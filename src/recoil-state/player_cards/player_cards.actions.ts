@@ -9,7 +9,8 @@ export function usePlayerCardsActions() {
 
     return {
         placeCardsOnTheBoard,
-        initializeFullDeck
+        initializeFullDeck,
+        setAllCards
     };
 
     function placeCardsOnTheBoard(cards: OriginalCard[]) {
@@ -23,6 +24,14 @@ export function usePlayerCardsActions() {
         setPlayerCards((state: any) => ({
             ...state,
             playerCards: [...cards]
+        }))
+    }
+
+    function setAllCards(cards: OriginalCard[]) {
+        setPlayerCards((state: any) => ({
+            ...state,
+            playerCards: [...cards],
+            fetched: true
         }))
     }
 }

@@ -38,8 +38,14 @@ export interface UserDocument extends Document {
     generatedName: string;
     createdAt?: Date;
     updatedAt?: Date;
-    playerClass: string;
-    fantasyRace: string;
+    playerClass: {
+        name: string;
+        ref: string;
+    };
+    fantasyRace: {
+        name: string;
+        ref: string;
+    };
 }
 
 interface UserModel extends Model<UserDocument> { }

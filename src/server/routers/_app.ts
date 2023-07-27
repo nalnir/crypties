@@ -1,7 +1,7 @@
 import { router } from '../trpc';
 import { REST } from 'discord.js';
 import { Configuration, OpenAIApi } from "openai";
-import { getUser, getUserCards, getUserClass, getUserFantasyRace, onboardUser, register, saveUserFantasyRace, saveUserPlayerClass } from './procedures/user_procedures';
+import { getUser, getUserClass, getUserFantasyRace, onboardUser, register, saveUserFantasyRace, saveUserPlayerClass } from './procedures/user_procedures';
 import { bumpCreateTry, checkIfPlayerClassAlreadyCreated, checkIfPlayerClassExists, checkIfRaceAlreadyCreated, checkIfRaceExists, createRace, resetCreateTries, setCreateCycle, setUseCreatePower } from './procedures/creation_power_procedures';
 import { correctName, generateDescription, generateImages, isFantasyRace, isPlayerClass } from './procedures/ai_procedures';
 import { bumpPlayedByAmountFantasyRace, getDefaultClasses, getDefaultFantasyRaces, getOtherFantasyRaces } from './procedures/fantasy_race_procedures';
@@ -9,6 +9,8 @@ import { bumpPlayedByAmoungPlayerClass, getOtherPlayerClasses } from './procedur
 import { getAuthToken, invalidateAuthToken, registerAuthToken } from './procedures/auth_procedures';
 import { bumpTokenId, getCurrentCardId, getCurrentGeneration, getTokenId, mintBulk, uploadMetadataToIPFS, uploadMetadataToS3 } from './procedures/card_creation_procedures';
 import { establishNextGeneration } from './procedures/admin_procedures';
+import { getAlignmentStat, getClassStat, getRaceStat } from './procedures/stats_procedures';
+import { getUserCards } from './procedures/imx_procedures';
 
 const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_BOT_TOKEN ?? '');
 const chatpgptConfig = new Configuration({
@@ -31,7 +33,6 @@ export const appRouter = router({
   getUserFantasyRace,
   saveUserPlayerClass,
   getUserClass,
-  getUserCards,
 
   // CREATION POWER PROCEDURES
   checkIfRaceAlreadyCreated,
@@ -71,7 +72,15 @@ export const appRouter = router({
   getCurrentCardId,
 
   // ADMIN PROCEDURES
-  establishNextGeneration
+  establishNextGeneration,
+
+  // STAT PROCEDURES
+  getRaceStat,
+  getClassStat,
+  getAlignmentStat,
+
+  //IMX PROCEDURES
+  getUserCards,
 });
 
 export type AppRouter = typeof appRouter;
