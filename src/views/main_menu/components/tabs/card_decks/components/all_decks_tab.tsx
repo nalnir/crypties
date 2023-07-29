@@ -21,12 +21,27 @@ export const AllDecksTab = ({ playerDecks }: AllDecksTabProps) => {
     const createNewDeck = trpc.createUserDeck.useMutation();
     const deleteUserDeck = trpc.deleteUserDeck.useMutation();
     const getUserDecks = trpc.getUserDecks.useMutation();
+    const generateDeckImage = trpc.generateImages.useMutation();
 
     const createDeck = async () => {
         if (deckName.length > 0) {
+            const image = await generateDeckImage.mutateAsync({
+                prompt: `${deckName} crystal, center shot, good magical background`,
+                negative_prompt: 'text, face, people, bizzare, weird, character, signature, title, watermark',
+                modelId: 'd69c8273-6b17-4a30-a13e-d6637ae1c644',
+                promptMagic: true,
+                num_images: 1
+            })
+            if (!image) {
+                errorSuccessActions.openErrorSuccess('Could not generate the image for the deck', ErrorSuccessType.ERROR);
+                return;
+            }
+            const imageUrl = image[0].url ?? '';
+
             const newDeck: any = await createNewDeck.mutateAsync({
                 deckName: deckName,
-                walletAddress: user?.walletAddress ?? ''
+                walletAddress: user?.walletAddress ?? '',
+                image: imageUrl
             })
 
             playerDeckActions.setAddDeckToList(newDeck)
@@ -53,7 +68,15 @@ export const AllDecksTab = ({ playerDecks }: AllDecksTabProps) => {
                 <ButtonCustom isLoading={createNewDeck.isLoading} title="Create" onClick={createDeck} className="w-full" />
             </div>
             {playerDecks.map((deck, index) => {
-                return <div key={index} className="p-3 space-y-3 border border-separate border-black rounded-lg shadow-xl shrink-1 border-opacity-30">
+                return <div key={index}
+                    style={{
+                        backgroundImage: `url(${deck.image})`,
+                        backgroundSize: 'cover',
+                        backgroundRepeat: 'no-repeat',
+                        backgroundPosition: 'center'
+                    }}
+                    className={`p-3 space-y-3 border border-separate border-black rounded-lg shadow-xl shrink-1 border-opacity-30`}
+                >
                     <PText>{deck.deckName}</PText>
                     <PText>{deck.cards.length ?? 0} cards in the deck</PText>
                     <ButtonCustom isLoading={deleteUserDeck.isLoading} title="Delete" onClick={() => deleteDeck(deck)} className="w-full" />

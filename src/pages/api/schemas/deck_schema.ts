@@ -5,7 +5,8 @@ const deckSchema = new mongoose.Schema({
     _id: { type: Schema.Types.ObjectId, auto: true, transform: (value: mongoose.Types.ObjectId) => value.toString(), },
     walletAddress: { type: String, required: true },
     cards: { type: [String], required: false },
-    deckName: { type: String, required: true }
+    deckName: { type: String, required: true },
+    image: { type: String, required: false }
 }, { timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' } });
 
 
@@ -14,6 +15,7 @@ export interface DeckDocument extends Document {
     walletAddress: string;
     cards: string[];
     deckName: string;
+    image: string;
 }
 
 interface DeckModel extends Model<DeckDocument> { }

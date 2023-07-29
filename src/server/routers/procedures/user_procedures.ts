@@ -193,7 +193,8 @@ export const getUserDecks = procedure
 export const createUserDeck = procedure
   .input(z.object({
     walletAddress: z.string(),
-    deckName: z.string()
+    deckName: z.string(),
+    image: z.string()
   }))
   .mutation(async (opts) => {
     const inputs = opts.input;
@@ -201,7 +202,7 @@ export const createUserDeck = procedure
     if (userDeck) {
       throw new Error('Deck with this name already exists')
     }
-    const newUserDeck: DeckDocument | null = await Deck.create({ walletAddress: inputs.walletAddress, deckName: inputs.deckName })
+    const newUserDeck: DeckDocument | null = await Deck.create({ walletAddress: inputs.walletAddress, deckName: inputs.deckName, image: inputs.image })
     return newUserDeck;
   })
 
