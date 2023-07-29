@@ -10,25 +10,12 @@ import { Tooltip } from 'flowbite-react';
 import { useState } from "react";
 import { useRecoilValue } from "recoil";
 import AvatarTab from "./components/tabs/avatar";
-import CardDecksTab from "./components/tabs/card_decks";
+import CardDecksTab from "./components/tabs/card_decks/card_decks";
 import CardMarketPlaceTab from "./components/tabs/card_marketplace";
+import { ITab } from "@/utils";
 
-interface ITabButton {
-    title: string,
-}
-interface ITab {
-    title: string,
-    component: JSX.Element
-}
 function MainMenu() {
-
     const [activeTab, setActiveTab] = useState(2)
-
-    const tabButtons: ITabButton[] = [
-        { title: "CARD DECKS" },
-        { title: "CARD MARKETPLACE" },
-        { title: "AVATAR" }
-    ]
 
     const tabs: ITab[] = [
         {
@@ -45,13 +32,13 @@ function MainMenu() {
         }
     ]
 
-    return <div className="grid grid-cols-2 bg-primary-400">
-        <div className="flex items-center justify-center p-3">
+    return <div className="grid grid-cols-2 gap-3 p-3 bg-primary-400">
+        <div className="flex items-start justify-start">
             {tabs[activeTab].component}
         </div>
-        <div className="flex-col items-center justify-center p-3 space-y-3">
+        <div className="flex-col items-center justify-center space-y-3">
             <ButtonCustom onClick={() => { }} title="PLAY" />
-            {tabButtons.map((item, index) => (
+            {tabs.map((item, index) => (
                 <ButtonCustom key={index} className={`${index === activeTab ? 'bg-primary-500' : 'bg-white'}`} textClassName="text-black" onClick={() => setActiveTab(index)} title={item.title} />
             ))}
         </div>

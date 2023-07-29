@@ -1,7 +1,7 @@
 import { router } from '../trpc';
 import { REST } from 'discord.js';
 import { Configuration, OpenAIApi } from "openai";
-import { getUser, getUserClass, getUserFantasyRace, onboardUser, register, saveUserFantasyRace, saveUserPlayerClass } from './procedures/user_procedures';
+import { createUserDeck, deleteUserDeck, getUser, getUserClass, getUserDecks, getUserFantasyRace, onboardUser, register, saveUserDeck, saveUserFantasyRace, saveUserPlayerClass, updateUserDecks } from './procedures/user_procedures';
 import { bumpCreateTry, checkIfPlayerClassAlreadyCreated, checkIfPlayerClassExists, checkIfRaceAlreadyCreated, checkIfRaceExists, createRace, resetCreateTries, setCreateCycle, setUseCreatePower } from './procedures/creation_power_procedures';
 import { correctName, generateDescription, generateImages, isFantasyRace, isPlayerClass } from './procedures/ai_procedures';
 import { bumpPlayedByAmountFantasyRace, getDefaultClasses, getDefaultFantasyRaces, getOtherFantasyRaces } from './procedures/fantasy_race_procedures';
@@ -10,7 +10,7 @@ import { getAuthToken, invalidateAuthToken, registerAuthToken } from './procedur
 import { bumpTokenId, getCurrentCardId, getCurrentGeneration, getTokenId, mintBulk, uploadMetadataToIPFS, uploadMetadataToS3 } from './procedures/card_creation_procedures';
 import { establishNextGeneration } from './procedures/admin_procedures';
 import { getAlignmentStat, getClassStat, getRaceStat } from './procedures/stats_procedures';
-import { getUserCards } from './procedures/imx_procedures';
+import { getAllCards, getUserCards } from './procedures/imx_procedures';
 
 const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_BOT_TOKEN ?? '');
 const chatpgptConfig = new Configuration({
@@ -33,6 +33,11 @@ export const appRouter = router({
   getUserFantasyRace,
   saveUserPlayerClass,
   getUserClass,
+  getUserDecks,
+  createUserDeck,
+  saveUserDeck,
+  deleteUserDeck,
+  updateUserDecks,
 
   // CREATION POWER PROCEDURES
   checkIfRaceAlreadyCreated,
@@ -81,6 +86,7 @@ export const appRouter = router({
 
   //IMX PROCEDURES
   getUserCards,
+  getAllCards,
 });
 
 export type AppRouter = typeof appRouter;

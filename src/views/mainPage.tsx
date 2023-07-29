@@ -23,13 +23,9 @@ export type Room = {
 const socket = io('http://localhost:3001');
 function MainPage() {
     const router = useRouter()
-    const userActions = useUserActions();
     const authActions = useAuthActions();
-    const authState = useRecoilValue(authAtom);
-    const userState = useRecoilValue(userAtom);
     const [rooms, setRooms] = useState<Room[] | undefined>();
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-
 
     const disconnectIMX = async () => {
         await authActions.logout()
@@ -66,7 +62,7 @@ function MainPage() {
                     {isDrawerOpen ?
                         <div onClick={() => setIsDrawerOpen(false)} className="cursor-pointer"><ClearIcon /></div> :
                         <div onClick={() => setIsDrawerOpen(true)} className="cursor-pointer"><MenuIcon /></div>}
-                        <ButtonCustom title="Disconnect" onClick={() => disconnectIMX()}/>
+                    <ButtonCustom title="Disconnect" onClick={() => disconnectIMX()} />
                 </div>
                 <div>
                     <Register />

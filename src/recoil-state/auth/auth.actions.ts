@@ -3,10 +3,18 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 import { authAtom } from "./auth.atom";
 import { LOCAL_CRYPTIES_STORAGE_KEY, LocalStorage } from "@/utils";
 import { trpc } from "@/utils/trpc";
+import { InitialUserState, userAtom } from "../user/user.atom";
+import { InitialPlayerDecksState, playerDecksAtom } from "../player_decks/player_decks.atom";
+import { InitialOnboardingHeroState, onboardingHeroAtom } from "../onboarding_hero/onboarding_hero.atom";
+import { InitialPlayerCardsState, playerCardsAtom } from "../player_cards/player_cards.atom";
 
 export function useAuthActions() {
     const setAuth = useSetRecoilState(authAtom);
-    const authState = useRecoilValue(authAtom)
+    const setUser = useSetRecoilState(userAtom);
+    const setDecks = useSetRecoilState(playerDecksAtom);
+    const setCards = useSetRecoilState(playerCardsAtom);
+    const setOnboarding = useSetRecoilState(onboardingHeroAtom);
+    const authState = useRecoilValue(authAtom);
 
     const getUser = trpc.getUser.useMutation();
     const registerUser = trpc.register.useMutation();
@@ -106,6 +114,7 @@ export function useAuthActions() {
 
     async function logout() {
         LocalStorage.remove(LOCAL_CRYPTIES_STORAGE_KEY.AUTH);
+        resetStates()
         setAuth((state) => ({
             ...state,
             isLocalStorageLoaded: true,
@@ -148,5 +157,12 @@ export function useAuthActions() {
             }));
             return undefined;
         }
+    }
+
+    function resetStates() {
+        setUser(InitialUserState);
+        setCards(InitialPlayerCardsState);
+        setOnboarding(InitialOnboardingHeroState)
+        setDecks(InitialPlayerDecksState);
     }
 }

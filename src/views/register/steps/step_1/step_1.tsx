@@ -155,6 +155,8 @@ export const Step1 = () => {
     //         const numberOfTokensToMint = 1;
     //         const generation: any = await getCurrentGeneration.data
 
+    //         const tokenId: number = getLatestCardId.data + 1;
+    //         const groupId: number = uuidv4();
     //         const first_image = images[0]
     //         let card: OriginalCard = {
     //             name: "Gnome",
@@ -169,14 +171,13 @@ export const Step1 = () => {
     //                 cardType: "common",
     //                 cardTypeId: "123456",
     //                 generation: generation.generation,
-    //                 imageId: first_image.id ?? ''
+    //                 imageId: first_image.id ?? '',
+    //                 groupId: groupId
     //             },
     //         }
     //         const cid = await uploadMetadataToIPFS.mutateAsync(card)
     //         console.log('CID: ', cid)
     //         card.metadata.ipfsCID = cid;
-
-    //         const tokenId: number = getLatestCardId.data + 1;
 
     //         console.log('GONNA UPLOAD TO S3')
     //         await Promise.all(

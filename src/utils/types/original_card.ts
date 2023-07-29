@@ -16,4 +16,6 @@ export interface OriginalCard {
         ipfsCID?: string,
         imageId: string
     },
+    token_id?: string,
+    token_address?: string
 }

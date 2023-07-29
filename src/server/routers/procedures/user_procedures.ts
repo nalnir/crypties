@@ -9,6 +9,7 @@ import { waitForTransaction } from '@/server/helper_functions';
 import { Wallet } from '@ethersproject/wallet';
 import { AlchemyProvider } from '@ethersproject/providers';
 import Deck, { DeckDocument } from '@/pages/api/schemas/deck_schema';
+import { deck } from '../objects/deck';
 const mongoose = require('mongoose');
 
 const PRIVATE_KEY1 = process.env.PRIVATE_KEY1 ?? ''
@@ -189,3 +190,54 @@ export const getUserDecks = procedure
     return userDecks;
   })
 
+export const createUserDeck = procedure
+  .input(z.object({
+    walletAddress: z.string(),
+    deckName: z.string()
+  }))
+  .mutation(async (opts) => {
+    const inputs = opts.input;
+    const userDeck: DeckDocument | null = await Deck.findOne({ walletAddress: inputs.walletAddress, deckName: inputs.deckName });
+    if (userDeck) {
+      throw new Error('Deck with this name already exists')
+    }
+    const newUserDeck: DeckDocument | null = await Deck.create({ walletAddress: inputs.walletAddress, deckName: inputs.deckName })
+    return newUserDeck;
+  })
+
+export const saveUserDeck = procedure
+  .input(z.object({
+    deck: deck
+  }))
+  .mutation(async (opts) => {
+    const inputs = opts.input;
+    const updatedDeck: DeckDocument | null = await Deck.findOneAndUpdate({ _id: inputs.deck._id }, { $set: { cards: inputs.deck.cards } }, { new: true })
+    console.log('updatedDeck: ', updatedDeck)
+    return updatedDeck;
+  })
+
+export const deleteUserDeck = procedure
+  .input(z.object({
+    deck: deck
+  }))
+  .mutation(async (opts) => {
+    const inputs = opts.input;
+    const res: DeckDocument | null = await Deck.findByIdAndDelete({ _id: inputs.deck._id });
+    return res;
+  })
+
+export const updateUserDecks = procedure
+  .input(z.object({
+    decks: z.array(deck)
+  }))
+  .mutation(async (opts) => {
+    const inputs = opts.input;
+    let results: any = [];
+    await Promise.all(
+      inputs.decks.map(async (deck) => {
+        const res = await Deck.findOneAndUpdate({ _id: deck._id }, { $set: { cards: deck.cards } }, { new: true })
+        results.push(res);
+      })
+    )
+    return results;
+  })

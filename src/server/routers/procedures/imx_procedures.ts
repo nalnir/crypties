@@ -5,14 +5,30 @@ import { ImmutableXClient } from '@imtbl/imx-sdk';
 import { waitForTransaction } from '@/server/helper_functions';
 import { Wallet } from '@ethersproject/wallet';
 import { AlchemyProvider } from '@ethersproject/providers';
+import { ImmutableX, Config, generateStarkPrivateKey, createStarkSigner, UnsignedOrderRequest, WalletConnection } from '@imtbl/core-sdk';
+import { ENVIRONMENTS, L1_PROVIDERS, WalletSDK } from '@imtbl/wallet-sdk-web';
+
 
 const PRIVATE_KEY1 = process.env.PRIVATE_KEY1 ?? ''
 const ETH_NETWORK = process.env.ETH_NETWORK ?? 'goerli';
 const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY ?? '';
 
-const provider = new AlchemyProvider(ETH_NETWORK, ALCHEMY_API_KEY);
-
 const IMX_COLLECTION_ADDRESS = process.env.IMX_COLLECTION_ADDRESS ?? '';
+const NEXT_PUBLIC_IMX_LINK_ADDRESS = process.env.NEXT_PUBLIC_IMX_LINK_ADDRESS ?? '';
+
+const provider = new AlchemyProvider(ETH_NETWORK, ALCHEMY_API_KEY);
+const config = Config.SANDBOX; // Or Config.PRODUCTION
+const walletClient = new ImmutableX(config);
+const starkPrivateKey = generateStarkPrivateKey(); // Or retrieve previously generated key
+const starkSigner = createStarkSigner(starkPrivateKey);
+
+const client = {
+  publicApiUrl: process.env.NEXT_PUBLIC_IMX_API_ADDRESS ?? '',
+  starkContractAddress: process.env.STARK_CONTRACT_ADDRESS ?? '',
+  registrationContractAddress: process.env.REGISTRATION_ADDRESS,
+  gasLimit: process.env.GAS_LIMIT,
+  gasPrice: process.env.GAS_PRICE,
+}
 
 export const setupWallet = procedure
   .input(
@@ -41,13 +57,6 @@ export const getUserCards = procedure
   )
   .mutation(async (opts) => {
     const inputs = opts.input;
-    const client = {
-      publicApiUrl: process.env.NEXT_PUBLIC_IMX_API_ADDRESS ?? '',
-      starkContractAddress: process.env.STARK_CONTRACT_ADDRESS ?? '',
-      registrationContractAddress: process.env.REGISTRATION_ADDRESS,
-      gasLimit: process.env.GAS_LIMIT,
-      gasPrice: process.env.GAS_PRICE,
-    }
     const minter = await ImmutableXClient.build({
       ...client,
       signer: new Wallet(PRIVATE_KEY1).connect(provider),
@@ -58,7 +67,35 @@ export const getUserCards = procedure
       starkPublicKey: minter.starkPublicKey,
     });
 
-    console.log('registerImxResult: ', registerImxResult.tx_hash)
+    if (registerImxResult.tx_hash === '') {
+      console.log('Minter registered, continuing...');
+    } else {
+      console.log('Waiting for minter registration...');
+      await waitForTransaction(Promise.resolve(registerImxResult.tx_hash));
+    }
+
+    const starkPrivateKey = generateStarkPrivateKey(); // Or retrieve previously generated key
+    const starkSigner = createStarkSigner(starkPrivateKey);
+
+    const assets = await minter.getAssets({
+      user: inputs.walletAddress,
+      collection: IMX_COLLECTION_ADDRESS
+    })
+    return assets;
+  })
+
+export const getAllCards = procedure
+  .query(async () => {
+
+    const minter = await ImmutableXClient.build({
+      ...client,
+      signer: new Wallet(PRIVATE_KEY1).connect(provider),
+    });
+
+    const registerImxResult = await minter.registerImx({
+      etherKey: minter.address.toLowerCase(),
+      starkPublicKey: minter.starkPublicKey,
+    });
 
     if (registerImxResult.tx_hash === '') {
       console.log('Minter registered, continuing...');
@@ -68,8 +105,8 @@ export const getUserCards = procedure
     }
 
     const assets = await minter.getAssets({
-      user: inputs.walletAddress,
       collection: IMX_COLLECTION_ADDRESS
     })
-    return assets;
+
+    return assets
   })
