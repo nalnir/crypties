@@ -5,7 +5,7 @@ import socketIOClient from 'socket.io-client';
 import { UserDocument } from "../api/schemas/user_schema";
 import { useQuery } from "@tanstack/react-query";
 import { trpc } from "@/utils/trpc";
-import socket from "../socket";
+import socket from "../../socket/socket";
 import { AuthGuard } from "@/recoil-state/auth/auth.guard";
 import { useRecoilValue } from "recoil";
 import { battleAtom, useBattleActions } from "@/recoil-state/battle";
