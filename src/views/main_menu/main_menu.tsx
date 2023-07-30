@@ -13,9 +13,11 @@ import AvatarTab from "./components/tabs/avatar";
 import CardDecksTab from "./components/tabs/card_decks/card_decks";
 import CardMarketPlaceTab from "./components/tabs/card_marketplace";
 import { ITab } from "@/utils";
+import { useRouter } from "next/router";
 
 function MainMenu() {
     const [activeTab, setActiveTab] = useState(2)
+    const router = useRouter();
 
     const tabs: ITab[] = [
         {
@@ -37,7 +39,7 @@ function MainMenu() {
             {tabs[activeTab].component}
         </div>
         <div className="flex-col items-center justify-center space-y-3">
-            <ButtonCustom onClick={() => { }} title="PLAY" />
+            <ButtonCustom onClick={() => router.push('/battle')} title="PLAY" />
             {tabs.map((item, index) => (
                 <ButtonCustom key={index} className={`${index === activeTab ? 'bg-primary-500' : 'bg-white'}`} textClassName="text-black" onClick={() => setActiveTab(index)} title={item.title} />
             ))}

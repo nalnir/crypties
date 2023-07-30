@@ -21,6 +21,6 @@
     },
     "downlevelIteration": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/server/server.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/server/server.ts", "src/server/socket.js"],
   "exclude": ["node_modules"]
 }

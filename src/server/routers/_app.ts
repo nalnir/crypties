@@ -11,6 +11,7 @@ import { bumpTokenId, getCurrentCardId, getCurrentGeneration, getTokenId, mintBu
 import { establishNextGeneration } from './procedures/admin_procedures';
 import { getAlignmentStat, getClassStat, getRaceStat } from './procedures/stats_procedures';
 import { getAllCards, getUserCards } from './procedures/imx_procedures';
+import { connectToLobby } from './procedures/battle_procedures';
 
 const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_BOT_TOKEN ?? '');
 const chatpgptConfig = new Configuration({
@@ -38,6 +39,9 @@ export const appRouter = router({
   saveUserDeck,
   deleteUserDeck,
   updateUserDecks,
+
+  // BATTLE PROCEDURES
+  connectToLobby,
 
   // CREATION POWER PROCEDURES
   checkIfRaceAlreadyCreated,
