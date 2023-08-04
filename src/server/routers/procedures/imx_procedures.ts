@@ -7,6 +7,7 @@ import { Wallet } from '@ethersproject/wallet';
 import { AlchemyProvider } from '@ethersproject/providers';
 import { ImmutableX, Config, generateStarkPrivateKey, createStarkSigner, UnsignedOrderRequest, WalletConnection } from '@imtbl/core-sdk';
 import { ENVIRONMENTS, L1_PROVIDERS, WalletSDK } from '@imtbl/wallet-sdk-web';
+import { BigNumber, utils } from 'ethers';
 
 
 const PRIVATE_KEY1 = process.env.PRIVATE_KEY1 ?? ''
@@ -105,8 +106,57 @@ export const getAllCards = procedure
     }
 
     const assets = await minter.getAssets({
-      collection: IMX_COLLECTION_ADDRESS
+      collection: IMX_COLLECTION_ADDRESS,
+      sell_orders: true,
     })
 
     return assets
   })
+
+export const getUserBalance = procedure
+  .input(z.object({
+    tokenAddress: z.string().default('eth'),
+    walletAddress: z.string()
+  }))
+  .query(async (opts) => {
+    const inputs = opts.input;
+    const minter = await ImmutableXClient.build({
+      ...client,
+      signer: new Wallet(PRIVATE_KEY1).connect(provider),
+    });
+
+    const registerImxResult = await minter.registerImx({
+      etherKey: minter.address.toLowerCase(),
+      starkPublicKey: minter.starkPublicKey,
+    });
+
+    if (registerImxResult.tx_hash === '') {
+      console.log('Minter registered, continuing...');
+    } else {
+      console.log('Waiting for minter registration...');
+      await waitForTransaction(Promise.resolve(registerImxResult.tx_hash));
+    }
+
+    const balance = await minter.getBalance({
+      tokenAddress: inputs.tokenAddress,
+      user: inputs.walletAddress
+    })
+
+
+    let balance_str = '0';
+    if (balance.balance) {
+      // const balanceInWei = BigNumber.from(userBalance.data?.balance.hex);
+      balance_str = utils.formatUnits(balance.balance, "ether");
+    }
+
+    return balance_str
+  })
+
+// ORDER PROCEDURES
+// export const getOrder = procedure
+//   .input(z.object({
+//     order_id: z.number()
+//   }))
+//   .mutation(async () => {
+
+//   })

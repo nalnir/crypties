@@ -7,15 +7,23 @@ interface ButtonCustomProps {
     className?: string,
     textClassName?: string,
     isLoading?: boolean,
+    disabled?: boolean
 }
 export const ButtonCustom = ({
     onClick,
     title,
     className,
     textClassName,
-    isLoading
+    isLoading,
+    disabled
 }: ButtonCustomProps) => {
-    return <div onClick={onClick} className={`${className ?? 'bg-secondary-400'} cursor-pointer space-x-3 border rounded-lg p-3 flex justify-center items-center`}>
+    return <div onClick={() => {
+        if (disabled) {
+            return
+        } else {
+            onClick()
+        }
+    }} className={`${className ?? 'bg-secondary-400'} ${disabled ? 'opacity-50' : 'opacity-100'} cursor-pointer space-x-3 border rounded-lg p-3 flex justify-center items-center`}>
         {isLoading ? <CircularProgress className="w-5 h-5" /> : <></>}<PText className={`${textClassName ?? 'text-white'}`}>{title}</PText>
     </div>
 }

@@ -26,14 +26,30 @@ export default function BattlePage() {
         } else {
             router.push('/')
         }
+        return () => {
+            socket.disconnect();
+        }
     }, [user])
 
     socket.on("users", (users) => {
-        console.log('USERS: ', users)
+        if (users.length > 1) {
+            console.log('USERS: ', users)
+            const player1 = users.shift();
+            const player2 = users.shift();
+            const players = {
+                player1: player1,
+                player2: player2
+            }
+            socket.emit('join_battle_room', players);
+        }
     });
 
-    socket.on("user_connected", (users) => {
-        battleActions.setSocketId(users.socketId)
+    socket.on("battle_start", (data) => {
+        console.log('Data: ', data)
+    })
+
+    socket.on("user_connected", (user) => {
+        battleActions.setSocketId(user.socketId)
     });
 
     socket.on("user_already_connected", (user) => {
@@ -42,8 +58,10 @@ export default function BattlePage() {
     });
 
     const handleConnect = async (user: UserDocument) => {
+        console.log('handleConnect: ', user)
         const walletAddress = user.walletAddress
         socket.auth = { walletAddress };
+        console.log('walletAddress: ', walletAddress)
         socket.connect();
     }
 

@@ -17,6 +17,7 @@ io.use((socket, next) => {
 io.on("connection", (socket) => {
   // fetch existing users
   const users = [];
+  const activePlayers = []
   for (let [id, userSocket] of io.of("/").sockets) {
     users.push({
       socketId: id,
@@ -51,6 +52,23 @@ io.on("connection", (socket) => {
   // notify users upon disconnection
   socket.on("disconnect", () => {
     socket.broadcast.emit("user disconnected", socket.id);
+    const disconnectedPlayerIdx = users.findIndex((user) => user.socketId === socket.id)
+    users.splice(disconnectedPlayerIdx, 1)
+  });
+
+  socket.on('join_battle_room', (players) => {
+    activePlayers.push({ id: socket.id, ...players });
+
+    console.log('PLAYERS: ', players)
+
+    // Create a unique battle room for the two players
+    const battleRoom = `battle_${players.player1.walletAddress}_${players.player2.walletAddress}`;
+
+    // Join both players to the battle room
+    socket.join(battleRoom);
+    io.to(players.player1.socketId).emit('battle_start', { room: battleRoom, opponent: players.player2 });
+    io.to(players.player2.socketId).emit('battle_start', { room: battleRoom, opponent: players.player1 });
+    
   });
 });
 

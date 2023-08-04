@@ -10,7 +10,7 @@ import { getAuthToken, invalidateAuthToken, registerAuthToken } from './procedur
 import { bumpTokenId, getCurrentCardId, getCurrentGeneration, getTokenId, mintBulk, uploadMetadataToIPFS, uploadMetadataToS3 } from './procedures/card_creation_procedures';
 import { establishNextGeneration } from './procedures/admin_procedures';
 import { getAlignmentStat, getClassStat, getRaceStat } from './procedures/stats_procedures';
-import { getAllCards, getUserCards } from './procedures/imx_procedures';
+import { getAllCards, getUserBalance, getUserCards } from './procedures/imx_procedures';
 import { connectToLobby } from './procedures/battle_procedures';
 
 const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_BOT_TOKEN ?? '');
@@ -91,6 +91,7 @@ export const appRouter = router({
   //IMX PROCEDURES
   getUserCards,
   getAllCards,
+  getUserBalance
 });
 
 export type AppRouter = typeof appRouter;
