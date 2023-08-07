@@ -14,7 +14,7 @@ export const CardSaleModal = ({ card, listOnMarketPlace }: CardSaleModalProps) =
         <PText className="text-black">{card.description}</PText>
         <div className="flex items-center justify-start space-x-3">
             <input value={salePrice} onChange={(e) => {
-                const formated = allowOnlyNumbersDecimals(e.target.value)
+                const formated = allowOnlyNumbersDecimals(e.target.value, true)
                 if (formated) {
                     setSalePrice(formated)
                 }

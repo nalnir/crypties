@@ -1,4 +1,5 @@
 import mongoose, { Model, Schema } from 'mongoose';
+import { UserRoles } from '../enums';
 
 const playerClassSchema = new mongoose.Schema({
     ref: { type: Schema.Types.ObjectId, transform: (value: mongoose.Types.ObjectId) => value.toString(), },
@@ -22,7 +23,14 @@ const userSchema = new mongoose.Schema({
     playerName: { type: String, required: false },
     generatedName: { type: String, required: false },
     playerClass: { type: playerClassSchema, required: false },
-    fantasyRace: { type: fantasyRaceSchema, require: false }
+    fantasyRace: { type: fantasyRaceSchema, require: false },
+    roles: {
+        type: [{
+            type: String,
+            enum: Object.values(UserRoles),
+        }],
+        required: true,
+    },
 }, { timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' } });
 
 export interface UserDocument extends Document {
@@ -46,6 +54,7 @@ export interface UserDocument extends Document {
         name: string;
         ref: string;
     };
+    roles: string[];
 }
 
 interface UserModel extends Model<UserDocument> { }

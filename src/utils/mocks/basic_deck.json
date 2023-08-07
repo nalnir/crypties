@@ -1,0 +1,138 @@
+{
+    "deck": [
+      {
+        "name": "Elven Archer",
+        "health": 3,
+        "attackPower": 2
+      },
+      {
+        "name": "Dwarven Warrior",
+        "health": 2,
+        "attackPower": 3
+      },
+      {
+        "name": "Orc Brute",
+        "health": 4,
+        "attackPower": 1
+      },
+      {
+        "name": "Goblin Bombardier",
+        "health": 2,
+        "attackPower": 2,
+        "specialPower": "Deal 2 damage to a random enemy."
+      },
+      {
+        "name": "Fireball",
+        "specialPower": "Deal 3 damage to a target minion."
+      },
+      {
+        "name": "Ancient Treant",
+        "health": 4,
+        "attackPower": 0,
+        "specialPower": "Taunt: Enemies must attack this minion first."
+      },
+      {
+        "name": "Healing Light",
+        "specialPower": "Restore 4 health to a target."
+      },
+      {
+        "name": "Dragonkin Sorcerer",
+        "health": 1,
+        "attackPower": 5
+      },
+      {
+        "name": "Serpent Wyrm",
+        "health": 5,
+        "attackPower": 3
+      },
+      {
+        "name": "Shadow Assassin",
+        "health": 2,
+        "attackPower": 2,
+        "specialPower": "Stealth: Can't be attacked or targeted until it attacks."
+      },
+      {
+        "name": "Enchanted Blade",
+        "specialPower": "Give a friendly minion +2 attack this turn."
+      },
+      {
+        "name": "Frost Giant",
+        "health": 4,
+        "attackPower": 4
+      },
+      {
+        "name": "Cursed Witch",
+        "health": 3,
+        "attackPower": 3,
+        "specialPower": "Deathrattle: Deal 2 damage to all enemy minions."
+      },
+      {
+        "name": "Frost Nova",
+        "specialPower": "Freeze a target minion. It can't attack next turn."
+      },
+      {
+        "name": "Ancient Dragon",
+        "health": 7,
+        "attackPower": 2
+      },
+      {
+        "name": "Thunderstorm Elemental",
+        "health": 2,
+        "attackPower": 6,
+        "specialPower": "fatalisticfrenzy: When killed it will do an attack 6 + (damage it took) to a random minion or hero"
+      },
+      {
+        "name": "Dire Wolf",
+        "health": 5,
+        "attackPower": 5
+      },
+      {
+        "name": "Charging Gryphon",
+        "health": 3,
+        "attackPower": 3,
+        "specialPower": "Charge: Can attack immediately."
+      },
+      {
+        "name": "Meteor Strike",
+        "specialPower": "Deal 2 damage to all enemy minions."
+      },
+      {
+        "name": "Ancient Protector",
+        "health": 6,
+        "attackPower": 4
+      },
+      {
+        "name": "Spellweaver Elf",
+        "health": 3,
+        "attackPower": 3,
+        "specialPower": "magicabsorb: Whenever you cast a spell, gain +1 attack."
+      },
+      {
+        "name": "Spirit Healer",
+        "health": 4,
+        "attackPower": 3,
+        "specialPower": "endturnregeneration: At the end of your turn, restore 2 health to your hero."
+      },
+      {
+        "name": "Boulder Ogre",
+        "health": 2,
+        "attackPower": 7
+      },
+      {
+        "name": "Divine Unicorn",
+        "health": 1,
+        "attackPower": 8,
+        "specialPower": "divineshield: The first time this minion takes damage, ignore it."
+      },
+      {
+        "name": "Magma Elemental",
+        "health": 4,
+        "attackPower": 4
+      },
+      {
+        "name": "Stormrage Druid",
+        "health": 3,
+        "attackPower": 6
+      }
+    ]
+  }

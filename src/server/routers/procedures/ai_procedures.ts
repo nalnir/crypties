@@ -172,7 +172,7 @@ export const generateDescription = procedure
           { role: "user", content: opts.input.prompt },
         ]
       });
-
+      console.log('TOKENS USED: ', completion.data.usage?.total_tokens)
       const message = completion.data.choices[0].message?.content
       return message;
 

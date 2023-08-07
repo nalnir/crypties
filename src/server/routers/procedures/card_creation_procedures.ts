@@ -15,7 +15,7 @@ const TOKEN_ADDRESS = process.env.TOKEN_ADDRESS ?? '';
 import AWS from 'aws-sdk';
 import { original_card } from "../objects";
 import { ImmutableMethodParams, ImmutableXClient } from "@imtbl/imx-sdk";
-import Generation from "@/pages/api/schemas/generation_schema";
+import Generation, { GenerationDocument } from "@/pages/api/schemas/generation_schema";
 import { waitForTransaction } from "@/server/helper_functions";
 
 AWS.config.update({
@@ -168,7 +168,7 @@ export const mintBulk = procedure
     })
 
 export const getCurrentGeneration = procedure
-    .query(async () => {
+    .query(async (): Promise<GenerationDocument | null> => {
         const db = await connectDB();
         return await Generation.findOne({}).sort({ generation: -1 }).limit(1);
     })

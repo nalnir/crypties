@@ -33,6 +33,15 @@ module.exports = {
 				100: '#C9A0DC',
 				300: '#7D3C98',
 			},
+			card: {
+				common: '#A0A0A0',
+				rare: '#4A80D9',
+				epic: '#9B59B6',
+				legendary: '#F5B041',
+				mythical: '#E74C3C',
+				cosmic: '#17A589',
+				transcendent: '#FF5733',
+			}
 		},
 	},
 

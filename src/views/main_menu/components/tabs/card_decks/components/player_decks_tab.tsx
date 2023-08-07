@@ -9,10 +9,10 @@ import { Input } from "@mui/material"
 import { useQuery } from "@tanstack/react-query"
 import { useState } from "react"
 
-interface AllDecksTabProps {
+interface PlayerDecksTabProps {
     playerDecks: DeckDocument[]
 }
-export const AllDecksTab = ({ playerDecks }: AllDecksTabProps) => {
+export const PlayerDecksTab = ({ playerDecks }: PlayerDecksTabProps) => {
     const { data: user, isLoading, isError } = useQuery<UserDocument>(['user']);
     const errorSuccessActions = useErrorSuccessActions();
     const playerDeckActions = usePlayerDecksActions();

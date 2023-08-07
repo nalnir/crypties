@@ -1,5 +1,5 @@
 import { UserDocument } from "@/pages/api/schemas/user_schema";
-import { ButtonCustom, PText, allowOnlyNumbersDecimals } from "@/shared";
+import { ButtonCustom, PText } from "@/shared";
 import { OriginalCard } from "@/utils";
 import { trpc } from "@/utils/trpc";
 import { IMXAssetCrypties } from "@/utils/types/imx_asset";
@@ -106,7 +106,6 @@ function CardMarketPlaceTab() {
 
     return <div className="grid grid-cols-4 gap-3">
         {allCards?.data?.result?.map((card: any, index) => {
-            console.log('Card: ', card)
             return <div key={index} className={`${isUsersCard(card) ? 'bg-primary-500' : ''} p-3 border border-black rounded-lg border-opacity-30`}>
                 <img src={card.image_url ?? ''} alt="Card image" />
                 {isUsersCard(card) ? renderSellCancelButton(card) : renderBuyButton(card)}

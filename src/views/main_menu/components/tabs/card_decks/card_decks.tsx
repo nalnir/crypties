@@ -10,7 +10,7 @@ import { CircularProgress } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
-import { AllCardsTab, AllDecksTab } from "./components";
+import { AllCardsTab, DefaultDecksTab, PlayerDecksTab } from "./components";
 import { playerDecksAtom } from "@/recoil-state/player_decks/player_decks.atom";
 import { usePlayerDecksActions } from "@/recoil-state/player_decks/player_decks.actions";
 import { useErrorSuccessActions } from "@/recoil-state/error_success/error_success.actions";
@@ -34,8 +34,12 @@ function CardDecksTab() {
 
     const tabs: ITab[] = [
         {
-            title: "ALL DECKS",
-            component: <AllDecksTab playerDecks={playerDecksState.playerDecks} />
+            title: "DEFAULT DECKS",
+            component: <DefaultDecksTab />
+        },
+        {
+            title: "PLAYER DECKS",
+            component: <PlayerDecksTab playerDecks={playerDecksState.playerDecks} />
         },
         {
             title: "ALL CARDS",

@@ -16,6 +16,7 @@ export const original_card = z.object({
         collection: z.string().nullish(),
         generation: z.number(),
         ipfsCID: z.string().nullish(),
-        imageId: z.string()
+        imageId: z.string(),
+        default: z.boolean()
     })
 })

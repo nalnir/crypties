@@ -12,6 +12,8 @@ import { establishNextGeneration } from './procedures/admin_procedures';
 import { getAlignmentStat, getClassStat, getRaceStat } from './procedures/stats_procedures';
 import { getAllCards, getUserBalance, getUserCards } from './procedures/imx_procedures';
 import { connectToLobby } from './procedures/battle_procedures';
+import { createCardType, getAllCardTypes, getCardType } from './procedures/card_type_procedures';
+import { createDefaultCard, getAllDefaultCards } from './procedures/default_card_procedures';
 
 const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_BOT_TOKEN ?? '');
 const chatpgptConfig = new Configuration({
@@ -71,6 +73,10 @@ export const appRouter = router({
   getOtherPlayerClasses,
   bumpPlayedByAmoungPlayerClass,
 
+  // DEFAULT CARD PROCEDURES
+  createDefaultCard,
+  getAllDefaultCards,
+
   // CARD CREATION PROCEDURES
   uploadMetadataToIPFS,
   uploadMetadataToS3,
@@ -79,6 +85,11 @@ export const appRouter = router({
   bumpTokenId,
   getCurrentGeneration,
   getCurrentCardId,
+
+  // CARD TYPE PROCEDURES
+  createCardType,
+  getCardType,
+  getAllCardTypes,
 
   // ADMIN PROCEDURES
   establishNextGeneration,

@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { connectDB } from '@/backend/connection';
 import User from '@/pages/api/schemas/user_schema';
+import { UserRoles } from "@/pages/api/enums";
 import { procedure } from '@/server/trpc';
 import Race, { RaceDocument } from '@/pages/api/schemas/race_schema';
 import PlayerClass, { PlayerClassDocument } from '@/pages/api/schemas/class_schema';
@@ -42,7 +43,8 @@ export const register = procedure
     const db = await connectDB()
     const user = await User.create({
       walletAddress: opts.input.walletAddress,
-      hasCreatePower: true
+      hasCreatePower: true,
+      roles: [UserRoles.USER]
     })
     return user
   })
