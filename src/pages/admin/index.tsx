@@ -2,9 +2,9 @@ import { SuperAdminGuard } from "@/guards/superadmin_guard";
 import { ButtonCustom, HeaderMain } from "@/shared/components";
 import { ITab } from "@/utils";
 import { useState } from "react";
-import { GameSettings } from "./tabs/game_settings";
-import { GeneralSettings } from "./tabs/general_settings";
-import { DefautlCardAndDeckGenerator } from "./tabs/default_card_and_deck_generator";
+import DefautlCardAndDeckGenerator from "./tabs/default_card_and_deck_generator";
+import GameSettings from "./tabs/game_settings";
+import GeneralSettings from "./tabs/general_settings";
 
 export default function AdminPage() {
     const [activeTab, setActiveTab] = useState(0);

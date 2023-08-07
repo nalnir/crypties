@@ -2,7 +2,7 @@ import { PText } from "@/shared";
 import { trpc } from "@/utils/trpc"
 import { Carousel } from "flowbite-react";
 
-export const DefaultCards = () => {
+export default function DefaultCards() {
     const getAllDefaultCards = trpc.getAllDefaultCards.useQuery();
 
     return <div className="grid items-start justify-center grid-cols-4 gap-3 max-h-96">

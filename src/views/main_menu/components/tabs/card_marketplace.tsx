@@ -21,6 +21,7 @@ function CardMarketPlaceTab() {
     const globalModalActions = useGlobalModalActions();
     const [salePrice, setSalePrice] = useState('0');
 
+
     // useEffect(() => {
     //     getBalance()
     // }, [])
@@ -86,7 +87,7 @@ function CardMarketPlaceTab() {
         if (card.orders?.sell_orders) {
             const activeOrder = card.orders.sell_orders.find((order: any) => order.status === "active");
             if (activeOrder) {
-                return <ButtonCustom disabled={parseInt(userBalance.data ?? '0') <= 0} title={`Buy for`} onClick={() => buy(activeOrder)} />
+                return <ButtonCustom disabled={parseFloat(userBalance.data ?? '0') <= 0} title={`Buy for`} onClick={() => buy(activeOrder)} />
             }
             return <PText>Not for sale</PText>
         }

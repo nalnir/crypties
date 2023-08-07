@@ -10,9 +10,9 @@ import { useQuery } from "@tanstack/react-query"
 import { Dropdown } from "flowbite-react"
 import { useState } from "react"
 import { Any } from "react-spring"
-import { DefaultCards } from "./components/default_cards"
+import DefaultCards from "./components/default_cards"
 
-export const DefautlCardGenerator = () => {
+export default function DefautlCardGenerator() {
     const errorSuccessActions = useErrorSuccessActions();
     const globalModal = useGlobalModalActions();
     const generateImages = trpc.generateImages.useMutation();

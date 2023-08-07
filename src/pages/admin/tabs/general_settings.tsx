@@ -1,3 +1,3 @@
-export const GeneralSettings = () => {
+export default function GeneralSettings() {
     return <div></div>
 }

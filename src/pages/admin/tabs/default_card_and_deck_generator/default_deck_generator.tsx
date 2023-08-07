@@ -1,4 +1,4 @@
-export const DefaultDeckGenerator = () => {
+export default function DefaultDeckGenerator() {
     return <div>
 
     </div>

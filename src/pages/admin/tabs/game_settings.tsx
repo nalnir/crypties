@@ -5,7 +5,7 @@ import { removeSingleWhiteSpace } from "@/utils/functions/remove_single_white_sp
 import { trpc } from "@/utils/trpc";
 import { useState } from "react";
 
-export const GameSettings = () => {
+export default function GameSettings() {
     const [cardType, setCardType] = useState('');
     const [power, setPower] = useState(0);
     const createCardType = trpc.createCardType.useMutation();

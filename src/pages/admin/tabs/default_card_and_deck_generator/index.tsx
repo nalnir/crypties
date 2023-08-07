@@ -1,10 +1,10 @@
 import { ITab } from "@/utils"
-import { DefaultDeckGenerator } from "./default_deck_generator"
-import { DefautlCardGenerator } from "./default_card_generator"
 import { ButtonCustom } from "@/shared"
 import { useState } from "react"
+import DefaultDeckGenerator from "./default_deck_generator"
+import DefautlCardGenerator from "./default_card_generator"
 
-export const DefautlCardAndDeckGenerator = () => {
+export default function DefautlCardAndDeckGenerator() {
     const [activeTab, setActiveTab] = useState(0)
     const tabs: ITab[] = [
         {
