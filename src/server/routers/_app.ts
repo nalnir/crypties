@@ -13,7 +13,9 @@ import { getAlignmentStat, getClassStat, getRaceStat } from './procedures/stats_
 import { getAllCards, getUserBalance, getUserCards } from './procedures/imx_procedures';
 import { connectToLobby } from './procedures/battle_procedures';
 import { createCardType, getAllCardTypes, getCardType } from './procedures/card_type_procedures';
-import { createDefaultCard, getAllDefaultCards } from './procedures/default_card_procedures';
+import { createDefaultCard, getAllDefaultCards, publishUnpublishDefaultCard } from './procedures/default_card_procedures';
+import { createNewDefaultDeck, deleteDefaultDeck, getAllDefaultDecks, publishUnpublishDeck, updateDefaultDeck } from './procedures/default_deck_procedures';
+import { getETHprice } from './procedures/other_procedures';
 
 const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_BOT_TOKEN ?? '');
 const chatpgptConfig = new Configuration({
@@ -76,6 +78,14 @@ export const appRouter = router({
   // DEFAULT CARD PROCEDURES
   createDefaultCard,
   getAllDefaultCards,
+  publishUnpublishDefaultCard,
+  deleteDefaultDeck,
+
+  // DEFAULT DECK PROCEDURES
+  getAllDefaultDecks,
+  createNewDefaultDeck,
+  publishUnpublishDeck,
+  updateDefaultDeck,
 
   // CARD CREATION PROCEDURES
   uploadMetadataToIPFS,
@@ -102,7 +112,10 @@ export const appRouter = router({
   //IMX PROCEDURES
   getUserCards,
   getAllCards,
-  getUserBalance
+  getUserBalance,
+
+  //OTHER PROCEDURES
+  getETHprice
 });
 
 export type AppRouter = typeof appRouter;

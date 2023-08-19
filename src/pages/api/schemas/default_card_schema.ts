@@ -6,7 +6,7 @@ const defaultCardSchema = new mongoose.Schema({
     description: { type: String, required: true },
     image_url: { type: String, required: true },
     metadata: {
-        health: { type: String, required: true },
+        health: { type: Number, required: true },
         attackPower: { type: Number, required: true },
         special: { type: String, required: false },
         creatorPlayerName: { type: String, required: true },
@@ -18,7 +18,8 @@ const defaultCardSchema = new mongoose.Schema({
         generation: { type: Number, required: true },
         imageId: { type: String, required: true },
         default: { type: Boolean, required: true }
-    }
+    },
+    isPublished: { type: Boolean, required: false }
 }, { timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' } });
 
 export interface DefaultCardDocument extends Document {
@@ -42,6 +43,7 @@ export interface DefaultCardDocument extends Document {
     },
     createdAt?: Date;
     updatedAt?: Date;
+    isPublished?: boolean
 }
 
 interface DefaultCardModel extends Model<DefaultCardDocument> { }

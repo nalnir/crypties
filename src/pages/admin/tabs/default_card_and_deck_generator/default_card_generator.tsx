@@ -20,6 +20,7 @@ export default function DefautlCardGenerator() {
     const getGeneration = trpc.getCurrentGeneration.useQuery();
     const getAllCardTypes = trpc.getAllCardTypes.useQuery();
     const createDefaultCard = trpc.createDefaultCard.useMutation();
+    const getAllDefaultCards = trpc.getAllDefaultCards.useQuery();
     const [name, setName] = useState('')
     const [leonardoPropmt, setLeonardoPrompt] = useState('');
     const [attackPower, setAttackPower] = useState(0)
@@ -63,7 +64,7 @@ export default function DefautlCardGenerator() {
             errorSuccessActions.openErrorSuccess('Image generation faild', ErrorSuccessType.ERROR)
             return
         }
-        globalModal.openGlobalModal(<div className="flex space-x-3 cursor-pointer">{images.map((image, index) => <img onClick={() => create(image)} key={index} src={image.url ?? ''} />)}</div>)
+        globalModal.openGlobalModal(<div className="flex space-x-3 cursor-pointer">{images.map((image, index) => <img onClick={() => create(image)} className="w-60 h-60" key={index} src={image.url ?? ''} />)}</div>)
     }
 
     const create = async (image: any) => {
@@ -88,7 +89,8 @@ export default function DefautlCardGenerator() {
                 generation: getGeneration.data?.generation ?? 0,
                 imageId: image.id,
                 default: true
-            }
+            },
+            isPublished: false
         }
         const res = await createDefaultCard.mutateAsync(defaultCard)
         if (!res) {
@@ -96,6 +98,7 @@ export default function DefautlCardGenerator() {
         } else {
             resetLocalState()
             errorSuccessActions.openErrorSuccess('Default card created', ErrorSuccessType.SUCCESS)
+            await getAllDefaultCards.refetch();
         }
     }
 

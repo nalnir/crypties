@@ -41,5 +41,6 @@ export const getCardType = procedure
 
 export const getAllCardTypes = procedure
     .query(async (): Promise<CardTypeDocument[]> => {
-        return await CardType.find({});
+        const allCards: CardTypeDocument[] = await CardType.find({});
+        return allCards ?? [];
     })

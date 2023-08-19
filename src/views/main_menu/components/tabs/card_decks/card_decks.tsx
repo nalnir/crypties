@@ -34,7 +34,7 @@ function CardDecksTab() {
 
     const tabs: ITab[] = [
         {
-            title: "DEFAULT DECKS",
+            title: "BUY DEFAULT DECKS",
             component: <DefaultDecksTab />
         },
         {

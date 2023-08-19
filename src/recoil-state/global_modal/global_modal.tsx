@@ -24,7 +24,7 @@ export function GlobalModal() {
 			aria-labelledby="basic-modal-title"
 			aria-describedby="basic-modal-description"
 		>
-			<div className="absolute left-1/3 w-[500px] bg-white rounded-lg shadow-lg p-3 ">
+			<div className="absolute p-3 m-10 bg-white rounded-lg shadow-lg h-fit ">
 				{globalModalState.component ? globalModalState.component : <></>}
 			</div>
 		</Modal>

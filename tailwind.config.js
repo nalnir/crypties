@@ -9,6 +9,11 @@ module.exports = {
 		join(__dirname, './src/**/*.{js,ts,jsx,tsx}')
 	],
 	theme: {
-		extend: {},
+		extend: {
+			height: {
+				'120': '30rem', // Example custom height value
+				// Add more custom height values as needed
+			},
+		},
 	},
 };
