@@ -14,16 +14,17 @@ import { usePlayerDecksActions } from "@/recoil-state/player_decks/player_decks.
 import { useErrorSuccessActions } from "@/recoil-state/error_success/error_success.actions";
 import { ErrorSuccessType } from "@/recoil-state/error_success/error_success.atom";
 
-interface AllCardsTabProps {
-    playerCards: OriginalCard[];
-    playerDecks: DeckDocument[];
-}
-export const AllCardsTab = ({ playerCards, playerDecks }: AllCardsTabProps) => {
+export const AllCardsTab = () => {
     const { data: user, isLoading, isError } = useQuery<UserDocument>(['user']);
     const playerDeckActions = usePlayerDecksActions();
     const errorSuccessActions = useErrorSuccessActions();
 
     const saveDeck = trpc.saveUserDeck.useMutation();
+    const getUserCards = trpc.getUserCards.useQuery({ walletAddress: user?.walletAddress ?? '' });
+    const getUserDecks = trpc.getUserDecks.useQuery({ walletAddress: user?.walletAddress ?? '' });
+
+    const allUserCards: any = getUserCards.data ?? [];
+    const allUserDecks: any = getUserDecks.data ?? [];
 
     const addRemoveFromDeck = async (deck: DeckDocument, card: OriginalCard) => {
         const newDeck: DeckDocument = JSON.parse(JSON.stringify(deck))
@@ -53,8 +54,9 @@ export const AllCardsTab = ({ playerCards, playerDecks }: AllCardsTabProps) => {
     }
 
     return <div className="grid grid-cols-4 gap-3">
-        {playerCards.map((card, index) => {
-            return <div key={index} className="flex-col items-center justify-center p-3 space-y-3 border border-black rounded-lg shadow-lg border-opacity-30">
+        {allUserCards?.result?.map((card: any, cardIndex: number) => {
+            // console.log('card: ', card)
+            return <div key={cardIndex} className="flex-col items-center justify-center p-3 space-y-3 border border-black rounded-lg shadow-lg border-opacity-30">
                 <img src={card.image_url} className="border rounded-md border-secondary-400 w-30 h-30" />
                 <div>
                     <PText>{card.name}</PText>
@@ -63,11 +65,14 @@ export const AllCardsTab = ({ playerCards, playerDecks }: AllCardsTabProps) => {
                 </div>
 
                 <Dropdown disabled={saveDeck.isLoading} label="Add to deck" arrowIcon={false} className="rounded-lg">
-                    {playerDecks.length > 0 ? playerDecks.map((deck, index) => {
-                        return <Dropdown.Item onClick={() => addRemoveFromDeck(deck, card)} key={index} className="flex items-center justify-start space-x-1">
-                            <PText className="text-black">{deck.deckName}</PText>
-                            {isPartOfDeck(deck, card) ? <PText className="text-black">-</PText> : <PText className="text-black">+</PText>}
-                        </Dropdown.Item>
+                    {allUserDecks.length > 0 ? allUserDecks.map((deck: any, deckIndex: number) => {
+                        if (!deck.default) {
+                            return <Dropdown.Item onClick={() => addRemoveFromDeck(deck, card)} key={deckIndex} className="flex items-center justify-start space-x-1">
+                                <PText className="text-black">{deck.deckName}</PText>
+                                {isPartOfDeck(deck, card) ? <PText className="text-black">-</PText> : <PText className="text-black">+</PText>}
+                            </Dropdown.Item>
+                        }
+                        return <></>
                     }) : <Dropdown.Item><PText className="text-black">You have no decks</PText></Dropdown.Item>}
                 </Dropdown>
             </div>

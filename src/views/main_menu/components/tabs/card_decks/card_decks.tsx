@@ -28,9 +28,12 @@ function CardDecksTab() {
 
     const errorSuccessActions = useErrorSuccessActions();
 
-    const getUserCards = trpc.getUserCards.useMutation();
-    const getUserDecks = trpc.getUserDecks.useMutation();
+    const getUserCards = trpc.getUserCards.useQuery({ walletAddress: user?.walletAddress ?? '' });
+    const getUserDecks = trpc.getUserDecks.useQuery({ walletAddress: user?.walletAddress ?? '' });
     const updateUserDecks = trpc.updateUserDecks.useMutation();
+
+    const allUserDecks = getUserDecks.data ?? [];
+    const allPlayerCards = getUserCards.data ? getUserCards.data.result : [];
 
     const tabs: ITab[] = [
         {
@@ -39,45 +42,28 @@ function CardDecksTab() {
         },
         {
             title: "PLAYER DECKS",
-            component: <PlayerDecksTab playerDecks={playerDecksState.playerDecks} />
+            component: <PlayerDecksTab />
         },
         {
             title: "ALL CARDS",
-            component: <AllCardsTab playerDecks={playerDecksState.playerDecks} playerCards={playerCardsState.playerCards} />
+            component: <AllCardsTab />
         },
     ]
 
     useEffect(() => {
-        if (!playerCardsState.fetched) {
-            userCards()
-        }
-    }, [playerCardsState.fetched])
-
-    useEffect(() => {
-        if (!playerDecksState.fetched && playerCardsState.fetched) {
+        if (allUserDecks.length > 0) {
             userDecks()
         }
-    }, [playerDecksState.fetched, playerCardsState.fetched])
-
-    const userCards = async () => {
-        const userCards = await getUserCards.mutateAsync({
-            walletAddress: user?.walletAddress ?? ''
-        })
-        playerCardsActions.setAllCards(userCards.result as any)
-    }
+    }, [allUserDecks.length])
 
     const userDecks = async () => {
-        const userDecks: any = await getUserDecks.mutateAsync({
-            walletAddress: user?.walletAddress ?? ''
-        })
-
         // FILTERING IS NEEDED IN CASE CARDS USER SOLD SO THEY ARE NO LONGER IN HIS POSESSION BUT THEIR ID'S ARE STILL RECORDED IN HIS DECK.
-        const filteredDecks = userDecks.map((deck: any) => ({
+        const filteredDecks = allUserDecks.map((deck: any) => ({
             ...deck,
-            cards: deck.cards.filter((card: any) => playerCardsState.playerCards.some((playerCard) => playerCard.token_id === card))
+            cards: deck.cards.filter((card: any) => allPlayerCards.some((playerCard) => playerCard.token_id === card))
         }));
 
-        if (!(JSON.stringify(filteredDecks) === JSON.stringify(userDecks))) {
+        if (!(JSON.stringify(filteredDecks) === JSON.stringify(allUserDecks))) {
             const res = await updateUserDecks.mutateAsync({
                 decks: filteredDecks
             })
@@ -87,7 +73,7 @@ function CardDecksTab() {
         }
         //
 
-        playerDecksActions.setAllDecks(filteredDecks)
+        getUserDecks.refetch()
     }
 
 

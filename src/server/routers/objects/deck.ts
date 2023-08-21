@@ -5,4 +5,5 @@ export const deck = z.object({
     walletAddress: z.string(),
     cards: z.array(z.string()),
     deckName: z.string(),
+    default: z.boolean().nullish()
 })

@@ -56,7 +56,7 @@ export const getUserCards = procedure
       walletAddress: z.string()
     })
   )
-  .mutation(async (opts) => {
+  .query(async (opts) => {
     const inputs = opts.input;
     const minter = await ImmutableXClient.build({
       ...client,

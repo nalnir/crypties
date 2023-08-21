@@ -186,7 +186,7 @@ export const getUserDecks = procedure
   .input(z.object({
     walletAddress: z.string(),
   }))
-  .mutation(async (opts) => {
+  .query(async (opts) => {
     const inputs = opts.input;
     const userDecks: DeckDocument[] | null = await Deck.find({ walletAddress: inputs.walletAddress })
     return userDecks;
@@ -196,7 +196,9 @@ export const createUserDeck = procedure
   .input(z.object({
     walletAddress: z.string(),
     deckName: z.string(),
-    image: z.string()
+    image: z.string(),
+    cards: z.array(z.string()).nullish(),
+    default: z.boolean().nullish()
   }))
   .mutation(async (opts) => {
     const inputs = opts.input;
@@ -204,7 +206,7 @@ export const createUserDeck = procedure
     if (userDeck) {
       throw new Error('Deck with this name already exists')
     }
-    const newUserDeck: DeckDocument | null = await Deck.create({ walletAddress: inputs.walletAddress, deckName: inputs.deckName, image: inputs.image })
+    const newUserDeck: DeckDocument | null = await Deck.create({ walletAddress: inputs.walletAddress, deckName: inputs.deckName, image: inputs.image, cards: inputs.cards, default: inputs.default })
     return newUserDeck;
   })
 
@@ -225,6 +227,9 @@ export const deleteUserDeck = procedure
   }))
   .mutation(async (opts) => {
     const inputs = opts.input;
+    if (inputs.deck.default) {
+      return;
+    }
     const res: DeckDocument | null = await Deck.findByIdAndDelete({ _id: inputs.deck._id });
     return res;
   })

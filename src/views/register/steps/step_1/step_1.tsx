@@ -46,7 +46,7 @@ export const Step1 = () => {
 
     const { data: user, isLoading, isError } = useQuery<UserDocument>(['user']);
 
-    const getUserCards = trpc.getUserCards.useMutation();
+    // const getUserCards = trpc.getUserCards.useQuery({ walletAddress: user?.walletAddress ?? '' });
 
     const getAllDefaultRaces = async () => {
         if (!defaultRacesState.fetched) {

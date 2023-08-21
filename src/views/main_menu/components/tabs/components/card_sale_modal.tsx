@@ -9,7 +9,7 @@ export const CardSaleModal = ({ card, listOnMarketPlace }: CardSaleModalProps) =
     const [salePrice, setSalePrice] = useState('0');
 
     return <div className="flex-col items-center justify-center p-3 space-y-3 bg-white">
-        <img src={card.image_url ?? ''} alt="Card image" />
+        <img src={card.image_url ?? ''} alt="Card image" className="w-96 h-96" />
         <PText className="font-bold text-black">{card.name}</PText>
         <PText className="text-black">{card.description}</PText>
         <div className="flex items-center justify-start space-x-3">

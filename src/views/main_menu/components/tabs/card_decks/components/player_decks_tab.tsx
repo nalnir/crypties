@@ -9,10 +9,7 @@ import { Input } from "@mui/material"
 import { useQuery } from "@tanstack/react-query"
 import { useState } from "react"
 
-interface PlayerDecksTabProps {
-    playerDecks: DeckDocument[]
-}
-export const PlayerDecksTab = ({ playerDecks }: PlayerDecksTabProps) => {
+export const PlayerDecksTab = () => {
     const { data: user, isLoading, isError } = useQuery<UserDocument>(['user']);
     const errorSuccessActions = useErrorSuccessActions();
     const playerDeckActions = usePlayerDecksActions();
@@ -20,8 +17,10 @@ export const PlayerDecksTab = ({ playerDecks }: PlayerDecksTabProps) => {
 
     const createNewDeck = trpc.createUserDeck.useMutation();
     const deleteUserDeck = trpc.deleteUserDeck.useMutation();
-    const getUserDecks = trpc.getUserDecks.useMutation();
+    const getUserDecks = trpc.getUserDecks.useQuery({ walletAddress: user?.walletAddress ?? '' });
     const generateDeckImage = trpc.generateImages.useMutation();
+
+    const userDecks = getUserDecks.data ?? [];
 
     const createDeck = async () => {
         if (deckName.length > 0) {
@@ -62,12 +61,12 @@ export const PlayerDecksTab = ({ playerDecks }: PlayerDecksTabProps) => {
     }
 
     return <div className="p-3">
-        {playerDecks.length > 0 ? <div className="grid grid-cols-4 gap-3">
+        {userDecks.length > 0 ? <div className="grid grid-cols-4 gap-3">
             <div className="p-3 space-y-3 border border-separate border-black rounded-lg shadow-xl shrink-1 border-opacity-30">
                 <Input value={deckName} onChange={(e) => setDeckName(e.target.value)} placeholder="Deck name" className="w-full" />
                 <ButtonCustom isLoading={createNewDeck.isLoading} title="Create" onClick={createDeck} className="w-full" />
             </div>
-            {playerDecks.map((deck, index) => {
+            {userDecks.map((deck: any, index: number) => {
                 return <div key={index}
                     style={{
                         backgroundImage: `url(${deck.image})`,
@@ -78,8 +77,8 @@ export const PlayerDecksTab = ({ playerDecks }: PlayerDecksTabProps) => {
                     className={`p-3 space-y-3 border border-separate border-black rounded-lg shadow-xl shrink-1 border-opacity-30`}
                 >
                     <PText>{deck.deckName}</PText>
-                    <PText>{deck.cards.length ?? 0} cards in the deck</PText>
-                    <ButtonCustom isLoading={deleteUserDeck.isLoading} title="Delete" onClick={() => deleteDeck(deck)} className="w-full" />
+                    <PText>{deck.cards.length ?? 0} {deck.cards.length === 1 ? 'card' : 'cards'} in the deck</PText>
+                    {!deck.default ? <ButtonCustom isLoading={deleteUserDeck.isLoading} title="Delete" onClick={() => deleteDeck(deck)} className="w-full" /> : <></>}
                 </div>
             })}
         </div> : <div className="space-y-1">

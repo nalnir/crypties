@@ -94,14 +94,13 @@ export const getTokenId = procedure
 
 export const bumpTokenId = procedure
     .input(z.object({
-        bump: z.number(),
         generation: z.number(),
     }))
     .mutation(async (opts) => {
         const inputs = opts.input;
         return await Generation.findOneAndUpdate({ generation: inputs.generation }, {
-            amountOfCardsForged: inputs.bump,
-        });
+            $inc: { amountOfCardsForged: 1 }
+        }, { new: true });
     })
 
 export const mintBulk = procedure
@@ -147,18 +146,16 @@ export const mintBulk = procedure
             await waitForTransaction(Promise.resolve(registerImxResult.tx_hash));
         }
 
-        const tokens = Array.from({ length: inputs.number_of_tokens_to_mint }, (_, i) => i).map(i => ({
-            id: (inputs.tokenId + i).toString(),
-            blueprint: 'onchain-metadata',
-        }));
-
         const payload: ImmutableMethodParams.ImmutableOffchainMintV2ParamsTS = [
             {
                 contractAddress: TOKEN_ADDRESS, // NOTE: a mintable token contract is not the same as regular erc token contract
                 users: [
                     {
                         etherKey: inputs.walletAddress.toLowerCase(),
-                        tokens,
+                        tokens: [{
+                            id: inputs.tokenId.toString(),
+                            blueprint: 'onchain-metadata'
+                        }]
                     },
                 ],
             },

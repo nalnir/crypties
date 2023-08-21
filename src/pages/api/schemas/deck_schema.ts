@@ -6,7 +6,8 @@ const deckSchema = new mongoose.Schema({
     walletAddress: { type: String, required: true },
     cards: { type: [String], required: false },
     deckName: { type: String, required: true },
-    image: { type: String, required: false }
+    image: { type: String, required: false },
+    default: { type: Boolean, required: false }
 }, { timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' } });
 
 
@@ -16,6 +17,7 @@ export interface DeckDocument extends Document {
     cards: string[];
     deckName: string;
     image: string;
+    default: boolean;
 }
 
 interface DeckModel extends Model<DeckDocument> { }
