@@ -38,15 +38,7 @@ export const Step1 = () => {
     const getUserFantasyRace = trpc.getUserFantasyRace.useMutation()
 
     const [fantasyRaceList, setFantasyRaceList] = useState<RaceDocument[]>([]);
-
-    // const generateImages = trpc.generateImages.useMutation();
-    // const getCurrentGeneration = trpc.getCurrentGeneration.useQuery();
-    // const uploadMetadataToIPFS = trpc.uploadMetadataToIPFS.useMutation();
-    // const uploadMetadataToS3 = trpc.uploadMetadataToS3.useMutation();
-
     const { data: user, isLoading, isError } = useQuery<UserDocument>(['user']);
-
-    // const getUserCards = trpc.getUserCards.useQuery({ walletAddress: user?.walletAddress ?? '' });
 
     const getAllDefaultRaces = async () => {
         if (!defaultRacesState.fetched) {
@@ -125,82 +117,6 @@ export const Step1 = () => {
             playerFantasyRaceActions.setFetched(true)
         }
     }
-
-    // const getCards = async () => {
-    //     const cards = await getUserCards.mutateAsync({
-    //         walletAddress: user?.walletAddress ?? ''
-    //     });
-    //     const playerCardCollection: OriginalCard[] = []
-    //     cards.result.forEach((card) => {
-    //         if (card) {
-    //             playerCardCollection.push({
-    //                 name: card.name ?? '',
-    //                 description: card.description ?? '',
-    //                 image_url: card.image_url ?? '',
-    //                 metadata: card.metadata as any,
-    //             })
-    //         }
-    //     })
-    //     console.log('CARDS: ', cards)
-    // }
-
-    // THIS FUNCTION SHOULD BE FOR CARD CREATION
-    // const generate = async () => {
-    //     const GENERATION = process.env.NEXT_PUBLIC_GENERATION;
-    //     const images = await generateImages.mutateAsync({
-    //         prompt: "PIXAR ANIMATION STYLE, grinning cute gnome"
-    //     })
-
-    //     if (images) {
-    //         const numberOfTokensToMint = 1;
-    //         const generation: any = await getCurrentGeneration.data
-
-    //         const tokenId: number = getLatestCardId.data + 1;
-    //         const groupId: number = uuidv4();
-    //         const first_image = images[0]
-    //         let card: OriginalCard = {
-    //             name: "Gnome",
-    //             description: "inputs.description",
-    //             image_url: first_image.url ?? '',
-    //             metadata: {
-    //                 health: 1,
-    //                 attackPower: 1,
-    //                 creatorPlayerName: "juico911",
-    //                 creatorAddress: user?.walletAddress ?? '',
-    //                 creatorLoreName: "Crescent Rainbow hunter",
-    //                 cardType: "common",
-    //                 cardTypeId: "123456",
-    //                 generation: generation.generation,
-    //                 imageId: first_image.id ?? '',
-    //                 groupId: groupId
-    //             },
-    //         }
-    //         const cid = await uploadMetadataToIPFS.mutateAsync(card)
-    //         console.log('CID: ', cid)
-    //         card.metadata.ipfsCID = cid;
-
-    //         console.log('GONNA UPLOAD TO S3')
-    //         await Promise.all(
-    //             Array.from({ length: numberOfTokensToMint }, (_, i) => i).map(async (i) => {
-    //                 await uploadMetadataToS3.mutateAsync({
-    //                     original_card: card,
-    //                     tokenId: tokenId + i,
-    //                 })
-    //             })
-    //         )
-    //         console.log('GONNA MINT')
-    //         await mintTokens.mutateAsync({
-    //             walletAddress: user?.walletAddress ?? '',
-    //             tokenId: 3,
-    //             number_of_tokens_to_mint: 1
-    //         })
-
-    //         await bumpTokenId.mutateAsync({
-    //             bump: (tokenId + numberOfTokensToMint) - 1,
-    //             generation: generation
-    //         })
-    //     }
-    // }
 
     return <div className="grid w-screen h-screen grid-cols-12 bg-primary-400">
         <div className="flex justify-center col-span-8 overflow-hidden">

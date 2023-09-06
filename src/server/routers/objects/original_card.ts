@@ -7,6 +7,7 @@ export const original_card = z.object({
     metadata: z.object({
         health: z.number(),
         attackPower: z.number(),
+        manaCost: z.number().nullish(),
         special: z.string().nullish(),
         creatorPlayerName: z.string(),
         creatorAddress: z.string(),

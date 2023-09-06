@@ -28,7 +28,7 @@ export const PlayerDecksTab = () => {
                 prompt: `${deckName} crystal, center shot, good magical background`,
                 negative_prompt: 'text, face, people, bizzare, weird, character, signature, title, watermark',
                 modelId: 'd69c8273-6b17-4a30-a13e-d6637ae1c644',
-                promptMagic: true,
+                promptMagic: false,
                 num_images: 1
             })
             if (!image) {

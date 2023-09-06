@@ -8,7 +8,7 @@ import { bumpPlayedByAmountFantasyRace, getDefaultClasses, getDefaultFantasyRace
 import { bumpPlayedByAmoungPlayerClass, getOtherPlayerClasses } from './procedures/player_class_procedures';
 import { getAuthToken, invalidateAuthToken, registerAuthToken } from './procedures/auth_procedures';
 import { bumpTokenId, getCurrentCardId, getCurrentGeneration, getTokenId, mintBulk, uploadMetadataToIPFS, uploadMetadataToS3 } from './procedures/card_creation_procedures';
-import { establishNextGeneration } from './procedures/admin_procedures';
+import { establishNextGeneration, testAuth } from './procedures/admin_procedures';
 import { getAlignmentStat, getClassStat, getRaceStat } from './procedures/stats_procedures';
 import { getAllCards, getUserBalance, getUserCards } from './procedures/imx_procedures';
 import { connectToLobby } from './procedures/battle_procedures';
@@ -24,6 +24,9 @@ const chatpgptConfig = new Configuration({
 const openai = new OpenAIApi(chatpgptConfig);
 
 export const appRouter = router({
+  // ADMIN PROCEDURES
+  establishNextGeneration,
+  testAuth,
 
   // AUTH PROCEDURES
   getAuthToken,
@@ -100,9 +103,6 @@ export const appRouter = router({
   createCardType,
   getCardType,
   getAllCardTypes,
-
-  // ADMIN PROCEDURES
-  establishNextGeneration,
 
   // STAT PROCEDURES
   getRaceStat,

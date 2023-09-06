@@ -1,9 +1,9 @@
 import { connectDB } from "@/backend/connection";
 import CardType, { CardTypeDocument } from "@/pages/api/schemas/card_type_schema";
-import { procedure } from "@/server/trpc";
+import { publicProcedure } from "@/server/trpc";
 import { z } from "zod";
 
-export const createCardType = procedure
+export const createCardType = publicProcedure
     .input(
         z.object({
             name: z.string(),
@@ -29,7 +29,7 @@ export const createCardType = procedure
         return authToken;
     })
 
-export const getCardType = procedure
+export const getCardType = publicProcedure
     .input(
         z.object({
             id: z.string()
@@ -39,7 +39,7 @@ export const getCardType = procedure
         return await CardType.findOne({ _id: opts.input.id })
     })
 
-export const getAllCardTypes = procedure
+export const getAllCardTypes = publicProcedure
     .query(async (): Promise<CardTypeDocument[]> => {
         const allCards: CardTypeDocument[] = await CardType.find({});
         return allCards ?? [];

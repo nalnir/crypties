@@ -2,10 +2,10 @@ import { connectDB } from "@/backend/connection";
 import PlayerClass from "@/pages/api/schemas/class_schema";
 import Race from "@/pages/api/schemas/race_schema";
 import User from "@/pages/api/schemas/user_schema";
-import { procedure } from "@/server/trpc";
+import { publicProcedure } from "@/server/trpc";
 import { z } from "zod";
 
-export const getRaceStat = procedure
+export const getRaceStat = publicProcedure
     .input(
         z.object({
             id: z.string(),
@@ -18,7 +18,7 @@ export const getRaceStat = procedure
         });
     });
 
-export const getClassStat = procedure
+export const getClassStat = publicProcedure
     .input(
         z.object({
             id: z.string(),
@@ -31,7 +31,7 @@ export const getClassStat = procedure
         });
     });
 
-export const getAlignmentStat = procedure
+export const getAlignmentStat = publicProcedure
     .mutation(async () => {
         const db = await connectDB();
         const lightAlignmentAmount = await User.countDocuments({ alignment: 'light' });

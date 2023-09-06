@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { procedure } from '@/server/trpc';
+import { publicProcedure } from '@/server/trpc';
 import { Link } from '@imtbl/imx-sdk';
 import { ImmutableXClient } from '@imtbl/imx-sdk';
 import { waitForTransaction } from '@/server/helper_functions';
@@ -31,7 +31,7 @@ const client = {
   gasPrice: process.env.GAS_PRICE,
 }
 
-export const setupWallet = procedure
+export const setupWallet = publicProcedure
   .input(
     z.object({
       imxLink: z.custom((val) => {
@@ -50,7 +50,7 @@ export const setupWallet = procedure
     localStorage.setItem('STARK_PUBLIC_KEY', starkPublicKey);
   })
 
-export const getUserCards = procedure
+export const getUserCards = publicProcedure
   .input(
     z.object({
       walletAddress: z.string()
@@ -80,12 +80,14 @@ export const getUserCards = procedure
 
     const assets = await minter.getAssets({
       user: inputs.walletAddress,
-      collection: IMX_COLLECTION_ADDRESS
+      collection: IMX_COLLECTION_ADDRESS,
+      sell_orders: true
     })
+
     return assets;
   })
 
-export const getAllCards = procedure
+export const getAllCards = publicProcedure
   .query(async () => {
 
     const minter = await ImmutableXClient.build({
@@ -113,7 +115,7 @@ export const getAllCards = procedure
     return assets
   })
 
-export const getUserBalance = procedure
+export const getUserBalance = publicProcedure
   .input(z.object({
     tokenAddress: z.string().default('eth'),
     walletAddress: z.string()

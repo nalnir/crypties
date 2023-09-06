@@ -1,15 +1,15 @@
 import { connectDB } from "@/backend/connection";
 import AuthToken from "@/pages/api/schemas/auth_token_schema";
-import { procedure } from "@/server/trpc"
+import { publicProcedure } from "@/server/trpc"
 import e from "cors";
 import { z } from "zod"
 
 
-export const getAuthToken = procedure
+export const getAuthToken = publicProcedure
     .input(
-    z.object({
-        walletAddress: z.string(),
-    })
+        z.object({
+            walletAddress: z.string(),
+        })
     )
     .mutation(async (opts) => {
         const db = await connectDB();
@@ -19,12 +19,12 @@ export const getAuthToken = procedure
         return authToken;
     })
 
-export const registerAuthToken = procedure
+export const registerAuthToken = publicProcedure
     .input(
-    z.object({
-        walletAddress: z.string(),
-        userId: z.string()
-    })
+        z.object({
+            walletAddress: z.string(),
+            userId: z.string()
+        })
     )
     .mutation(async (opts) => {
         const db = await connectDB();
@@ -41,15 +41,15 @@ export const registerAuthToken = procedure
         return authToken;
     })
 
-export const invalidateAuthToken = procedure
-.input(
-    z.object({
-        walletAddress: z.string(),
-    })
+export const invalidateAuthToken = publicProcedure
+    .input(
+        z.object({
+            walletAddress: z.string(),
+        })
     )
     .mutation(async (opts) => {
         const db = await connectDB();
-        const authToken = await AuthToken.findByIdAndRemove({
+        const authToken = await AuthToken.findOneAndRemove({
             userWalletAddress: opts.input.walletAddress,
         });
         return authToken;

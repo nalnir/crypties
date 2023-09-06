@@ -6,7 +6,7 @@ import { usePlayerClassActions } from "@/recoil-state/player_class/player_class.
 import { PText } from "@/shared/components/p_text"
 import { Button, CircularProgress, Input } from "@mui/material"
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { useRecoilValue } from "recoil";
 import { trpc } from "@/utils/trpc";
 import { capitalizeFirstLetter } from "@/utils/functions/capitalize_first_letter";
@@ -43,7 +43,7 @@ export const ClassCreatorComponent = () => {
     const queryClient = useQueryClient();
     const { data: user, isLoading, isError } = useQuery<UserDocument>(['user']);
 
-    const handleSetName = (e: any) => {
+    const handleSetName = (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
         const input: string = e.target.value
         if (input.length > 15) {
             return
@@ -160,7 +160,7 @@ export const ClassCreatorComponent = () => {
                             negative_prompt: 'text, logo, out of aspect ratio, people, characters, animals, creatures, humans, face bad drawing, bad anatomy, ugly, abnormal anatomy, defects, noise, fuzzy, oversaturated, soft, blurry, out of focus, frame, Ugly face, bad body shape, blurred details, awkward poses, incorrect shadows, unrealistic expressions, lack of texture, poor composition, incorrect proportions,',
                             modelId: 'd69c8273-6b17-4a30-a13e-d6637ae1c644',
                             num_images: 2,
-                            promptMagic: true
+                            promptMagic: false
                         })
                         const urls: string[] = []
                         if (images) {

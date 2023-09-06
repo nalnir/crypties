@@ -1,8 +1,8 @@
 import { z } from 'zod';
 import { connectDB } from '@/backend/connection';
-import User from '@/pages/api/schemas/user_schema';
+import User, { UserDocument } from '@/pages/api/schemas/user_schema';
 import { UserRoles } from "@/pages/api/enums";
-import { procedure } from '@/server/trpc';
+import { publicProcedure } from '@/server/trpc';
 import Race, { RaceDocument } from '@/pages/api/schemas/race_schema';
 import PlayerClass, { PlayerClassDocument } from '@/pages/api/schemas/class_schema';
 import { ImmutableXClient } from '@imtbl/imx-sdk';
@@ -19,21 +19,24 @@ const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY ?? '';
 
 const provider = new AlchemyProvider(ETH_NETWORK, ALCHEMY_API_KEY);
 
-export const getUser = procedure
+export const getUser = publicProcedure
   .input(
     z.object({
       walletAddress: z.string(),
     })
   )
   .mutation(async (opts) => {
+
     const db = await connectDB();
     const user = await User.findOne({
       walletAddress: opts.input.walletAddress,
     });
-    return user;
+
+    opts.ctx.user = user ?? undefined;
+    return user as UserDocument;
   });
 
-export const register = procedure
+export const register = publicProcedure
   .input(
     z.object({
       walletAddress: z.string(),
@@ -46,10 +49,12 @@ export const register = procedure
       hasCreatePower: true,
       roles: [UserRoles.USER]
     })
+
+    opts.ctx.user = user;
     return user
   })
 
-export const onboardUser = procedure
+export const onboardUser = publicProcedure
   .input(
     z.object({
       walletAddress: z.string(),
@@ -92,7 +97,7 @@ export const onboardUser = procedure
     return updatedUser;
   })
 
-export const saveUserFantasyRace = procedure
+export const saveUserFantasyRace = publicProcedure
   .input(
     z.object({
       name: z.string(),
@@ -117,7 +122,7 @@ export const saveUserFantasyRace = procedure
     }
   })
 
-export const getUserFantasyRace = procedure
+export const getUserFantasyRace = publicProcedure
   .input(
     z.object({
       walletAddress: z.string(),
@@ -137,7 +142,7 @@ export const getUserFantasyRace = procedure
     }
   })
 
-export const saveUserPlayerClass = procedure
+export const saveUserPlayerClass = publicProcedure
   .input(
     z.object({
       name: z.string(),
@@ -162,7 +167,7 @@ export const saveUserPlayerClass = procedure
     }
   })
 
-export const getUserClass = procedure
+export const getUserClass = publicProcedure
   .input(
     z.object({
       walletAddress: z.string(),
@@ -182,7 +187,7 @@ export const getUserClass = procedure
     }
   })
 
-export const getUserDecks = procedure
+export const getUserDecks = publicProcedure
   .input(z.object({
     walletAddress: z.string(),
   }))
@@ -192,7 +197,7 @@ export const getUserDecks = procedure
     return userDecks;
   })
 
-export const createUserDeck = procedure
+export const createUserDeck = publicProcedure
   .input(z.object({
     walletAddress: z.string(),
     deckName: z.string(),
@@ -210,18 +215,17 @@ export const createUserDeck = procedure
     return newUserDeck;
   })
 
-export const saveUserDeck = procedure
+export const saveUserDeck = publicProcedure
   .input(z.object({
     deck: deck
   }))
   .mutation(async (opts) => {
     const inputs = opts.input;
     const updatedDeck: DeckDocument | null = await Deck.findOneAndUpdate({ _id: inputs.deck._id }, { $set: { cards: inputs.deck.cards } }, { new: true })
-    console.log('updatedDeck: ', updatedDeck)
-    return updatedDeck;
+    return updatedDeck
   })
 
-export const deleteUserDeck = procedure
+export const deleteUserDeck = publicProcedure
   .input(z.object({
     deck: deck
   }))
@@ -234,7 +238,7 @@ export const deleteUserDeck = procedure
     return res;
   })
 
-export const updateUserDecks = procedure
+export const updateUserDecks = publicProcedure
   .input(z.object({
     decks: z.array(deck)
   }))

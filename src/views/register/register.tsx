@@ -117,7 +117,7 @@ function Register() {
             prompt: `${onboardingHeroState.alignment === "darkness" ? 'Evil' : 'Good'}, ${onboardingHeroState.fantasyRace.name}, ${onboardingHeroState.description}, ${onboardingHeroState.class.name}, fantasy, centered, 4k resolution, ${onboardingHeroState.alignment === "darkness" ? 'dark gloomy' : 'beautiful bright'} background`,
             negative_prompt: 'HALF FACE, CROPED IMAGE, watermark, ugly, weird face, double head, double face, multiple face, multiple head, multiple body, disfigured hand, disproportion body, incorrect hands, extra limbs, extra fingers, fused fingers, missing facial features, low quality, bad quality, bad anatomy, Missing limbs, missing fingers, ugly',
             modelId: 'd69c8273-6b17-4a30-a13e-d6637ae1c644',
-            promptMagic: true
+            promptMagic: false
         })
         const urls: string[] = []
         if (images) {

@@ -7,6 +7,7 @@ import { InitialUserState, userAtom } from "../user/user.atom";
 import { InitialPlayerDecksState, playerDecksAtom } from "../player_decks/player_decks.atom";
 import { InitialOnboardingHeroState, onboardingHeroAtom } from "../onboarding_hero/onboarding_hero.atom";
 import { InitialPlayerCardsState, playerCardsAtom } from "../player_cards/player_cards.atom";
+import { isAdmin } from "@/server/trpc";
 
 export function useAuthActions() {
     const setAuth = useSetRecoilState(authAtom);
@@ -63,7 +64,6 @@ export function useAuthActions() {
         }
         try {
             const { address, starkPublicKey } = await imxLink.setup({});
-            console.log('address: ', address)
             localStorage.setItem('WALLET_ADDRESS', address);
             localStorage.setItem('STARK_PUBLIC_KEY', starkPublicKey);
             return address
@@ -77,12 +77,12 @@ export function useAuthActions() {
         let currentUser: any = await getUser.mutateAsync({
             walletAddress: address
         })
-        console.log('HERE: ', currentUser)
         if (!currentUser) {
             currentUser = await registerUser.mutateAsync({
                 walletAddress: address
             })
         }
+
         const currentDate = new Date();
         let authToken: any = await getAuthToken.mutateAsync({
             walletAddress: address
@@ -93,7 +93,8 @@ export function useAuthActions() {
                 userId: currentUser._id
             })
         }
-        if (currentDate > authToken.validUntil) {
+
+        if (currentDate > new Date(authToken.validUntil)) {
             await invalidateAuthToken.mutateAsync({
                 walletAddress: address
             })
@@ -109,6 +110,7 @@ export function useAuthActions() {
             isLoggedIn: true,
             auth: authToken,
         }))
+
         return currentUser;
     }
 

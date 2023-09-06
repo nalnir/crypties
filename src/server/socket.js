@@ -7,10 +7,16 @@ const io = require("socket.io")(httpServer, {
 
 io.use((socket, next) => {
   const walletAddress = socket.handshake.auth.walletAddress;
+  const battleDeckAmount = socket.handshake.auth.battleDeckAmount
+  const hero = socket.handshake.auth.hero
+
   if (!walletAddress) {
     return next(new Error("invalid walletAddress"));
   }
   socket.walletAddress = walletAddress;
+  socket.battleDeckAmount = battleDeckAmount;
+  socket.cardsOnTheTable = [];
+  socket.hero = hero
   next();
 });
 
@@ -22,6 +28,8 @@ io.on("connection", (socket) => {
     users.push({
       socketId: id,
       walletAddress: userSocket.walletAddress,
+      battleDeckAmount: userSocket.battleDeckAmount,
+      hero: userSocket.hero
     });
   }
 
@@ -59,17 +67,35 @@ io.on("connection", (socket) => {
   socket.on('join_battle_room', (players) => {
     activePlayers.push({ id: socket.id, ...players });
 
-    console.log('PLAYERS: ', players)
-
     // Create a unique battle room for the two players
     const battleRoom = `battle_${players.player1.walletAddress}_${players.player2.walletAddress}`;
 
     // Join both players to the battle room
     socket.join(battleRoom);
-    io.to(players.player1.socketId).emit('battle_start', { room: battleRoom, opponent: players.player2 });
-    io.to(players.player2.socketId).emit('battle_start', { room: battleRoom, opponent: players.player1 });
-    
+    io.to(players.player1.socketId).emit('battle_start', { room: battleRoom, mySocketId: players.player1.socketId, opponent: players.player2, myTurn: true });
+    io.to(players.player2.socketId).emit('battle_start', { room: battleRoom, mySocketId: players.player2.socketId, opponent: players.player1, myTurn: false });
   });
+
+  socket.on('flip_turn', () => {
+    io.emit('flip_turn');
+  })
+
+  socket.on('set_opponent_state', (data) => {
+    console.log('DATA: ', data)
+    io.to(data.to).emit('set_opponent_state', data.opponent)
+  })
+
+  socket.on('damaged_cards_on_the_table', (data) => {
+    io.to(data.to).emit('damaged_cards_on_the_table', data.damagedCardsOnTheTable)
+  })
+
+  socket.on('damaged_hero', (data) => {
+    io.to(data.to).emit('damaged_hero', data.damagedHero)
+  })
+
+  socket.on('defeated', (data) => {
+    io.to(data.to).emit('defeated')
+  })
 });
 
 const SOCKET_PORT = process.env.SOCKET_PORT || 3001;

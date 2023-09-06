@@ -1,8 +1,8 @@
 import { z } from 'zod';
-import { procedure } from '@/server/trpc';
+import { publicProcedure } from '@/server/trpc';
 
 
-export const getETHprice = procedure
+export const getETHprice = publicProcedure
     .query(async () => {
         try {
             const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd');

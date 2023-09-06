@@ -1,4 +1,5 @@
 import { PlayingCardModel } from "../mocks/player_deck";
+import { OriginalCard } from "../types";
 
 export function handleAttackTargetCard(
     targetCard: PlayingCardModel | null,
@@ -82,4 +83,12 @@ export function pickFirstFiveCards<PlayingCardModel>(
 
 export function handleGameOver() {
     prompt("GAME OVER BITCH!!!");
+}
+
+export function pickRandomCardFromBattleDeck(array: OriginalCard[]) {
+    const randomIndex = Math.floor(Math.random() * array.length);
+    return {
+        randomCard: array[randomIndex],
+        index: randomIndex
+    }
 }

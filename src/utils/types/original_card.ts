@@ -5,6 +5,7 @@ export interface OriginalCard {
     metadata: {
         health: number,
         attackPower: number,
+        manaCost?: number,
         special?: string,
         creatorPlayerName: string,
         creatorAddress: string,
@@ -15,6 +16,18 @@ export interface OriginalCard {
         generation: number,
         ipfsCID?: string,
         imageId: string
+    },
+    orders?: {
+        sell_orders?: Array<{
+            buy_decimals: number,
+            buy_quantity: {
+                hex: string,
+                type: string
+            },
+            order_id: number,
+            status: string,
+            user: string
+        }>
     },
     token_id?: string,
     token_address?: string

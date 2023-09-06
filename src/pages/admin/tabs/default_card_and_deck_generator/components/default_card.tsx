@@ -62,6 +62,7 @@ export default function DefaultCard({ defaultCard }: DefaultCardProps) {
         <PText className="flex !whitespace-nowrap truncate text-ellipsis">{defaultCard.name}</PText>
         <PText>Attack: {defaultCard.metadata.attackPower}</PText>
         <PText>Health: {defaultCard.metadata.health}</PText>
+        <PText>Mana cost: {defaultCard.metadata.manaCost ?? "0"}</PText>
         <ButtonCustom isLoading={publishUnpublishCard.isLoading && getAllDefaultCards.isLoading} disabled={publishUnpublishCard.isLoading && getAllDefaultCards.isLoading} title={defaultCard.isPublished ? 'Unpublish' : 'Publish'} onClick={() => publishUnpublish(defaultCard)} />
         {defaultCard.isPublished ?
             <Dropdown disabled={updateDefaultDeck.isLoading || getAllDefaultDecks.isLoading} label="Decks" autoFocus={false}>

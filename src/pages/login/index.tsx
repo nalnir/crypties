@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import { useRecoilValue } from "recoil";
 import { useQueryClient } from "@tanstack/react-query";
 import { ErrorSuccessType } from "@/recoil-state/error_success/error_success.atom";
+import { UserDocument } from "../api/schemas/user_schema";
 
 export default function LoginPage() {
     const useAuth = useAuthActions();
@@ -20,7 +21,6 @@ export default function LoginPage() {
     useEffect(() => {
         checkAuth();
     }, []);
-
 
     const checkAuth = async () => {
         const userWalletAddress = await useAuth.loadFromStorage();

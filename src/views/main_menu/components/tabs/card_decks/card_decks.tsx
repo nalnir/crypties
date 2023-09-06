@@ -51,17 +51,18 @@ function CardDecksTab() {
     ]
 
     useEffect(() => {
-        if (allUserDecks.length > 0) {
+        if (getUserDecks.isFetched && getUserCards.isFetched) {
             userDecks()
         }
-    }, [allUserDecks.length])
+    }, [getUserDecks.isFetched, getUserCards.isFetched])
 
     const userDecks = async () => {
         // FILTERING IS NEEDED IN CASE CARDS USER SOLD SO THEY ARE NO LONGER IN HIS POSESSION BUT THEIR ID'S ARE STILL RECORDED IN HIS DECK.
         const filteredDecks = allUserDecks.map((deck: any) => ({
             ...deck,
-            cards: deck.cards.filter((card: any) => allPlayerCards.some((playerCard) => playerCard.token_id === card))
+            cards: deck.cards.filter((card: string) => allPlayerCards.some((playerCard) => playerCard.token_id === card))
         }));
+        console.log('filteredDecks: ', filteredDecks)
 
         if (!(JSON.stringify(filteredDecks) === JSON.stringify(allUserDecks))) {
             const res = await updateUserDecks.mutateAsync({
@@ -74,6 +75,14 @@ function CardDecksTab() {
         //
 
         getUserDecks.refetch()
+    }
+
+    const isOnSale = (card: OriginalCard) => {
+        if (card.orders?.sell_orders) {
+            const sellOrders = card.orders?.sell_orders;
+            return sellOrders.some((orders) => orders.user === user?.walletAddress && orders.status === "active")
+        }
+        return false
     }
 
 

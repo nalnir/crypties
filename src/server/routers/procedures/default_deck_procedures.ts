@@ -1,9 +1,9 @@
 import DefaultDeck, { DefaultDeckDocument } from "@/pages/api/schemas/default_deck_schema";
-import { procedure } from "@/server/trpc";
+import { publicProcedure } from "@/server/trpc";
 import { default_deck } from "../objects/default_deck";
 import { z } from "zod";
 
-export const getAllDefaultDecks = procedure
+export const getAllDefaultDecks = publicProcedure
     .input(z.object({
         onlyPublished: z.boolean().nullish()
     }))
@@ -17,14 +17,14 @@ export const getAllDefaultDecks = procedure
         return [];
     })
 
-export const createNewDefaultDeck = procedure
+export const createNewDefaultDeck = publicProcedure
     .input(default_deck)
     .mutation(async (opts) => {
         const inputs = opts.input;
         return await DefaultDeck.create(inputs)
     })
 
-export const deleteDefaultDeck = procedure
+export const deleteDefaultDeck = publicProcedure
     .input(default_deck)
     .mutation(async (opts) => {
         const inputs = opts.input;
@@ -34,14 +34,14 @@ export const deleteDefaultDeck = procedure
         return;
     })
 
-export const publishUnpublishDeck = procedure
+export const publishUnpublishDeck = publicProcedure
     .input(default_deck)
     .mutation(async (opts) => {
         const inputs = opts.input;
         return await DefaultDeck.findOneAndUpdate({ _id: inputs._id }, { isPublished: !inputs.isPublished }, { new: true })
     })
 
-export const updateDefaultDeck = procedure
+export const updateDefaultDeck = publicProcedure
     .input(default_deck)
     .mutation(async (opts) => {
         const inputs = opts.input;

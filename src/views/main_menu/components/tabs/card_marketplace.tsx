@@ -17,21 +17,13 @@ function CardMarketPlaceTab() {
     const errorSuccessActions = useErrorSuccessActions();
     const { data: user, isLoading, isError } = useQuery<UserDocument>(['user']);
     const allCards = trpc.getAllCards.useQuery();
+    const userDecks = trpc.getUserDecks.useQuery({ walletAddress: user?.walletAddress ?? '' });
+    const updateUserDecks = trpc.updateUserDecks.useMutation();
     const userBalance = trpc.getUserBalance.useQuery({ walletAddress: user?.walletAddress ?? '' });
     const globalModalActions = useGlobalModalActions();
     const [salePrice, setSalePrice] = useState('0');
 
-
-    // useEffect(() => {
-    //     getBalance()
-    // }, [])
-
-    // const getBalance = async () => {
-    //     const balance = await userBalance.mutateAsync({
-    //         walletAddress: user?.walletAddress ?? ''
-    //     })
-    //     console.log('balance: ', balance)
-    // }
+    const allDecks = userDecks.data ?? [];
 
     const isUsersCard = (card: any) => {
         return user?.walletAddress === card.user
@@ -48,7 +40,15 @@ function CardMarketPlaceTab() {
                     percentage: 3
                 }]
             })
-            console.log('res: ', res)
+            const updatedDecks = allDecks.map((deck) => {
+                let newDeck = deck.cards.filter((deckCard) => deckCard !== card.token_id)
+                deck.cards = newDeck;
+                return deck;
+            })
+
+            await updateUserDecks.mutateAsync({
+                decks: updatedDecks
+            })
         } catch (e) {
             console.log('e: ', e)
             errorSuccessActions.openErrorSuccess('Something went wrong. Please try again', ErrorSuccessType.ERROR)

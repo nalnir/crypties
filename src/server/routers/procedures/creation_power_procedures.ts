@@ -1,11 +1,11 @@
 import { z } from 'zod';
 import { connectDB } from '@/backend/connection';
 import User from '@/pages/api/schemas/user_schema';
-import { procedure } from '@/server/trpc';
+import { publicProcedure } from '@/server/trpc';
 import Race from '@/pages/api/schemas/race_schema';
 import PlayerClass from '@/pages/api/schemas/class_schema';
 
-export const checkIfRaceAlreadyCreated = procedure
+export const checkIfRaceAlreadyCreated = publicProcedure
   .input(
     z.object({
       creatorAddress: z.union([z.string(), z.null(), z.undefined()]),
@@ -26,7 +26,7 @@ export const checkIfRaceAlreadyCreated = procedure
     return false
   })
 
-export const checkIfPlayerClassAlreadyCreated = procedure
+export const checkIfPlayerClassAlreadyCreated = publicProcedure
   .input(
     z.object({
       creatorAddress: z.union([z.string(), z.null(), z.undefined()]),
@@ -47,7 +47,7 @@ export const checkIfPlayerClassAlreadyCreated = procedure
     return false
   })
 
-export const checkIfRaceExists = procedure
+export const checkIfRaceExists = publicProcedure
   .input(
     z.object({
       name: z.string(),
@@ -64,7 +64,7 @@ export const checkIfRaceExists = procedure
     return false
   })
 
-export const checkIfPlayerClassExists = procedure
+export const checkIfPlayerClassExists = publicProcedure
   .input(
     z.object({
       name: z.string(),
@@ -81,7 +81,7 @@ export const checkIfPlayerClassExists = procedure
     return false
   })
 
-export const createRace = procedure
+export const createRace = publicProcedure
   .input(
     z.object({
       name: z.string(),
@@ -120,7 +120,7 @@ export const createRace = procedure
     return { success: false, message: "Could not find the user", data: null }
   })
 
-export const setUseCreatePower = procedure
+export const setUseCreatePower = publicProcedure
   .input(
     z.object({
       walletAddress: z.string()
@@ -133,7 +133,7 @@ export const setUseCreatePower = procedure
     return updatedUser;
   })
 
-export const setCreateCycle = procedure
+export const setCreateCycle = publicProcedure
   .input(
     z.object({
       walletAddress: z.string()
@@ -145,7 +145,7 @@ export const setCreateCycle = procedure
     return updatedUser;
   })
 
-export const resetCreateTries = procedure
+export const resetCreateTries = publicProcedure
   .input(
     z.object({
       walletAddress: z.string()
@@ -156,7 +156,7 @@ export const resetCreateTries = procedure
     return updatedUser;
   })
 
-export const bumpCreateTry = procedure
+export const bumpCreateTry = publicProcedure
   .input(
     z.object({
       walletAddress: z.string()

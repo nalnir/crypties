@@ -25,6 +25,7 @@ export default function DefautlCardGenerator() {
     const [leonardoPropmt, setLeonardoPrompt] = useState('');
     const [attackPower, setAttackPower] = useState(0)
     const [health, setHealth] = useState(0)
+    const [mana, setMana] = useState(0);
     const [special, setSpecial] = useState('');
     const [cardType, setCardType] = useState<{
         id?: string,
@@ -79,6 +80,7 @@ export default function DefautlCardGenerator() {
             metadata: {
                 health: health,
                 attackPower: attackPower,
+                manaCost: mana,
                 special: special.length < 1 ? undefined : special,
                 creatorPlayerName: user?.playerName ?? '',
                 creatorAddress: user?.walletAddress ?? '',
@@ -106,6 +108,7 @@ export default function DefautlCardGenerator() {
         setName('')
         setLeonardoPrompt('')
         setHealth(0)
+        setMana(0)
         setAttackPower(0),
             setCardType({
                 id: undefined,
@@ -135,6 +138,15 @@ export default function DefautlCardGenerator() {
                     const formatedInput = allowOnlyNumbersDecimals(e.target.value)
                     if (formatedInput) {
                         setHealth(parseInt(formatedInput))
+                    }
+                }} />
+            </div>
+            <div>
+                <PText>Mana Cost</PText>
+                <input placeholder="Mana Cost" value={mana} onChange={(e) => {
+                    const formatedInput = allowOnlyNumbersDecimals(e.target.value)
+                    if (formatedInput) {
+                        setMana(parseInt(formatedInput))
                     }
                 }} />
             </div>

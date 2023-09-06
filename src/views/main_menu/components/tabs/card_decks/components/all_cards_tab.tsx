@@ -39,9 +39,14 @@ export const AllCardsTab = () => {
             newDeck.cards.push(card.token_id ?? '0')
         }
 
-        const updatedDeck: any = await saveDeck.mutateAsync({
+        const updatedDeck = await saveDeck.mutateAsync({
             deck: newDeck
         })
+        if (!updatedDeck) {
+            errorSuccessActions.openErrorSuccess('Could not update the deck', ErrorSuccessType.WARNING);
+            return
+        }
+        await getUserDecks.refetch()
         playerDeckActions.replaceDeckInList(updatedDeck)
     }
 
@@ -53,9 +58,17 @@ export const AllCardsTab = () => {
         return false;
     }
 
+    const isOnSale = (card: OriginalCard) => {
+        if (card.orders?.sell_orders) {
+            const sellOrders = card.orders?.sell_orders;
+            return sellOrders.some((orders) => orders.user === user?.walletAddress && orders.status === "active")
+        }
+        return false
+    }
+
     return <div className="grid grid-cols-4 gap-3">
         {allUserCards?.result?.map((card: any, cardIndex: number) => {
-            // console.log('card: ', card)
+            console.log('card: ', card)
             return <div key={cardIndex} className="flex-col items-center justify-center p-3 space-y-3 border border-black rounded-lg shadow-lg border-opacity-30">
                 <img src={card.image_url} className="border rounded-md border-secondary-400 w-30 h-30" />
                 <div>
@@ -63,8 +76,7 @@ export const AllCardsTab = () => {
                     <PText>Attack: {card.metadata.attackPower}</PText>
                     <PText>Health: {card.metadata.health}</PText>
                 </div>
-
-                <Dropdown disabled={saveDeck.isLoading} label="Add to deck" arrowIcon={false} className="rounded-lg">
+                {!isOnSale(card) ? <Dropdown disabled={saveDeck.isLoading} label="Add to deck" arrowIcon={false} className="rounded-lg">
                     {allUserDecks.length > 0 ? allUserDecks.map((deck: any, deckIndex: number) => {
                         if (!deck.default) {
                             return <Dropdown.Item onClick={() => addRemoveFromDeck(deck, card)} key={deckIndex} className="flex items-center justify-start space-x-1">
@@ -74,7 +86,7 @@ export const AllCardsTab = () => {
                         }
                         return <></>
                     }) : <Dropdown.Item><PText className="text-black">You have no decks</PText></Dropdown.Item>}
-                </Dropdown>
+                </Dropdown> : <></>}
             </div>
         })}
     </div >

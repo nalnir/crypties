@@ -56,11 +56,11 @@ export const DefaultDecksTab = () => {
         const mergedArray = [...matchedFixedCards, ...res];
         const allCardTokens: string[] = [];
         try {
-            const res = await link.transfer([{
-                amount: deck.price.toString(),
-                type: ETHTokenType.ETH,
-                toAddress: process.env.NEXT_PUBLIC_SUPERADMIN_ADDRESS ?? ''
-            }])
+            // const res = await link.transfer([{
+            //     amount: deck.price.toString(),
+            //     type: ETHTokenType.ETH,
+            //     toAddress: process.env.NEXT_PUBLIC_SUPERADMIN_ADDRESS ?? ''
+            // }])
             const numberOfTokensToMint = deck.cards.reduce((acc: number, val: any) => acc + val.amountOfCards, 0) + deck.randomCards.reduce((acc: number, val: any) => acc + val.amountOfCards, 0)
             const result = await Promise.all(mergedArray.map(async (card: any, index: number) => {
                 let deckCardMatch = deck.cards.find((deckCard: any) => deckCard.cardId === card._id)
@@ -88,6 +88,10 @@ export const DefaultDecksTab = () => {
 
                 if (card.metadata.special) {
                     cardToBeMinted.metadata.special = card.metadata.special
+                }
+
+                if (card.metadata.manaCost) {
+                    cardToBeMinted.metadata.manaCost = card.metadata.manaCost
                 }
 
                 const cid = await uploadMetadataToIPFS.mutateAsync(cardToBeMinted)

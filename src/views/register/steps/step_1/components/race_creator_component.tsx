@@ -2,7 +2,7 @@ import { useErrorSuccessActions } from "@/recoil-state/error_success/error_succe
 import { ErrorSuccessType } from "@/recoil-state/error_success/error_success.atom";
 import { trpc } from "@/utils/trpc";
 import { Button, CircularProgress, Input } from "@mui/material"
-import { useState } from "react"
+import { ChangeEvent, useState } from "react"
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { UserDocument } from "@/pages/api/schemas/user_schema";
 import { usePlayerFantasyRaceActions } from "@/recoil-state/player_fantasy_race/player_fantasy_race.actions";
@@ -43,7 +43,7 @@ export const RaceCreatorComponent = () => {
     const queryClient = useQueryClient();
     const { data: user, isLoading: isLoadingUser, isError: isErrorUser } = useQuery<UserDocument>(['user']);
 
-    const handleSetName = (e: any) => {
+    const handleSetName = (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
         const input: string = e.target.value
         if (input.length > 15) {
             return
@@ -163,7 +163,7 @@ export const RaceCreatorComponent = () => {
                             prompt: `${correctedName} portrait, fantasy, centered, 4k resolution, bright color, beautiful background, male or female, pixar style`,
                             negative_prompt: 'logo, watermark, signature, cropped, zoomed, abnormal, bizzare, double heads, minimalistic, lowpoly, distortion, blur, flat, matte, dead, loud, tension. Extra Arms, extra limbs, long neck,teeth, long head',
                             modelId: 'd69c8273-6b17-4a30-a13e-d6637ae1c644',
-                            promptMagic: true
+                            promptMagic: false
                         })
                         const urls: string[] = []
                         if (images) {

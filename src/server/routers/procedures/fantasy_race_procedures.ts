@@ -1,10 +1,10 @@
 import { z } from 'zod';
-import { procedure } from '@/server/trpc';
+import { publicProcedure } from '@/server/trpc';
 import Race, { RaceDocument } from '@/pages/api/schemas/race_schema';
 import { connectDB } from '@/backend/connection';
 import PlayerClass, { PlayerClassDocument } from '@/pages/api/schemas/class_schema';
 
-export const getDefaultFantasyRaces = procedure
+export const getDefaultFantasyRaces = publicProcedure
   .mutation(async () => {
     try {
       const db = await connectDB();
@@ -20,7 +20,7 @@ export const getDefaultFantasyRaces = procedure
     }
   })
 
-export const getDefaultClasses = procedure
+export const getDefaultClasses = publicProcedure
   .mutation(async () => {
     try {
       const db = await connectDB();
@@ -36,7 +36,7 @@ export const getDefaultClasses = procedure
     }
   })
 
-export const getOtherFantasyRaces = procedure
+export const getOtherFantasyRaces = publicProcedure
   .input(
     z.object({
       page: z.number(),
@@ -58,7 +58,7 @@ export const getOtherFantasyRaces = procedure
     }
   })
 
-export const bumpPlayedByAmountFantasyRace = procedure
+export const bumpPlayedByAmountFantasyRace = publicProcedure
   .input(
     z.object({
       fantasyRaceID: z.string(),

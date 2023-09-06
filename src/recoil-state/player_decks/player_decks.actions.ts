@@ -10,7 +10,8 @@ export function usePlayerDecksActions() {
         setAllDecks,
         setAddDeckToList,
         replaceDeckInList,
-        removeDeckFromList
+        removeDeckFromList,
+        setBattleDeck,
     };
 
     function setAllDecks(decks: DeckDocument[]) {
@@ -30,7 +31,7 @@ export function usePlayerDecksActions() {
         }))
     }
 
-    function replaceDeckInList(deck: DeckDocument) {
+    function replaceDeckInList(deck: any) {
         const currentDeckList: DeckDocument[] = JSON.parse(JSON.stringify(playerDecksState.playerDecks));
         const currentIdx = currentDeckList.findIndex(currentDeck => currentDeck._id === deck._id);
         currentDeckList[currentIdx] = deck;
@@ -47,6 +48,13 @@ export function usePlayerDecksActions() {
         setPlayerDecks((state: any) => ({
             ...state,
             playerDecks: [...currentDeckList],
+        }))
+    }
+
+    function setBattleDeck(deck: any[]) {
+        setPlayerDecks((state: any) => ({
+            ...state,
+            battleDeck: [...deck],
         }))
     }
 }

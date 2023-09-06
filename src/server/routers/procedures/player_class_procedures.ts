@@ -1,8 +1,8 @@
 import { z } from 'zod';
-import { procedure } from '@/server/trpc';
+import { publicProcedure } from '@/server/trpc';
 import PlayerClass, { PlayerClassDocument } from '@/pages/api/schemas/class_schema';
 
-export const getOtherPlayerClasses = procedure
+export const getOtherPlayerClasses = publicProcedure
   .input(
     z.object({
       page: z.number(),
@@ -23,7 +23,7 @@ export const getOtherPlayerClasses = procedure
     }
   })
 
-export const bumpPlayedByAmoungPlayerClass = procedure
+export const bumpPlayedByAmoungPlayerClass = publicProcedure
   .input(
     z.object({
       playerClassID: z.string(),

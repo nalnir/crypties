@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { procedure } from '@/server/trpc';
+import { publicProcedure } from '@/server/trpc';
 import { Configuration, OpenAIApi } from "openai";
 import { CreateGenerationResponseData, GeneratedImageVariationGenerics, LeonardoAPI } from '@/utils/types/leonardo';
 
@@ -11,7 +11,7 @@ const leonardo: LeonardoAPI = require('api')('@leonardoai/v1.0#28807z41owlgnis8j
 
 // LEONARDO AI PROCEDURES
 
-export const generateImages = procedure
+export const generateImages = publicProcedure
   .input(
     z.object({
       prompt: z.string(),
@@ -70,7 +70,7 @@ export const generateImages = procedure
     }
   })
 
-export const isFantasyRace = procedure
+export const isFantasyRace = publicProcedure
   .input(
     z.object({
       name: z.string()
@@ -99,7 +99,7 @@ export const isFantasyRace = procedure
     }
   })
 
-export const isPlayerClass = procedure
+export const isPlayerClass = publicProcedure
   .input(
     z.object({
       name: z.string()
@@ -127,7 +127,7 @@ export const isPlayerClass = procedure
     }
   })
 
-export const correctName = procedure
+export const correctName = publicProcedure
   .input(
     z.object({
       name: z.string()
@@ -158,7 +158,7 @@ export const correctName = procedure
     }
   })
 
-export const generateDescription = procedure
+export const generateDescription = publicProcedure
   .input(
     z.object({
       prompt: z.string(),

@@ -1,5 +1,5 @@
 import { connectDB } from "@/backend/connection";
-import { procedure } from "@/server/trpc";
+import { publicProcedure } from "@/server/trpc";
 import { z } from "zod";
 
 import { NFTStorage, File } from 'nft.storage';
@@ -29,7 +29,7 @@ const provider = new AlchemyProvider(ETH_NETWORK, ALCHEMY_API_KEY);
 const bucketName = process.env.AWS_BUCKET_NAME
 const s3 = new AWS.S3();
 
-export const uploadMetadataToIPFS = procedure
+export const uploadMetadataToIPFS = publicProcedure
     .input(original_card)
     .mutation(async (opts) => {
         if (!NFT_STORAGE_KEY) {
@@ -47,7 +47,7 @@ export const uploadMetadataToIPFS = procedure
         return cid;
     })
 
-export const uploadMetadataToS3 = procedure
+export const uploadMetadataToS3 = publicProcedure
     .input(z.object({
         original_card,
         tokenId: z.number()
@@ -82,7 +82,7 @@ export const uploadMetadataToS3 = procedure
         }
     })
 
-export const getTokenId = procedure
+export const getTokenId = publicProcedure
     .input(z.object({
         generation: z.number()
     }))
@@ -92,7 +92,7 @@ export const getTokenId = procedure
         });
     })
 
-export const bumpTokenId = procedure
+export const bumpTokenId = publicProcedure
     .input(z.object({
         generation: z.number(),
     }))
@@ -103,7 +103,7 @@ export const bumpTokenId = procedure
         }, { new: true });
     })
 
-export const mintBulk = procedure
+export const mintBulk = publicProcedure
     .input(z.object({
         number_of_tokens_to_mint: z.number().default(1),
         walletAddress: z.string(),
@@ -164,13 +164,13 @@ export const mintBulk = procedure
         const result = await minter.mintV2(payload);
     })
 
-export const getCurrentGeneration = procedure
+export const getCurrentGeneration = publicProcedure
     .query(async (): Promise<GenerationDocument | null> => {
         const db = await connectDB();
         return await Generation.findOne({}).sort({ generation: -1 }).limit(1);
     })
 
-export const getCurrentCardId = procedure
+export const getCurrentCardId = publicProcedure
     .query(async () => {
         const db = await connectDB();
 

@@ -1,9 +1,9 @@
 import { connectDB } from "@/backend/connection";
 import Generation from "@/pages/api/schemas/generation_schema";
-import { procedure } from "@/server/trpc";
+import { adminProcedure } from "@/server/trpc";
 import { z } from "zod";
 
-export const establishNextGeneration = procedure
+export const establishNextGeneration = adminProcedure
     .input(
         z.object({
             generation: z.number()
@@ -28,4 +28,10 @@ export const establishNextGeneration = procedure
             amountOfCardsForged: 0,
             year: currentYear
         })
+    })
+
+export const testAuth = adminProcedure
+    .mutation(async (opts) => {
+        const db = await connectDB();
+        console.log('I WORK')
     })

@@ -8,6 +8,7 @@ const defaultCardSchema = new mongoose.Schema({
     metadata: {
         health: { type: Number, required: true },
         attackPower: { type: Number, required: true },
+        manaCost: { type: Number, required: false },
         special: { type: String, required: false },
         creatorPlayerName: { type: String, required: true },
         creatorAddress: { type: String, required: true },
@@ -30,6 +31,7 @@ export interface DefaultCardDocument extends Document {
     metadata: {
         health: number,
         attackPower: number,
+        manaCost?: number,
         special?: string,
         creatorPlayerName: string,
         creatorAddress: string,

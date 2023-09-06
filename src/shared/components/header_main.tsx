@@ -28,6 +28,13 @@ export const HeaderMain = ({ onAdminSite }: HeaderMainProps) => {
     const globalModalActions = useGlobalModalActions();
     const errorSuccessActions = useErrorSuccessActions();
     // const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+    const test = trpc.testAuth.useMutation();
+
+
+    const t = async () => {
+        await test.mutateAsync();
+    }
+
 
     const userBalance = trpc.getUserBalance.useQuery({ walletAddress: user?.walletAddress ?? '' });
 
@@ -65,6 +72,7 @@ export const HeaderMain = ({ onAdminSite }: HeaderMainProps) => {
             <PText>{userBalance.data} ETH</PText>
             <ButtonCustom title="Deposit funds to L2" onClick={() => globalModalActions.openGlobalModal(<DepositFundsModal fundAccount={(amount: string) => fundAccount(amount)} />)} />
             <ButtonCustom title="Disconnect" onClick={() => disconnectIMX()} />
+            <div onClick={t}>CLICK</div>
         </div>
     </div>
 }
