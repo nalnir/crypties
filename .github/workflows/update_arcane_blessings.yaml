@@ -27,9 +27,12 @@ jobs:
 
           if [ "$latest_version" != "$current_version" ]; then
             echo "New version available: $latest_version"
+            
             npm install "arcane-blessings@$latest_version"
-            # Perform actions to update the package, e.g., npm install
-            # You can also create a pull request or commit the changes here
+
+            git commit -am "Update arcane-blessings to $latest_version"
+
+            git push origin main
           else
             echo "No updates available"
           fi
