@@ -23,7 +23,8 @@ export function useBattleActions() {
         setHero,
         setHaveAttacked,
         setCardsHaveAttacked,
-        resetCardsHaveAttacked
+        resetCardsHaveAttacked,
+        setBattleDeckId,
     };
 
     function setMySocketId(mySocketId: string) {
@@ -130,6 +131,13 @@ export function useBattleActions() {
         setBattle((state: any) => ({
             ...state,
             cardsHaveAttacked: []
+        }))
+    }
+
+    function setBattleDeckId(deckId: string) {
+        setBattle((state: any) => ({
+            ...state,
+            deckId: deckId
         }))
     }
 }

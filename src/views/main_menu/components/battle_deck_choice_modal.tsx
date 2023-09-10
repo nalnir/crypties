@@ -27,6 +27,7 @@ function BattleDeckChoiceModal({ playableDecks }: BattleDeckChoiceModalProps) {
 
         playerDeckActions.setBattleDeck(matchedCards);
         battleActions.setActiveBattleDeck(matchedCards);
+        battleActions.setBattleDeckId(deck._id)
         globalModal.closeGlobalModal()
         router.push('/battle')
     }

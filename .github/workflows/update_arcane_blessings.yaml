@@ -1,0 +1,35 @@
+name: Update Arcane Blessings Dependency
+
+on:
+  schedule:
+    - cron: "/5 * * * *" # Schedule the workflow to run daily
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16 # Use your desired Node.js version
+
+      - name: Check for Updates
+        run: |
+          # Check the latest version of arcane-blessings on npm
+          latest_version=$(npm show arcane-blessings version)
+
+          # Compare the latest version with the current version in package.json
+          current_version=$(node -e "console.log(require('./package.json').dependencies['arcane-blessings'])")
+
+          if [ "$latest_version" != "$current_version" ]; then
+            echo "New version available: $latest_version"
+            npm install "arcane-blessings@$latest_version"
+            # Perform actions to update the package, e.g., npm install
+            # You can also create a pull request or commit the changes here
+          else
+            echo "No updates available"
+          fi

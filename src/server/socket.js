@@ -6,9 +6,11 @@ const io = require("socket.io")(httpServer, {
 });
 
 io.use((socket, next) => {
-  const walletAddress = socket.handshake.auth.walletAddress;
-  const battleDeckAmount = socket.handshake.auth.battleDeckAmount
-  const hero = socket.handshake.auth.hero
+  const authObject = socket.handshake.auth;
+  const walletAddress = authObject.walletAddress;
+  const battleDeckAmount = authObject.battleDeckAmount
+  const hero = authObject.hero
+  const battleDeckId = authObject.battleDeckId
 
   if (!walletAddress) {
     return next(new Error("invalid walletAddress"));
@@ -17,6 +19,7 @@ io.use((socket, next) => {
   socket.battleDeckAmount = battleDeckAmount;
   socket.cardsOnTheTable = [];
   socket.hero = hero
+  socket.battleDeckId = battleDeckId
   next();
 });
 
@@ -29,7 +32,8 @@ io.on("connection", (socket) => {
       socketId: id,
       walletAddress: userSocket.walletAddress,
       battleDeckAmount: userSocket.battleDeckAmount,
-      hero: userSocket.hero
+      hero: userSocket.hero,
+      battleDeckId: userSocket.battleDeckId
     });
   }
 

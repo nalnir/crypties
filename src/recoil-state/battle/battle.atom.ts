@@ -18,6 +18,7 @@ interface BattleAtom {
     haveAttacked: boolean;
     cardsHaveAttacked: string[];
     hero?: Hero;
+    deckId?: string;
 }
 
 export const InitialBattleState = {
@@ -33,7 +34,8 @@ export const InitialBattleState = {
     havePlacedOnBoard: false,
     haveAttacked: false,
     cardsHaveAttacked: [],
-    hero: undefined
+    hero: undefined,
+    deckId: undefined
 }
 export const battleAtom = atom<BattleAtom>({
     key: 'battleState', // unique ID (with respect to other atoms/selectors)

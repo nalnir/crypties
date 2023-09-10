@@ -4,6 +4,8 @@ import Race from "@/pages/api/schemas/race_schema";
 import User from "@/pages/api/schemas/user_schema";
 import { publicProcedure } from "@/server/trpc";
 import { z } from "zod";
+import { game_stats } from "../objects";
+import GameStats from "@/pages/api/schemas/game_stats_schema";
 
 export const getRaceStat = publicProcedure
     .input(
@@ -41,3 +43,12 @@ export const getAlignmentStat = publicProcedure
             darknessAlignmentAmount: darknessAlignmentAmount
         }
     });
+
+export const saveGameStats = publicProcedure
+    .input(game_stats)
+    .mutation(async (opts) => {
+        const db = await connectDB();
+        const inputs = opts.input
+        console.log('inputs: ', inputs)
+        return await GameStats.create(inputs)
+    })

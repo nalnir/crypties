@@ -14,6 +14,7 @@ import { useErrorSuccessActions } from "@/recoil-state/error_success/error_succe
 import { ErrorSuccessType } from "@/recoil-state/error_success/error_success.atom";
 import { Link } from '@imtbl/imx-sdk';
 import { allowOnlyNumbersDecimals } from "../functions";
+import powerRegistry from 'arcane-blessings';
 
 const NEXT_PUBLIC_IMX_LINK_ADDRESS = process.env.NEXT_PUBLIC_IMX_LINK_ADDRESS ?? '';
 const link = new Link(NEXT_PUBLIC_IMX_LINK_ADDRESS, null, 'v3');
@@ -32,7 +33,10 @@ export const HeaderMain = ({ onAdminSite }: HeaderMainProps) => {
 
 
     const t = async () => {
-        await test.mutateAsync();
+        // await test.mutateAsync();
+        const t = new powerRegistry["charge"]();
+        const s = t.execute([], [], [])
+        console.log('s: ', s)
     }
 
 

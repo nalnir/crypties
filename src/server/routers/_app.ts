@@ -9,7 +9,7 @@ import { bumpPlayedByAmoungPlayerClass, getOtherPlayerClasses } from './procedur
 import { getAuthToken, invalidateAuthToken, registerAuthToken } from './procedures/auth_procedures';
 import { bumpTokenId, getCurrentCardId, getCurrentGeneration, getTokenId, mintBulk, uploadMetadataToIPFS, uploadMetadataToS3 } from './procedures/card_creation_procedures';
 import { establishNextGeneration, testAuth } from './procedures/admin_procedures';
-import { getAlignmentStat, getClassStat, getRaceStat } from './procedures/stats_procedures';
+import { getAlignmentStat, getClassStat, getRaceStat, saveGameStats } from './procedures/stats_procedures';
 import { getAllCards, getUserBalance, getUserCards } from './procedures/imx_procedures';
 import { connectToLobby } from './procedures/battle_procedures';
 import { createCardType, getAllCardTypes, getCardType } from './procedures/card_type_procedures';
@@ -108,6 +108,7 @@ export const appRouter = router({
   getRaceStat,
   getClassStat,
   getAlignmentStat,
+  saveGameStats,
 
   //IMX PROCEDURES
   getUserCards,

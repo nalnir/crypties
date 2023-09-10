@@ -26,14 +26,15 @@ import LooserComponent from "./components/looser_component";
 interface IMyStateToOponent {
     opponent: {
         socketId: string,
-        walletAddres: string,
+        walletAddress: string,
         battleDeckAmount: number,
         playableCardsAmount: number,
         cardsOnTheTable: OriginalCard[],
         activeCard?: OriginalCard,
         totalMana: number,
         availableMana: number,
-        hero?: Hero
+        hero?: Hero,
+        deckId?: string
     },
     to: string
 }
@@ -42,6 +43,7 @@ export default function BattlePage() {
     const { data: user, isLoading, isError } = useQuery<UserDocument>(['user']);
     const router = useRouter()
     const connectToLobby = trpc.connectToLobby.useMutation();
+    const saveGameStats = trpc.saveGameStats.useMutation();
     const battleLobbyState = useRecoilValue(battleLobbyAtom);
     const playerDecksState = useRecoilValue(playerDecksAtom);
     const playerCardsState = useRecoilValue(playerCardsAtom);
@@ -82,14 +84,15 @@ export default function BattlePage() {
         const data: IMyStateToOponent = {
             opponent: {
                 socketId: battleState.mySocketId ?? '',
-                walletAddres: user?.walletAddress ?? '',
+                walletAddress: user?.walletAddress ?? '',
                 battleDeckAmount: battleState.activeBattleDeck.length,
                 playableCardsAmount: battleState.playerPlayableCards.length,
                 cardsOnTheTable: battleState.playerCardsOnTable,
                 activeCard: battleState.activeCard,
                 totalMana: battleState.totalMana,
                 availableMana: battleState.availableMana,
-                hero: battleState.hero
+                hero: battleState.hero,
+                deckId: battleState.deckId
             },
             to: battleState.opponent?.socketId ?? ''
         }
@@ -110,14 +113,15 @@ export default function BattlePage() {
         const data: IMyStateToOponent = {
             opponent: {
                 socketId: battleState.mySocketId ?? '',
-                walletAddres: user?.walletAddress ?? '',
+                walletAddress: user?.walletAddress ?? '',
                 battleDeckAmount: battleDeck.length,
                 playableCardsAmount: playerPlayableCards.length,
                 cardsOnTheTable: battleState.playerCardsOnTable,
                 activeCard: battleState.activeCard,
                 totalMana: battleState.totalMana,
                 availableMana: battleState.availableMana,
-                hero: battleState.hero
+                hero: battleState.hero,
+                deckId: battleState.deckId
             },
             to: battleState.opponent?.socketId ?? ''
         }
@@ -127,11 +131,12 @@ export default function BattlePage() {
     const handleConnect = async (user: UserDocument) => {
         const walletAddress = user.walletAddress
         const battleDeckAmount = playerDecksState.battleDeck.length
+        const battleDeckId = battleState.deckId
         const hero: Hero = {
             image: user.profilePicture ?? '',
             health: 30
         }
-        socket.auth = { walletAddress, battleDeckAmount, hero };
+        socket.auth = { walletAddress, battleDeckAmount, hero, battleDeckId };
         socket.connect();
     }
 
@@ -140,14 +145,15 @@ export default function BattlePage() {
         const data: IMyStateToOponent = {
             opponent: {
                 socketId: battleState.mySocketId ?? '',
-                walletAddres: user?.walletAddress ?? '',
+                walletAddress: user?.walletAddress ?? '',
                 battleDeckAmount: battleState.activeBattleDeck.length,
                 playableCardsAmount: battleState.playerPlayableCards.length,
                 cardsOnTheTable: battleState.playerCardsOnTable,
                 activeCard: undefined,
                 totalMana: battleState.totalMana,
                 availableMana: battleState.availableMana,
-                hero: battleState.hero
+                hero: battleState.hero,
+                deckId: battleState.deckId
             },
             to: battleState.opponent?.socketId ?? ''
         }
@@ -183,14 +189,15 @@ export default function BattlePage() {
         const data: IMyStateToOponent = {
             opponent: {
                 socketId: battleState.mySocketId ?? '',
-                walletAddres: user?.walletAddress ?? '',
+                walletAddress: user?.walletAddress ?? '',
                 battleDeckAmount: battleState.activeBattleDeck.length,
                 playableCardsAmount: playerPlayableCards.length,
                 cardsOnTheTable: currentPlayerCardsOnTable,
                 activeCard: undefined,
                 totalMana: battleState.totalMana,
                 availableMana: battleState.availableMana,
-                hero: battleState.hero
+                hero: battleState.hero,
+                deckId: battleState.deckId
             },
             to: battleState.opponent?.socketId ?? ''
         }
@@ -205,14 +212,15 @@ export default function BattlePage() {
         const data: IMyStateToOponent = {
             opponent: {
                 socketId: battleState.mySocketId ?? '',
-                walletAddres: user?.walletAddress ?? '',
+                walletAddress: user?.walletAddress ?? '',
                 battleDeckAmount: battleState.activeBattleDeck.length,
                 playableCardsAmount: battleState.playerPlayableCards.length,
                 cardsOnTheTable: battleState.playerCardsOnTable,
                 activeCard: card,
                 totalMana: battleState.totalMana,
                 availableMana: battleState.availableMana,
-                hero: battleState.hero
+                hero: battleState.hero,
+                deckId: battleState.deckId
             },
             to: battleState.opponent?.socketId ?? ''
         }
@@ -272,9 +280,20 @@ export default function BattlePage() {
     const isHeroDead = (hero: Hero) => {
         return hero.health <= 0
     }
-    const damageHero = (hero: Hero, defeat?: boolean) => {
+    const damageHero = async (hero: Hero, defeat?: boolean) => {
         const opponent: Opponent = JSON.parse(JSON.stringify(battleState.opponent))
         if (defeat) {
+            await saveGameStats.mutateAsync({
+                players: {
+                    winner: user?.walletAddress ?? '',
+                    looser: opponent.walletAddress
+                },
+                decks: {
+                    winner: battleState.deckId ?? '',
+                    looser: opponent.deckId ?? ''
+                },
+                game: 'FINISHED'
+            })
             globalModalActions.openGlobalModal(<WinnerComponent />)
             socket.emit("defeated", {
                 to: battleState.opponent?.socketId ?? ''
