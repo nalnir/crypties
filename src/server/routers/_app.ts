@@ -1,5 +1,5 @@
 import { router } from '../trpc';
-import { REST } from 'discord.js';
+// import { REST } from 'discord.js';
 import { Configuration, OpenAIApi } from "openai";
 import { createUserDeck, deleteUserDeck, getUser, getUserClass, getUserDecks, getUserFantasyRace, onboardUser, register, saveUserDeck, saveUserFantasyRace, saveUserPlayerClass, updateUserDecks } from './procedures/user_procedures';
 import { bumpCreateTry, checkIfPlayerClassAlreadyCreated, checkIfPlayerClassExists, checkIfRaceAlreadyCreated, checkIfRaceExists, createRace, resetCreateTries, setCreateCycle, setUseCreatePower } from './procedures/creation_power_procedures';
@@ -17,7 +17,7 @@ import { createDefaultCard, getAllDefaultCards, publishUnpublishDefaultCard } fr
 import { createNewDefaultDeck, deleteDefaultDeck, getAllDefaultDecks, publishUnpublishDeck, updateDefaultDeck } from './procedures/default_deck_procedures';
 import { getETHprice } from './procedures/other_procedures';
 
-const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_BOT_TOKEN ?? '');
+// const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_BOT_TOKEN ?? '');
 const chatpgptConfig = new Configuration({
   apiKey: process.env.OPEN_API_KEY,
 });
