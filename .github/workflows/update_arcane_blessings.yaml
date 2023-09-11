@@ -2,7 +2,8 @@ name: Update Arcane Blessings Dependency
 
 on:
   schedule:
-    - cron: "0 0 * * *" # Schedule the workflow to run daily
+    # - cron: "0 0 * * *" # Schedule the workflow to run daily
+    - cron: "*/5 * * * *"
 
 jobs:
   update:
@@ -17,28 +18,27 @@ jobs:
         with:
           node-version: 16 # Use your desired Node.js version
 
+      - name: Configure Git
+        run: |
+          git config --global user.email "statecznylukas@gmail.com"
+          git config --global user.name "nalnir"
 
-      # - name: Configure Git
-      #   run: |
-      #     git config --global user.email "statecznylukas@gmail.com"
-      #     git config --global user.name "nalnir"
+      - name: Check for Updates
+        run: |
+          # Check the latest version of arcane-blessings on npm
+          latest_version=$(npm show arcane-blessings version)
 
-      # - name: Check for Updates
-      #   run: |
-      #     # Check the latest version of arcane-blessings on npm
-      #     latest_version=$(npm show arcane-blessings version)
+          # Compare the latest version with the current version in package.json
+          current_version=$(node -e "console.log(require('./package.json').dependencies['arcane-blessings'])")
 
-      #     # Compare the latest version with the current version in package.json
-      #     current_version=$(node -e "console.log(require('./package.json').dependencies['arcane-blessings'])")
+          if [ "$latest_version" != "$current_version" ]; then
+            echo "New version available: $latest_version"
 
-      #     if [ "$latest_version" != "$current_version" ]; then
-      #       echo "New version available: $latest_version"
+            npm install "arcane-blessings@$latest_version"
 
-      #       npm install "arcane-blessings@$latest_version"
+            git commit -am "Update arcane-blessings to $latest_version"
 
-      #       git commit -am "Update arcane-blessings to $latest_version"
-
-      #       git push origin main
-      #     else
-      #       echo "No updates available"
-      #     fi
+            git push origin main
+          else
+            echo "No updates available"
+          fi
