@@ -30,7 +30,7 @@
 		"@types/react": "18.0.27",
 		"@types/react-dom": "18.0.10",
 		"api": "^5.0.8",
-		"arcane-blessings": "^0.0.4",
+		"arcane-blessings": "^0.0.5",
 		"autoprefixer": "^10.4.13",
 		"aws-sdk": "^2.1415.0",
 		"concurrently": "^8.0.1",
