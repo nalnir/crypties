@@ -1,4 +1,4 @@
-name: Update Arcane Blessings Dependency
+name: Test
 
 on:
   schedule:
