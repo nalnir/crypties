@@ -17,6 +17,11 @@ jobs:
         with:
           node-version: 16 # Use your desired Node.js version
 
+      - name: Configure Git
+        run: |
+          git config --global user.email "statecznylukas@gmail.com"
+          git config --global user.name "nalnir"
+
       - name: Check for Updates
         run: |
           # Check the latest version of arcane-blessings on npm
@@ -27,7 +32,7 @@ jobs:
 
           if [ "$latest_version" != "$current_version" ]; then
             echo "New version available: $latest_version"
-            
+
             npm install "arcane-blessings@$latest_version"
 
             git commit -am "Update arcane-blessings to $latest_version"
