@@ -32,8 +32,10 @@ jobs:
             npm install "arcane-blessings@$latest_version"
 
             git config --global user.email "statecznylukas@gmail.com"
-            
+
             git config --global user.name "nalnir"
+
+            git pull
 
             git commit -am "Update arcane-blessings to $latest_version"
 
