@@ -22,6 +22,7 @@ import { Hero } from "@/utils/types/hero";
 import { useGlobalModalActions } from "@/recoil-state/global_modal/global_modal.actions";
 import WinnerComponent from "./components/winner_component";
 import LooserComponent from "./components/looser_component";
+import powerRegistry from "arcane-blessings";
 
 interface IMyStateToOponent {
     opponent: {
@@ -178,6 +179,7 @@ export default function BattlePage() {
             return;
         }
         deactivateCard()
+
         const playerPlayableCards: OriginalCard[] = JSON.parse(JSON.stringify(battleState.playerPlayableCards));
         const cardIdx = playerPlayableCards.findIndex((playableCard) => playableCard.token_id === card.token_id)
 
@@ -186,6 +188,21 @@ export default function BattlePage() {
 
         battleActions.setPlayerPlayableCards(playerPlayableCards)
         battleActions.setPlayerCardsOnTable(currentPlayerCardsOnTable)
+        const d = powerRegistry['arcaneAffinity'].execute({
+            attackingCard: card,
+            attackerCardsOnBoard: currentPlayerCardsOnTable,
+            attackerCardInHand: playerPlayableCards,
+            attackerDeck: battleState.activeBattleDeck,
+            attackerDiscardedCards: [],
+            attackerHero: battleState.hero as any,
+            attackedCard: card,
+            opponentCardsOnBoard: battleState.opponent?.cardsOnTheTable as any,
+            opponentCardInHand: [],
+            opponentDeck: [],
+            opponentDiscardedCards: [],
+            opponentHero: battleState.opponent?.hero as any
+        })
+        console.log('POWER DATA: ', d)
         const data: IMyStateToOponent = {
             opponent: {
                 socketId: battleState.mySocketId ?? '',
@@ -393,8 +410,8 @@ export default function BattlePage() {
     })
 
     return <AuthGuard>
-        <div className="w-screen h-screen bg-primary-400 p-3 grid grid-cols-12">
-            <div className="flex flex-col justify-between items-center col-span-1">
+        <div className="grid w-screen h-screen grid-cols-12 p-3 bg-primary-400">
+            <div className="flex flex-col items-center justify-between col-span-1">
                 <div className="flex items-center justify-center space-x-0.5">
                     {Array.from({ length: battleState.opponent?.battleDeckAmount || 0 }, (_, index) => {
                         return <div className="h-20 shadow-lg w-0.5 border border-secondary-400" key={index}></div>
@@ -402,16 +419,16 @@ export default function BattlePage() {
                 </div>
                 {battleState.hero ? <HeroComponent hero={battleState.hero} /> : <></>}
             </div>
-            <div className="flex flex-col justify-between items-center h-full col-span-10">
+            <div className="flex flex-col items-center justify-between h-full col-span-10">
                 <div>
-                    <div className="space-y-3 flex items-center justify-start">
+                    <div className="flex items-center justify-start space-y-3">
                         <div>
                             <p className="flex whitespace-nowrap">{battleState.opponent?.availableMana} / {battleState.opponent?.totalMana}</p>
                         </div>
-                        <div className="flex justify-center items-center space-x-3">
-                            <div className="flex space-x-1 justify-center items-center grow">
+                        <div className="flex items-center justify-center space-x-3">
+                            <div className="flex items-center justify-center space-x-1 grow">
                                 {Array.from({ length: battleState.opponent?.playableCardsAmount || 0 }, (_, index) => {
-                                    return <div key={index} className="rounded-md border border-black space-y-3">
+                                    return <div key={index} className="space-y-3 border border-black rounded-md">
                                         <img src='/crypties_logo_original.png' className="rounded-md w-28 h-28" />
                                     </div>
                                 })
@@ -419,7 +436,7 @@ export default function BattlePage() {
                             </div>
                         </div>
                     </div>
-                    <div className="flex space-x-3 justify-center items-center">
+                    <div className="flex items-center justify-center space-x-3">
                         {battleState.opponent?.cardsOnTheTable?.map((card, index) => {
                             return <div key={index} onClick={() => attack(card)} className={`${isActiveOpponentCard(card) ? 'shadow-lg border-secondary-400' : 'border-black'} cursor-pointer p-3 rounded-md border space-y-3`}>
                                 <img src={card.image_url} className="rounded-md w-28 h-28" />
@@ -434,8 +451,8 @@ export default function BattlePage() {
                     </div>
                 </div>
 
-                <div className="space-y-3 items-center justify-center">
-                    <div className="flex space-x-3 justify-center items-center">
+                <div className="items-center justify-center space-y-3">
+                    <div className="flex items-center justify-center space-x-3">
                         {battleState.playerCardsOnTable.map((card, index) => {
                             return <div key={index} onClick={() => activateCard(card)} className={`${isActivePlayerCard(card) ? 'shadow-lg border-secondary-400' : 'border-black'} cursor-pointer p-3 rounded-md border space-y-3`}>
                                 <img src={card.image_url} className="rounded-md w-28 h-28" />
@@ -448,8 +465,8 @@ export default function BattlePage() {
                             </div>
                         })}
                     </div>
-                    <div className="flex justify-center items-center space-x-3">
-                        <div className="flex space-x-1 justify-center items-center grow">
+                    <div className="flex items-center justify-center space-x-3">
+                        <div className="flex items-center justify-center space-x-1 grow">
                             {battleState.playerPlayableCards.map((card, index) => {
                                 if (card) {
                                     return <div onClick={() => placeOnBoard(card)} key={index} className={`${battleState.myTurn ? 'cursor-pointer' : ''} p-3 rounded-md border border-black space-y-3`}>
@@ -471,7 +488,7 @@ export default function BattlePage() {
                     </div>
                 </div>
             </div>
-            <div className="flex flex-col justify-between items-center col-span-1">
+            <div className="flex flex-col items-center justify-between col-span-1">
                 {battleState.opponent?.hero ? <div className={`${battleState.activeCard ? 'cursor-pointer' : ''}`} onClick={attackHero}><HeroComponent hero={battleState.opponent?.hero} /></div> : <></>}
                 <div className={`${battleState.myTurn ? 'opacity-100 cursor-pointer' : 'opacity-50'} p-3 border border-secondary-400 rounded-full flex items-center justify-center text-center text-black bg-secondary-400`} onClick={flipTurn}>End turn</div>
                 <div className="flex items-center justify-center space-x-0.5">

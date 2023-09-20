@@ -14,7 +14,6 @@ import { useErrorSuccessActions } from "@/recoil-state/error_success/error_succe
 import { ErrorSuccessType } from "@/recoil-state/error_success/error_success.atom";
 import { Link } from '@imtbl/imx-sdk';
 import { allowOnlyNumbersDecimals } from "../functions";
-import powerRegistry from 'arcane-blessings';
 
 const NEXT_PUBLIC_IMX_LINK_ADDRESS = process.env.NEXT_PUBLIC_IMX_LINK_ADDRESS ?? '';
 const link = new Link(NEXT_PUBLIC_IMX_LINK_ADDRESS, null, 'v3');
@@ -30,15 +29,6 @@ export const HeaderMain = ({ onAdminSite }: HeaderMainProps) => {
     const errorSuccessActions = useErrorSuccessActions();
     // const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const test = trpc.testAuth.useMutation();
-
-
-    const t = async () => {
-        // await test.mutateAsync();
-        const t = new powerRegistry["charge"]();
-        const s = t.execute([], [], [])
-        console.log('s: ', s)
-    }
-
 
     const userBalance = trpc.getUserBalance.useQuery({ walletAddress: user?.walletAddress ?? '' });
 
@@ -76,7 +66,6 @@ export const HeaderMain = ({ onAdminSite }: HeaderMainProps) => {
             <PText>{userBalance.data} ETH</PText>
             <ButtonCustom title="Deposit funds to L2" onClick={() => globalModalActions.openGlobalModal(<DepositFundsModal fundAccount={(amount: string) => fundAccount(amount)} />)} />
             <ButtonCustom title="Disconnect" onClick={() => disconnectIMX()} />
-            <div onClick={t}>CLICK</div>
         </div>
     </div>
 }
