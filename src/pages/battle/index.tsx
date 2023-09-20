@@ -188,21 +188,22 @@ export default function BattlePage() {
 
         battleActions.setPlayerPlayableCards(playerPlayableCards)
         battleActions.setPlayerCardsOnTable(currentPlayerCardsOnTable)
-        const d = powerRegistry['arcaneAffinity'].execute({
-            attackingCard: card,
-            attackerCardsOnBoard: currentPlayerCardsOnTable,
-            attackerCardInHand: playerPlayableCards,
-            attackerDeck: battleState.activeBattleDeck,
-            attackerDiscardedCards: [],
-            attackerHero: battleState.hero as any,
-            attackedCard: card,
-            opponentCardsOnBoard: battleState.opponent?.cardsOnTheTable as any,
-            opponentCardInHand: [],
-            opponentDeck: [],
-            opponentDiscardedCards: [],
-            opponentHero: battleState.opponent?.hero as any
-        })
-        console.log('POWER DATA: ', d)
+        // const d = powerRegistry['arcaneMastery'].execute({
+        //     attackingCard: card,
+        //     attackerCardsOnBoard: currentPlayerCardsOnTable,
+        //     attackerCardInHand: playerPlayableCards,
+        //     attackerDeck: battleState.activeBattleDeck,
+        //     attackerDiscardedCards: [],
+        //     attackerHero: battleState.hero as any,
+        //     attackedCard: card,
+        //     opponentCardsOnBoard: battleState.opponent?.cardsOnTheTable as any,
+        //     opponentCardInHand: [],
+        //     opponentDeck: [],
+        //     opponentDiscardedCards: [],
+        //     opponentHero: battleState.opponent?.hero as any
+        // })
+
+        // console.log('POWER DATA: ', d)
         const data: IMyStateToOponent = {
             opponent: {
                 socketId: battleState.mySocketId ?? '',
