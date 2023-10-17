@@ -207,6 +207,7 @@ export default function BattlePage() {
         }
 
         const powerData = powerRegistry['arcaneAffinity'].execute(specialPowerData)
+        console.log('takesEffect: ', powerRegistry['arcaneAffinity'].takesEffect)
 
         const demoPowerData = arcaneAffinity(specialPowerData)
 

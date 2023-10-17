@@ -85,10 +85,10 @@ export function arcaneMastery(data: SpecialAttackData): SpecialAttackData {
 export function divineFury(data: SpecialAttackData): SpecialAttackData {
     let newData: SpecialAttackData = JSON.parse(JSON.stringify(data));
     if (newData.opponentCardsOnBoard.length > 1 && randomChance(35)) {
-        const randomIndex = Math.floor(Math.random() * data.opponentCardsOnBoard.length);
-        const randomCard = data.opponentCardsOnBoard[randomIndex];
+        const randomIndex = Math.floor(Math.random() * newData.opponentCardsOnBoard.length);
+        const randomCard = newData.opponentCardsOnBoard[randomIndex];
 
-        const damagedCard = damage(randomCard, data.attackingCard);
+        const damagedCard = damage(randomCard, newData.attackingCard);
         if (shouldDiscard(damagedCard)) {
             const resDiscard = discard(damagedCard, newData.opponentCardsOnBoard, newData.opponentDiscardedCards)
             newData.opponentCardsOnBoard = resDiscard.discardFrom;
@@ -104,7 +104,7 @@ export function divineFury(data: SpecialAttackData): SpecialAttackData {
 export function divineShield(data: SpecialAttackData): SpecialAttackData {
     let newData: SpecialAttackData = JSON.parse(JSON.stringify(data));
     if (randomChance(45)) {
-        const attackingCardIndex = data.attackerCardsOnBoard.findIndex((card) => card.token_id === newData.attackingCard.token_id)
+        const attackingCardIndex = newData.attackerCardsOnBoard.findIndex((card) => card.token_id === newData.attackingCard.token_id)
         newData.attackingCard.metadata.health -= newData.attackingCard.metadata.attackPower
         const damagedCard = damage(newData.attackingCard, newData.attackingCard);
         if (shouldDiscard(damagedCard)) {
@@ -123,7 +123,7 @@ export function dragonBreath(data: SpecialAttackData): SpecialAttackData {
     const newData: SpecialAttackData = JSON.parse(JSON.stringify(data));
     if (newData.opponentCardsOnBoard.length > 0) {
         newData.opponentCardsOnBoard.map((card, index) => {
-            if (card.token_id !== data.attackedCard.token_id) {
+            if (card.token_id !== newData.attackedCard.token_id) {
                 if (randomChance(35)) {
                     card.metadata.health -= 2
                 } else {
