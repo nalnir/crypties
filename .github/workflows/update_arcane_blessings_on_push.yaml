@@ -1,0 +1,44 @@
+name: Update Arcane Blessings Dependency
+
+on: push
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16 # Use your desired Node.js version
+
+      - name: Check for Updates
+        run: |
+          # Check the latest version of arcane-blessings on npm
+          latest_version=$(npm show arcane-blessings version)
+
+          # Compare the latest version with the current version in package.json
+          current_version=$(node -e "console.log(require('./package.json').dependencies['arcane-blessings'])")
+
+          if [ "$latest_version" != "$current_version" ]; then
+            echo "New version available: $latest_version"
+
+            npm install "arcane-blessings@$latest_version"
+
+            git config --global user.email "statecznylukas@gmail.com"
+
+            git config --global user.name "nalnir"
+
+            git pull
+
+            git commit -am "Update arcane-blessings to $latest_version"
+
+            git push origin main
+          else
+            echo "No updates available"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
