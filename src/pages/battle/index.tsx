@@ -23,6 +23,8 @@ import { useGlobalModalActions } from "@/recoil-state/global_modal/global_modal.
 import WinnerComponent from "./components/winner_component";
 import LooserComponent from "./components/looser_component";
 import powerRegistry from "arcane-blessings";
+import { arcaneAffinity, divineFury } from "../../utils/demo_powers.ts";
+import { SpecialAttackData } from "../../utils/types/special_attack_data.ts";
 
 interface IMyStateToOponent {
     opponent: {
@@ -188,22 +190,29 @@ export default function BattlePage() {
 
         battleActions.setPlayerPlayableCards(playerPlayableCards)
         battleActions.setPlayerCardsOnTable(currentPlayerCardsOnTable)
-        // const d = powerRegistry['arcaneMastery'].execute({
-        //     attackingCard: card,
-        //     attackerCardsOnBoard: currentPlayerCardsOnTable,
-        //     attackerCardInHand: playerPlayableCards,
-        //     attackerDeck: battleState.activeBattleDeck,
-        //     attackerDiscardedCards: [],
-        //     attackerHero: battleState.hero as any,
-        //     attackedCard: card,
-        //     opponentCardsOnBoard: battleState.opponent?.cardsOnTheTable as any,
-        //     opponentCardInHand: [],
-        //     opponentDeck: [],
-        //     opponentDiscardedCards: [],
-        //     opponentHero: battleState.opponent?.hero as any
-        // })
 
-        // console.log('POWER DATA: ', d)
+        const specialPowerData: SpecialAttackData = {
+            attackingCard: card,
+            attackerCardsOnBoard: currentPlayerCardsOnTable,
+            attackerCardInHand: playerPlayableCards,
+            attackerDeck: battleState.activeBattleDeck,
+            attackerDiscardedCards: [],
+            attackerHero: battleState.hero as any,
+            attackedCard: card,
+            opponentCardsOnBoard: battleState.opponent?.cardsOnTheTable as any,
+            opponentCardInHand: [],
+            opponentDeck: [],
+            opponentDiscardedCards: [],
+            opponentHero: battleState.opponent?.hero as any
+        }
+
+        const powerData = powerRegistry['arcaneAffinity'].execute(specialPowerData)
+
+        const demoPowerData = arcaneAffinity(specialPowerData)
+
+
+        console.log('POWER DATA: ', powerData)
+        console.log('DEMO POWER DATA: ', demoPowerData)
         const data: IMyStateToOponent = {
             opponent: {
                 socketId: battleState.mySocketId ?? '',
