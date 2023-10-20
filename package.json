@@ -3,7 +3,7 @@
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
-		"dev": "concurrently -i \"next dev\" \"npx nodemon src/server/socket.js\"",
+		"dev": "concurrently -i \"cross-env NODE_OPTIONS='--inspect' next dev\" \"npx nodemon src/server/socket.js\"",
 		"build": "next build",
 		"start": "next start",
 		"lint": "next lint"

@@ -17,6 +17,7 @@ export interface OriginalCard {
         ipfsCID?: string,
         imageId: string
     },
+    specialPowerUsed: number,
     orders?: {
         sell_orders?: Array<{
             buy_decimals: number,
@@ -30,5 +31,5 @@ export interface OriginalCard {
         }>
     },
     token_id?: string,
-    token_address?: string
+    token_address?: string,
 }

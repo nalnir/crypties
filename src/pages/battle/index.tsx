@@ -23,7 +23,7 @@ import { useGlobalModalActions } from "@/recoil-state/global_modal/global_modal.
 import WinnerComponent from "./components/winner_component";
 import LooserComponent from "./components/looser_component";
 import powerRegistry from "arcane-blessings";
-import { arcaneAffinity, divineFury } from "../../utils/demo_powers.ts";
+import { arcaneAffinity, arcaneMastery, divineFury, divineShield, dragonBreath, frostNova, infernalRage, lycanthropy, ressurect, stealth, suddenStrike, thunderStrike, wisdomGaze } from "../../utils/demo_powers.ts";
 import { SpecialAttackData } from "../../utils/types/special_attack_data.ts";
 
 interface IMyStateToOponent {
@@ -203,16 +203,17 @@ export default function BattlePage() {
             opponentCardInHand: [],
             opponentDeck: [],
             opponentDiscardedCards: [],
-            opponentHero: battleState.opponent?.hero as any
+            opponentHero: battleState.opponent?.hero as any,
+            lingerEffect: []
         }
 
-        const powerData = powerRegistry['arcaneAffinity'].execute(specialPowerData)
-        console.log('takesEffect: ', powerRegistry['arcaneAffinity'].takesEffect);
+        // const powerData = powerRegistry['divineFury'].execute(specialPowerData)
+        // console.log('takesEffect: ', powerRegistry['divineFury'].takesEffect);
 
-        const demoPowerData = arcaneAffinity(specialPowerData)
+        const demoPowerData = wisdomGaze(specialPowerData)
 
 
-        console.log('POWER DATA: ', powerData)
+        // console.log('POWER DATA: ', powerData)
         console.log('DEMO POWER DATA: ', demoPowerData)
         const data: IMyStateToOponent = {
             opponent: {
