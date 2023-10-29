@@ -44,6 +44,7 @@ interface IMyStateToOponent {
 
 export default function BattlePage() {
     const { data: user, isLoading, isError } = useQuery<UserDocument>(['user']);
+
     const router = useRouter()
     const connectToLobby = trpc.connectToLobby.useMutation();
     const saveGameStats = trpc.saveGameStats.useMutation();
@@ -206,10 +207,11 @@ export default function BattlePage() {
             opponentHero: battleState.opponent?.hero as any,
             lingerEffect: []
         }
-        // if(card.metadata.special) {
-        //     const power = powerRegistry[card.metadata.special]
-        //     if(power.takesEffect === EffectType.)
-        // }
+        if (card.metadata.special) {
+            const power = powerRegistry[card.metadata.special]
+            // if (power.takesEffect === EffectT)
+            // powerRegistry
+        }
 
         // const powerData = powerRegistry['arcaneAffinity'].execute(specialPowerData)
         // const demoPowerData = arcaneAffinity(specialPowerData)

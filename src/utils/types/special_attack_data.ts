@@ -1,5 +1,5 @@
-import { Hero } from "./hero.ts";
-import { OriginalCard } from "./original_card.ts";
+import { Hero } from "./hero";
+import { OriginalCard } from "./original_card";
 
 export enum LingerEffectOperation {
     ADD = "ADD",
