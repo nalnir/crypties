@@ -4,10 +4,10 @@ import { z } from "zod";
 
 import { NFTStorage, File } from 'nft.storage';
 import { Wallet } from '@ethersproject/wallet';
-import { AlchemyProvider } from '@ethersproject/providers';
+import { AlchemyProvider, JsonRpcProvider } from '@ethersproject/providers';
 
 const NFT_STORAGE_KEY = process.env.NFT_STORAGE_API_KEY ?? ''
-const ETH_NETWORK = process.env.ETH_NETWORK ?? 'goerli';
+const ETH_NETWORK = process.env.ETH_NETWORK ?? 'sepolia';
 const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY ?? '';
 const PRIVATE_KEY1 = process.env.PRIVATE_KEY1 ?? '';
 const TOKEN_ADDRESS = process.env.TOKEN_ADDRESS ?? '';
@@ -24,7 +24,14 @@ AWS.config.update({
     region: process.env.AWS_REGION,
 });
 
-const provider = new AlchemyProvider(ETH_NETWORK, ALCHEMY_API_KEY);
+// const provider = new AlchemyProvider(ETH_NETWORK, ALCHEMY_API_KEY);
+const provider = new JsonRpcProvider(
+    `https://eth-sepolia.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
+    {
+        name: 'sepolia',
+        chainId: 11155111,
+    },
+);
 
 const bucketName = process.env.AWS_BUCKET_NAME
 const s3 = new AWS.S3();
@@ -32,19 +39,24 @@ const s3 = new AWS.S3();
 export const uploadMetadataToIPFS = publicProcedure
     .input(original_card)
     .mutation(async (opts) => {
+
         if (!NFT_STORAGE_KEY) {
             throw new Error("NFT_STORAGE_KEY Undefined")
         }
         const inputs = opts.input;
 
         const jsonStr = JSON.stringify(inputs);
-        const jsonFile = new File([jsonStr], 'card_data.json', { type: 'application/json' });
+        const jsonFile = new File([jsonStr], 'crypties-metadata', { type: 'application/json' });
 
         const storage = new NFTStorage({ token: NFT_STORAGE_KEY })
 
-        const cid = await storage.storeBlob(jsonFile)
-        console.log({ cid })
-        return cid;
+        try {
+            const cid = await storage.storeBlob(jsonFile)
+            return cid;
+        } catch (e) {
+            console.log('ERROR: ', e)
+            return;
+        }
     })
 
 export const uploadMetadataToS3 = publicProcedure

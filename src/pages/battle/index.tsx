@@ -23,8 +23,8 @@ import { useGlobalModalActions } from "@/recoil-state/global_modal/global_modal.
 import WinnerComponent from "./components/winner_component";
 import LooserComponent from "./components/looser_component";
 import powerRegistry from "arcane-blessings";
-import { arcaneAffinity, arcaneMastery, divineFury, divineShield, dragonBreath, frostNova, infernalRage, lycanthropy, ressurect, stealth, suddenStrike, thunderStrike, wisdomGaze } from "../../utils/demo_powers.ts";
-import { SpecialAttackData } from "../../utils/types/special_attack_data.ts";
+import { arcaneAffinity, arcaneMastery, divineFury, divineShield, dragonBreath, frostNova, infernalRage, lycanthropy, ressurect, stealth, suddenStrike, thunderStrike, wisdomGaze } from "../../utils/demo_powers";
+import { SpecialAttackData } from "../../utils/types/special_attack_data";
 
 interface IMyStateToOponent {
     opponent: {
@@ -199,22 +199,24 @@ export default function BattlePage() {
             attackerDiscardedCards: [],
             attackerHero: battleState.hero as any,
             attackedCard: card,
-            opponentCardsOnBoard: battleState.opponent?.cardsOnTheTable as any,
+            opponentCardsOnBoard: battleState.opponent?.cardsOnTheTable ?? [],
             opponentCardInHand: [],
             opponentDeck: [],
             opponentDiscardedCards: [],
             opponentHero: battleState.opponent?.hero as any,
             lingerEffect: []
         }
+        // if(card.metadata.special) {
+        //     const power = powerRegistry[card.metadata.special]
+        //     if(power.takesEffect === EffectType.)
+        // }
 
-        // const powerData = powerRegistry['divineFury'].execute(specialPowerData)
-        // console.log('takesEffect: ', powerRegistry['divineFury'].takesEffect);
-
-        const demoPowerData = wisdomGaze(specialPowerData)
-
+        // const powerData = powerRegistry['arcaneAffinity'].execute(specialPowerData)
+        // const demoPowerData = arcaneAffinity(specialPowerData)
 
         // console.log('POWER DATA: ', powerData)
-        console.log('DEMO POWER DATA: ', demoPowerData)
+        // console.log('DEMO POWER DATA: ', demoPowerData)
+
         const data: IMyStateToOponent = {
             opponent: {
                 socketId: battleState.mySocketId ?? '',

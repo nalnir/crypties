@@ -146,6 +146,7 @@ export const RaceCreatorComponent = () => {
                 const resIsFantayRace = await isFantayRace.mutateAsync({
                     name: correctedName
                 })
+                console.log('resIsFantayRace: ', resIsFantayRace)
                 if (!resIsFantayRace) {
                     return handleError('Somethign went worng with the ChatGPT check')
                 } else {

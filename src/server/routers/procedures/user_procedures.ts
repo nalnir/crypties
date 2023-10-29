@@ -13,12 +13,6 @@ import Deck, { DeckDocument } from '@/pages/api/schemas/deck_schema';
 import { deck } from '../objects/deck';
 const mongoose = require('mongoose');
 
-const PRIVATE_KEY1 = process.env.PRIVATE_KEY1 ?? ''
-const ETH_NETWORK = process.env.ETH_NETWORK ?? 'goerli';
-const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY ?? '';
-
-const provider = new AlchemyProvider(ETH_NETWORK, ALCHEMY_API_KEY);
-
 export const getUser = publicProcedure
   .input(
     z.object({

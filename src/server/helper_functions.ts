@@ -1,9 +1,16 @@
 const nodeFetch = require('node-fetch');
-import { AlchemyProvider } from '@ethersproject/providers';
+import { AlchemyProvider, JsonRpcProvider } from '@ethersproject/providers';
 
-const ETH_NETWORK = process.env.ETH_NETWORK ?? 'goerli'
+const ETH_NETWORK = process.env.ETH_NETWORK ?? 'sepolia'
 const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY ?? ''
-const provider = new AlchemyProvider(ETH_NETWORK, ALCHEMY_API_KEY);
+// const provider = new AlchemyProvider(ETH_NETWORK, ALCHEMY_API_KEY);
+const provider = new JsonRpcProvider(
+  `https://eth-sepolia.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
+  {
+    name: 'sepolia',
+    chainId: 11155111,
+  },
+);
 
 export async function downloadImageAsBuffer(url: string) {
   try {
@@ -25,8 +32,8 @@ export const waitForTransaction = async (promise: Promise<string>) => {
   const txId = await promise;
   console.log('Waiting for transaction', {
     txId,
-    etherscanLink: `https://goerli.etherscan.io/tx/${txId}`,
-    alchemyLink: `https://dashboard.alchemyapi.io/mempool/eth-goerli/tx/${txId}`,
+    etherscanLink: `https://sepolia.etherscan.io/tx/${txId}`,
+    alchemyLink: `https://dashboard.alchemyapi.io/mempool/eth-sepolia/tx/${txId}`,
   });
   const receipt = await provider.waitForTransaction(txId);
   if (receipt.status === 0) {

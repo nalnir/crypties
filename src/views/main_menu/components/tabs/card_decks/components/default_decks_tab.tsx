@@ -62,71 +62,95 @@ export const DefaultDecksTab = () => {
             //     toAddress: process.env.NEXT_PUBLIC_SUPERADMIN_ADDRESS ?? ''
             // }])
             const numberOfTokensToMint = deck.cards.reduce((acc: number, val: any) => acc + val.amountOfCards, 0) + deck.randomCards.reduce((acc: number, val: any) => acc + val.amountOfCards, 0)
-            const result = await Promise.all(mergedArray.map(async (card: any, index: number) => {
-                let deckCardMatch = deck.cards.find((deckCard: any) => deckCard.cardId === card._id)
-                if (!deckCardMatch) {
-                    deckCardMatch = deck.randomCards.find((randomDeckCard: any) => randomDeckCard.cardType === card.metadata.cardType)
-                }
 
-                let cardToBeMinted: any = {
-                    name: card.name,
-                    description: card.description,
-                    image_url: card.image_url,
-                    metadata: {
-                        health: card.metadata.health,
-                        attackPower: card.metadata.attackPower,
-                        creatorPlayerName: card.metadata.creatorPlayerName,
-                        creatorAddress: card.metadata.creatorAddress,
-                        creatorLoreName: card.metadata.creatorLoreName,
-                        cardType: card.metadata.cardType,
-                        cardTypeId: card.metadata.cardTypeId,
-                        generation: card.metadata.generation,
-                        imageId: card.metadata.imageId,
-                        default: true
-                    },
-                }
+            let cardToBeMinted: any = {
+                name: mergedArray[0].name,
+                description: mergedArray[0].description,
+                image_url: mergedArray[0].image_url,
+                metadata: {
+                    health: mergedArray[0].metadata.health,
+                    attackPower: mergedArray[0].metadata.attackPower,
+                    creatorPlayerName: mergedArray[0].metadata.creatorPlayerName,
+                    creatorAddress: mergedArray[0].metadata.creatorAddress,
+                    creatorLoreName: mergedArray[0].metadata.creatorLoreName,
+                    cardType: mergedArray[0].metadata.cardType,
+                    cardTypeId: mergedArray[0].metadata.cardTypeId,
+                    generation: mergedArray[0].metadata.generation,
+                    imageId: mergedArray[0].metadata.imageId,
+                    default: true
+                },
+            }
+            const cid = await uploadMetadataToIPFS.mutateAsync(cardToBeMinted)
+            // const result = await Promise.all(mergedArray.map(async (card: any, index: number) => {
+            //     let deckCardMatch = deck.cards.find((deckCard: any) => deckCard.cardId === card._id)
+            //     if (!deckCardMatch) {
+            //         deckCardMatch = deck.randomCards.find((randomDeckCard: any) => randomDeckCard.cardType === card.metadata.cardType)
+            //     }
 
-                if (card.metadata.special) {
-                    cardToBeMinted.metadata.special = card.metadata.special
-                }
+            //     let cardToBeMinted: any = {
+            //         name: card.name,
+            //         description: card.description,
+            //         image_url: card.image_url,
+            //         metadata: {
+            //             health: card.metadata.health,
+            //             attackPower: card.metadata.attackPower,
+            //             creatorPlayerName: card.metadata.creatorPlayerName,
+            //             creatorAddress: card.metadata.creatorAddress,
+            //             creatorLoreName: card.metadata.creatorLoreName,
+            //             cardType: card.metadata.cardType,
+            //             cardTypeId: card.metadata.cardTypeId,
+            //             generation: card.metadata.generation,
+            //             imageId: card.metadata.imageId,
+            //             default: true
+            //         },
+            //     }
 
-                if (card.metadata.manaCost) {
-                    cardToBeMinted.metadata.manaCost = card.metadata.manaCost
-                }
+            //     if (card.metadata.special) {
+            //         cardToBeMinted.metadata.special = card.metadata.special
+            //     }
 
-                const cid = await uploadMetadataToIPFS.mutateAsync(cardToBeMinted)
-                cardToBeMinted.metadata.ipfsCID = cid;
+            //     if (card.metadata.manaCost) {
+            //         cardToBeMinted.metadata.manaCost = card.metadata.manaCost
+            //     }
 
-                const allPromises = await Promise.all(
-                    Array.from({ length: deckCardMatch.amountOfCards }, (_, i) => i).map(async (i) => {
-                        const res: any = await bumpTokenId.mutateAsync({
-                            generation: card.metadata.generation
-                        })
-                        allCardTokens.push(res.amountOfCardsForged.toString())
-                        await uploadMetadataToS3.mutateAsync({
-                            original_card: card,
-                            tokenId: res.amountOfCardsForged,
-                        })
+            //     // const cid = await uploadMetadataToIPFS.mutateAsync(cardToBeMinted)
+            //     // if (!cid) {
+            //     //     console.log('Card: ', card)
+            //     //     errorSuccessActions.openErrorSuccess('Could not upload metadata for: ', card.name)
+            //     //     return
+            //     // }
+            //     // cardToBeMinted.metadata.ipfsCID = cid;
 
-                        await mintTokens.mutateAsync({
-                            walletAddress: user?.walletAddress ?? '',
-                            tokenId: res.amountOfCardsForged,
-                            number_of_tokens_to_mint: 1
-                        })
-                    })
-                )
-                return allPromises;
-            }))
-            await createUserDefaultDeck.mutateAsync({
-                walletAddress: user?.walletAddress ?? '',
-                image: deck.image,
-                deckName: deck.deckName,
-                cards: allCardTokens,
-                default: true
-            })
+            //     const allPromises = await Promise.all(
+            //         Array.from({ length: deckCardMatch.amountOfCards }, (_, i) => i).map(async (i) => {
+            //             const res: any = await bumpTokenId.mutateAsync({
+            //                 generation: card.metadata.generation
+            //             })
+            //             allCardTokens.push(res.amountOfCardsForged.toString())
+            //             await uploadMetadataToS3.mutateAsync({
+            //                 original_card: card,
+            //                 tokenId: res.amountOfCardsForged,
+            //             })
+
+            //             await mintTokens.mutateAsync({
+            //                 walletAddress: user?.walletAddress ?? '',
+            //                 tokenId: res.amountOfCardsForged,
+            //                 number_of_tokens_to_mint: 1
+            //             })
+            //         })
+            //     )
+            //     return allPromises;
+            // }))
+            // await createUserDefaultDeck.mutateAsync({
+            //     walletAddress: user?.walletAddress ?? '',
+            //     image: deck.image,
+            //     deckName: deck.deckName,
+            //     cards: allCardTokens,
+            //     default: true
+            // })
 
             setIsLoading(false)
-            return result;
+            // return result;
         } catch (e) {
             console.log('e: ', e)
             errorSuccessActions.openErrorSuccess('Something went wrong. Please try again', ErrorSuccessType.ERROR)

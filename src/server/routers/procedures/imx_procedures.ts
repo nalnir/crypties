@@ -4,20 +4,27 @@ import { Link } from '@imtbl/imx-sdk';
 import { ImmutableXClient } from '@imtbl/imx-sdk';
 import { waitForTransaction } from '@/server/helper_functions';
 import { Wallet } from '@ethersproject/wallet';
-import { AlchemyProvider } from '@ethersproject/providers';
+import { AlchemyProvider, JsonRpcProvider } from '@ethersproject/providers';
 import { ImmutableX, Config, generateStarkPrivateKey, createStarkSigner, UnsignedOrderRequest, WalletConnection } from '@imtbl/core-sdk';
 import { ENVIRONMENTS, L1_PROVIDERS, WalletSDK } from '@imtbl/wallet-sdk-web';
 import { BigNumber, utils } from 'ethers';
 
 
 const PRIVATE_KEY1 = process.env.PRIVATE_KEY1 ?? ''
-const ETH_NETWORK = process.env.ETH_NETWORK ?? 'goerli';
+const ETH_NETWORK = process.env.ETH_NETWORK ?? 'sepolia';
 const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY ?? '';
 
 const IMX_COLLECTION_ADDRESS = process.env.IMX_COLLECTION_ADDRESS ?? '';
 const NEXT_PUBLIC_IMX_LINK_ADDRESS = process.env.NEXT_PUBLIC_IMX_LINK_ADDRESS ?? '';
 
-const provider = new AlchemyProvider(ETH_NETWORK, ALCHEMY_API_KEY);
+// const provider = new AlchemyProvider(ETH_NETWORK, ALCHEMY_API_KEY);
+const provider = new JsonRpcProvider(
+  `https://eth-sepolia.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
+  {
+    name: 'sepolia',
+    chainId: 11155111,
+  },
+);
 const config = Config.SANDBOX; // Or Config.PRODUCTION
 const walletClient = new ImmutableX(config);
 const starkPrivateKey = generateStarkPrivateKey(); // Or retrieve previously generated key

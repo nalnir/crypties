@@ -10,6 +10,4 @@
   "[solidity]": {
     "editor.defaultFormatter": "JuanBlanco.solidity"
   },
-  "deno.enable": true,
-  "deno.unstable": true
 }
