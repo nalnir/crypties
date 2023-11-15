@@ -2,7 +2,6 @@ import { UserDocument } from "@/pages/api/schemas/user_schema";
 import { usePlayerCardsActions } from "@/recoil-state/player_cards/player_cards.actions";
 import { playerCardsAtom } from "@/recoil-state/player_cards/player_cards.atom";
 import { ButtonCustom, PText } from "@/shared";
-import { trpc } from "@/utils/trpc";
 import { CircularProgress } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
@@ -13,15 +12,16 @@ import { DeckDocument } from "@/pages/api/schemas/deck_schema";
 import { usePlayerDecksActions } from "@/recoil-state/player_decks/player_decks.actions";
 import { useErrorSuccessActions } from "@/recoil-state/error_success/error_success.actions";
 import { ErrorSuccessType } from "@/recoil-state/error_success/error_success.atom";
+import { api } from "@/utils/api";
 
 export const AllCardsTab = () => {
     const { data: user, isLoading, isError } = useQuery<UserDocument>(['user']);
     const playerDeckActions = usePlayerDecksActions();
     const errorSuccessActions = useErrorSuccessActions();
 
-    const saveDeck = trpc.saveUserDeck.useMutation();
-    const getUserCards = trpc.getUserCards.useQuery({ walletAddress: user?.walletAddress ?? '' });
-    const getUserDecks = trpc.getUserDecks.useQuery({ walletAddress: user?.walletAddress ?? '' });
+    const saveDeck = api.user.saveUserDeck.useMutation();
+    const getUserCards = api.imx.getUserCards.useQuery({ walletAddress: user?.walletAddress ?? '' });
+    const getUserDecks = api.user.getUserDecks.useQuery({ walletAddress: user?.walletAddress ?? '' });
 
     const allUserCards: any = getUserCards.data ?? [];
     const allUserDecks: any = getUserDecks.data ?? [];

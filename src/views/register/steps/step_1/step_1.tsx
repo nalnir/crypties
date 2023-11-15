@@ -6,7 +6,6 @@ import { useRecoilValue } from "recoil";
 import { useGlobalModalActions } from "@/recoil-state/global_modal/global_modal.actions";
 import { usePlayerFantasyRaceActions } from "@/recoil-state/player_fantasy_race/player_fantasy_race.actions";
 import Image from 'next/image';
-import { trpc } from "@/utils/trpc";
 import { useQuery } from "@tanstack/react-query";
 import { UserDocument } from "@/pages/api/schemas/user_schema";
 import { RaceDocument } from "@/pages/api/schemas/race_schema";
@@ -18,6 +17,7 @@ import { Input } from "@mui/material";
 import { defaultRacesAtom } from "@/recoil-state/default_races/default_races.atom";
 import { useDefaultRacesActions } from "@/recoil-state/default_races/default_races.actions";
 import { RaceListComponent } from "./components/race_list";
+import { api } from "@/utils/api";
 
 export const Step1 = () => {
     const globalModal = useGlobalModalActions();
@@ -32,10 +32,10 @@ export const Step1 = () => {
 
     const [activeRace, setActiveRace] = useState<RaceDocument | undefined>()
 
-    const getDefaultFantasyRaces = trpc.getDefaultFantasyRaces.useMutation()
-    const generateDescription = trpc.generateDescription.useMutation()
-    const saveUserFantasyRace = trpc.saveUserFantasyRace.useMutation()
-    const getUserFantasyRace = trpc.getUserFantasyRace.useMutation()
+    const getDefaultFantasyRaces = api.fatansyRace.getDefaultFantasyRaces.useMutation()
+    const generateDescription = api.ai.generateDescription.useMutation()
+    const saveUserFantasyRace = api.user.saveUserFantasyRace.useMutation()
+    const getUserFantasyRace = api.user.getUserFantasyRace.useMutation()
 
     const [fantasyRaceList, setFantasyRaceList] = useState<RaceDocument[]>([]);
     const { data: user, isLoading, isError } = useQuery<UserDocument>(['user']);

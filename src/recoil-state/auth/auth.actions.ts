@@ -2,12 +2,13 @@ import { ImmutableXClient, Link } from "@imtbl/imx-sdk";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { authAtom } from "./auth.atom";
 import { LOCAL_CRYPTIES_STORAGE_KEY, LocalStorage } from "@/utils";
-import { trpc } from "@/utils/trpc";
+
 import { InitialUserState, userAtom } from "../user/user.atom";
 import { InitialPlayerDecksState, playerDecksAtom } from "../player_decks/player_decks.atom";
 import { InitialOnboardingHeroState, onboardingHeroAtom } from "../onboarding_hero/onboarding_hero.atom";
 import { InitialPlayerCardsState, playerCardsAtom } from "../player_cards/player_cards.atom";
-import { isAdmin } from "@/server/trpc";
+import { api } from "@/utils/api";
+import { users } from "@prisma/client";
 
 export function useAuthActions() {
     const setAuth = useSetRecoilState(authAtom);
@@ -17,11 +18,12 @@ export function useAuthActions() {
     const setOnboarding = useSetRecoilState(onboardingHeroAtom);
     const authState = useRecoilValue(authAtom);
 
-    const getUser = trpc.getUser.useMutation();
-    const registerUser = trpc.register.useMutation();
-    const getAuthToken = trpc.getAuthToken.useMutation();
-    const registerAuthToken = trpc.registerAuthToken.useMutation();
-    const invalidateAuthToken = trpc.invalidateAuthToken.useMutation();
+    const getUser = api.user.getUser.useMutation();
+    const getPublicUser = api.user.getPublicUser.useMutation();
+    const registerUser = api.user.register.useMutation();
+    const getAuthToken = api.auth.getAuthToken.useMutation();
+    const registerAuthToken = api.auth.registerAuthToken.useMutation();
+    const invalidateAuthToken = api.auth.invalidateAuthToken.useMutation();
 
     return {
         connectIMX,
@@ -74,7 +76,7 @@ export function useAuthActions() {
     }
 
     async function login(address: string) {
-        let currentUser: any = await getUser.mutateAsync({
+        let currentUser = await getPublicUser.mutateAsync({
             walletAddress: address
         })
         if (!currentUser) {
@@ -90,7 +92,7 @@ export function useAuthActions() {
         if (!authToken) {
             authToken = await registerAuthToken.mutateAsync({
                 walletAddress: address,
-                userId: currentUser._id
+                userId: currentUser.id
             })
         }
 
@@ -100,7 +102,7 @@ export function useAuthActions() {
             })
             authToken = await registerAuthToken.mutateAsync({
                 walletAddress: address,
-                userId: currentUser._id
+                userId: currentUser.id
             })
         }
         LocalStorage.set(LOCAL_CRYPTIES_STORAGE_KEY.AUTH, authToken);

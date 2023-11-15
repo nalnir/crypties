@@ -4,8 +4,8 @@ import { useErrorSuccessActions } from "@/recoil-state/error_success/error_succe
 import { ErrorSuccessType } from "@/recoil-state/error_success/error_success.atom";
 import { ButtonCustom, PText, allowOnlyNumbersDecimals } from "@/shared";
 import { CardInDefaultDeck } from "@/utils";
+import { api } from "@/utils/api";
 import { capitalizeFirstLetter } from "@/utils/functions/capitalize_first_letter";
-import { trpc } from "@/utils/trpc";
 import { RandomCardInDefaultDeck } from "@/utils/types/random_card_in_default_deck";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -18,8 +18,8 @@ const deckAmountOfCardsAllowed = process.env.NEXT_PUBLIC_DECK_AMOUNT_OF_CARDS ??
 export default function DefaultCardType({ randomCard, deck }: DefaultCardTypeProps) {
     const { data: user, isLoading, isError } = useQuery<UserDocument>(['user']);
     const errorSuccessActions = useErrorSuccessActions();
-    const updateDefaultDeck = trpc.updateDefaultDeck.useMutation();
-    const getAllDefaultDecks = trpc.getAllDefaultDecks.useQuery({});
+    const updateDefaultDeck = api.defaultDeck.updateDefaultDeck.useMutation();
+    const getAllDefaultDecks = api.defaultDeck.getAllDefaultDecks.useQuery({});
     const [amount, setAmount] = useState(randomCard.amountOfCards);
     const allDefaultDecks = getAllDefaultDecks?.data ?? [];
 

@@ -11,13 +11,13 @@ import { useRecoilValue } from "recoil";
 import { playerClassAtom } from "@/recoil-state/player_class/player_class.atom";
 import { usePlayerClassActions } from "@/recoil-state/player_class/player_class.actions";
 import { useGlobalModalActions } from "@/recoil-state/global_modal/global_modal.actions";
-import { trpc } from "@/utils/trpc";
 import { OtherPlayersClassesState, otherPlayersClassesAtom } from "@/recoil-state/other_players_classes/other_players_classes.atom";
 import { onboardingHeroAtom } from '@/recoil-state/onboarding_hero/onboarding_hero.atom';
 import { PlayerClassDocument } from '@/pages/api/schemas/class_schema';
 import { useDefaultClassesActions } from '@/recoil-state/default_classes/default_classes.actions';
 import { defaultClassesAtom } from '@/recoil-state/default_classes/default_classes.atom';
 import { ClassListComponent } from './components/class_list';
+import { api } from '@/utils/api';
 
 export const Step2 = () => {
     const globalModal = useGlobalModalActions();
@@ -32,10 +32,10 @@ export const Step2 = () => {
     const onboardingHeroActions = useOnboardingHeroActions();
     const onboardingHeroState = useRecoilValue(onboardingHeroAtom);
 
-    const generateDescription = trpc.generateDescription.useMutation();
-    const saveUserPlayerClass = trpc.saveUserPlayerClass.useMutation();
-    const getUserClass = trpc.getUserClass.useMutation();
-    const getDefaultClasses = trpc.getDefaultClasses.useMutation();
+    const generateDescription = api.ai.generateDescription.useMutation();
+    const saveUserPlayerClass = api.user.saveUserPlayerClass.useMutation();
+    const getUserClass = api.user.getUserClass.useMutation();
+    const getDefaultClasses = api.playerClass.getDefaultClasses.useMutation();
 
     const getAllDefaultClasses = async () => {
         if (!defaultClassesState.fetched) {

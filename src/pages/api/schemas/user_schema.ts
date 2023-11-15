@@ -31,6 +31,7 @@ const userSchema = new mongoose.Schema({
         }],
         required: true,
     },
+    level: { type: Number, require: false },
 }, { timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' } });
 
 export interface UserDocument extends Document {
@@ -55,6 +56,7 @@ export interface UserDocument extends Document {
         ref: string;
     };
     roles: string[];
+    level: number;
 }
 
 interface UserModel extends Model<UserDocument> { }

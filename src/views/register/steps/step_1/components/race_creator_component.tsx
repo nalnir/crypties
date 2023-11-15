@@ -1,6 +1,5 @@
 import { useErrorSuccessActions } from "@/recoil-state/error_success/error_success.actions"
 import { ErrorSuccessType } from "@/recoil-state/error_success/error_success.atom";
-import { trpc } from "@/utils/trpc";
 import { Button, CircularProgress, Input } from "@mui/material"
 import { ChangeEvent, useState } from "react"
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -16,6 +15,7 @@ import { useOtherPlayersRacesActions } from "@/recoil-state/other_players_races/
 import { useRecoilValue } from "recoil";
 import { otherPlayersRacesAtom } from "@/recoil-state/other_players_races/other_players_races.atom";
 import { useProgressiveLoaderActions } from "@/recoil-state/progressive_loader/progressive_loader.actions";
+import { api } from "@/utils/api";
 
 export const RaceCreatorComponent = () => {
     const errorSuccessActions = useErrorSuccessActions();
@@ -24,17 +24,17 @@ export const RaceCreatorComponent = () => {
     const otherPlayersRacesActions = useOtherPlayersRacesActions();
     const otherPlayersRacesState = useRecoilValue(otherPlayersRacesAtom);
 
-    const checkIfRaceAlreadyCreated = trpc.checkIfRaceAlreadyCreated.useMutation()
-    const checkIfPlayerClassAlreadyCreated = trpc.checkIfPlayerClassAlreadyCreated.useMutation()
-    const checkIfRaceExists = trpc.checkIfRaceExists.useMutation()
-    const generateFantasyRaceImages = trpc.generateImages.useMutation()
-    const isFantayRace = trpc.isFantasyRace.useMutation();
-    const bumpCreateTry = trpc.bumpCreateTry.useMutation()
-    const setUseCreatePower = trpc.setUseCreatePower.useMutation()
-    const setCreateCycle = trpc.setCreateCycle.useMutation()
-    const resetCreateTries = trpc.resetCreateTries.useMutation()
-    const correctName = trpc.correctName.useMutation()
-    const getOtherFantasyRaces = trpc.getOtherFantasyRaces.useMutation()
+    const checkIfRaceAlreadyCreated = api.creation.checkIfRaceAlreadyCreated.useMutation()
+    const checkIfPlayerClassAlreadyCreated = api.creation.checkIfPlayerClassAlreadyCreated.useMutation()
+    const checkIfRaceExists = api.creation.checkIfRaceExists.useMutation()
+    const generateFantasyRaceImages = api.ai.generateImages.useMutation()
+    const isFantayRace = api.ai.isFantasyRace.useMutation();
+    const bumpCreateTry = api.creation.bumpCreateTry.useMutation()
+    const setUseCreatePower = api.creation.setUseCreatePower.useMutation()
+    const setCreateCycle = api.creation.setCreateCycle.useMutation()
+    const resetCreateTries = api.creation.resetCreateTries.useMutation()
+    const correctName = api.ai.correctName.useMutation()
+    const getOtherFantasyRaces = api.fatansyRace.getOtherFantasyRaces.useMutation()
 
     const [name, setName] = useState('')
     const [loading, setLoading] = useState(false)

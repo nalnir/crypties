@@ -6,22 +6,22 @@ import DefaultCardType from "./default_card_type"
 import { ErrorSuccessType } from "@/recoil-state/error_success/error_success.atom"
 import { DefaultDeckDocument } from "@/pages/api/schemas/default_deck_schema"
 import { CardTypeDocument } from "@/pages/api/schemas/card_type_schema"
-import { trpc } from "@/utils/trpc"
 import { useErrorSuccessActions } from "@/recoil-state/error_success/error_success.actions"
 import { useState } from "react"
 import { calculateEthToDollar } from "@/utils/functions/calculate_eth_to_usd"
+import { api } from "@/utils/api"
 
 interface DefaultDeckProps {
     deck: any
 }
 export default function DefaultDeck({ deck }: DefaultDeckProps) {
     const errorSuccessActions = useErrorSuccessActions();
-    const deleteDefaultDeck = trpc.deleteDefaultDeck.useMutation();
-    const publishUnpublishDeck = trpc.publishUnpublishDeck.useMutation();
-    const updateDefaultDeck = trpc.updateDefaultDeck.useMutation();
-    const getAllCardTypes = trpc.getAllCardTypes.useQuery();
-    const getAllDefaultDecks = trpc.getAllDefaultDecks.useQuery({});
-    const getETHprice = trpc.getETHprice.useQuery();
+    const deleteDefaultDeck = api.defaultDeck.deleteDefaultDeck.useMutation();
+    const publishUnpublishDeck = api.defaultDeck.publishUnpublishDeck.useMutation();
+    const updateDefaultDeck = api.defaultDeck.updateDefaultDeck.useMutation();
+    const getAllCardTypes = api.cardType.getAllCardTypes.useQuery();
+    const getAllDefaultDecks = api.defaultDeck.getAllDefaultDecks.useQuery({});
+    const getETHprice = api.other.getETHprice.useQuery();
 
     const [deckName, setDeckName] = useState(deck.deckName ?? '')
     const [deckDescription, setDeckDescription] = useState(deck.description ?? '')

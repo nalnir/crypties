@@ -2,8 +2,8 @@ import { UserDocument } from "@/pages/api/schemas/user_schema";
 import { useStatsActions } from "@/recoil-state/stats/stats.actions";
 import { statsAtom } from "@/recoil-state/stats/stats.atom";
 import { PText } from "@/shared";
+import { api } from "@/utils/api";
 import { capitalizeFirstLetter } from "@/utils/functions/capitalize_first_letter";
-import { trpc } from "@/utils/trpc";
 import { CircularProgress } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { Tooltip } from "flowbite-react";
@@ -14,9 +14,9 @@ function AvatarTab() {
 
     const statsActions = useStatsActions();
     const statsState = useRecoilValue(statsAtom);
-    const getRaceStat = trpc.getRaceStat.useMutation();
-    const getClassStat = trpc.getClassStat.useMutation();
-    const getAlignmentStat = trpc.getAlignmentStat.useMutation();
+    const getRaceStat = api.stats.getRaceStat.useMutation();
+    const getClassStat = api.stats.getClassStat.useMutation();
+    const getAlignmentStat = api.stats.getAlignmentStat.useMutation();
 
 
     const fantasyRaceStats = async () => {

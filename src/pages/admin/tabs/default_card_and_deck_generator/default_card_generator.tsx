@@ -5,22 +5,22 @@ import { ErrorSuccessType } from "@/recoil-state/error_success/error_success.ato
 import { useGlobalModalActions } from "@/recoil-state/global_modal/global_modal.actions"
 import { ButtonCustom, PText, allowOnlyNumbersDecimals } from "@/shared"
 import { capitalizeFirstLetter } from "@/utils/functions/capitalize_first_letter"
-import { trpc } from "@/utils/trpc"
 import { useQuery } from "@tanstack/react-query"
 import { Dropdown } from "flowbite-react"
 import { useState } from "react"
 import { Any } from "react-spring"
 import DefaultCards from "./components/default_cards"
+import { api } from "@/utils/api"
 
 export default function DefautlCardGenerator() {
     const errorSuccessActions = useErrorSuccessActions();
     const globalModal = useGlobalModalActions();
-    const generateImages = trpc.generateImages.useMutation();
-    const generateDescription = trpc.generateDescription.useMutation();
-    const getGeneration = trpc.getCurrentGeneration.useQuery();
-    const getAllCardTypes = trpc.getAllCardTypes.useQuery();
-    const createDefaultCard = trpc.createDefaultCard.useMutation();
-    const getAllDefaultCards = trpc.getAllDefaultCards.useQuery();
+    const generateImages = api.ai.generateImages.useMutation();
+    const generateDescription = api.ai.generateDescription.useMutation();
+    const getGeneration = api.cardCreation.getCurrentGeneration.useQuery();
+    const getAllCardTypes = api.cardType.getAllCardTypes.useQuery();
+    const createDefaultCard = api.defautlCard.createDefaultCard.useMutation();
+    const getAllDefaultCards = api.defautlCard.getAllDefaultCards.useQuery();
     const [name, setName] = useState('')
     const [leonardoPropmt, setLeonardoPrompt] = useState('');
     const [attackPower, setAttackPower] = useState(0)

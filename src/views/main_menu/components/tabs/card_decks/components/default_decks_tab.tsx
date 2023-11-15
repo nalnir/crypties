@@ -2,7 +2,6 @@ import { useGlobalModalActions } from "@/recoil-state/global_modal/global_modal.
 import { ButtonCustom } from "@/shared";
 import { calculateEthToDollar } from "@/utils/functions/calculate_eth_to_usd";
 import { capitalizeFirstLetter } from "@/utils/functions/capitalize_first_letter";
-import { trpc } from "@/utils/trpc"
 import { CardsViewModal } from "./cards_view";
 import { ETHTokenType, Link } from "@imtbl/imx-sdk";
 import { ErrorSuccessType } from "@/recoil-state/error_success/error_success.atom";
@@ -11,6 +10,7 @@ import { OriginalCard } from "@/utils";
 import { useQuery } from "@tanstack/react-query";
 import { UserDocument } from "@/pages/api/schemas/user_schema";
 import { useState } from "react";
+import { api } from "@/utils/api";
 
 const NEXT_PUBLIC_IMX_LINK_ADDRESS = process.env.NEXT_PUBLIC_IMX_LINK_ADDRESS ?? '';
 const link = new Link(NEXT_PUBLIC_IMX_LINK_ADDRESS, null, 'v3');
@@ -18,15 +18,15 @@ const link = new Link(NEXT_PUBLIC_IMX_LINK_ADDRESS, null, 'v3');
 export const DefaultDecksTab = () => {
     const globalModalActions = useGlobalModalActions();
     const errorSuccessActions = useErrorSuccessActions();
-    const getAllDefaultDecks = trpc.getAllDefaultDecks.useQuery({ onlyPublished: true });
-    const getAllDefaultCards = trpc.getAllDefaultCards.useQuery();
-    const getETHprice = trpc.getETHprice.useQuery();
-    const bumpTokenId = trpc.bumpTokenId.useMutation();
-    const mintTokens = trpc.mintBulk.useMutation();
-    const getLatestCardId = trpc.getCurrentCardId.useQuery();
-    const uploadMetadataToIPFS = trpc.uploadMetadataToIPFS.useMutation();
-    const uploadMetadataToS3 = trpc.uploadMetadataToS3.useMutation();
-    const createUserDefaultDeck = trpc.createUserDeck.useMutation();
+    const getAllDefaultDecks = api.defaultDeck.getAllDefaultDecks.useQuery({ onlyPublished: true });
+    const getAllDefaultCards = api.defautlCard.getAllDefaultCards.useQuery();
+    const getETHprice = api.other.getETHprice.useQuery();
+    const bumpTokenId = api.cardCreation.bumpTokenId.useMutation();
+    const mintTokens = api.cardCreation.mintBulk.useMutation();
+    const getLatestCardId = api.cardCreation.getCurrentCardId.useQuery();
+    const uploadMetadataToIPFS = api.cardCreation.uploadMetadataToIPFS.useMutation();
+    const uploadMetadataToS3 = api.cardCreation.uploadMetadataToS3.useMutation();
+    const createUserDefaultDeck = api.user.createUserDeck.useMutation();
 
     const { data: user, isLoading: loadingUser, isError } = useQuery<UserDocument>(['user']);
 

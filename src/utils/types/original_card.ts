@@ -1,4 +1,4 @@
-export interface OriginalCard {
+export interface OriginalCard extends InGameData {
     name: string,
     description: string,
     image_url: string,
@@ -17,7 +17,6 @@ export interface OriginalCard {
         ipfsCID?: string,
         imageId: string
     },
-    specialPowerUsed: number,
     orders?: {
         sell_orders?: Array<{
             buy_decimals: number,
@@ -32,4 +31,8 @@ export interface OriginalCard {
     },
     token_id?: string,
     token_address?: string,
+}
+
+interface InGameData {
+    specialPowerUsedTimes?: number;
 }

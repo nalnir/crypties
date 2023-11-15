@@ -1,0 +1,171 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("SUPABASE_DATABASE_URL")
+}
+
+model users {
+  id              String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  walletAddress   String       @unique
+  profilePicture  String?
+  alignment       alignment?
+  createTriesUsed Int?
+  createNextCycle DateTime?    @db.Date
+  onboarded       Boolean?
+  hasCreatePower  Boolean
+  playerName      String?
+  generatedName   String?
+  createdAt       DateTime     @default(now()) @db.Timestamptz(6)
+  updatedAt       DateTime?    @default(now()) @db.Timestamptz(6)
+  level           Int
+  playerClassId   String?      @db.Uuid
+  fantasyRaceId   String?      @db.Uuid
+  roles           user_role[]  @default([user])
+  fantasyRace     fantasyRace? @relation(fields: [fantasyRaceId], references: [id])
+  playerClass     playerClass? @relation(fields: [playerClassId], references: [id])
+}
+
+model playerClass {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  creatorAddress   String
+  name             String
+  description      String
+  image            String
+  playedBy         Int
+  nameCombinations String[]
+  playedByAmount   Int
+  createdAt        DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt        DateTime? @default(now()) @db.Timestamptz(6)
+  default          Boolean
+  user             users[]
+}
+
+model fantasyRace {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  creatorAddress   String
+  name             String
+  description      String
+  image            String
+  playedBy         Int
+  nameCombinations String[]
+  playedByAmount   Int
+  createdAt        DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt        DateTime? @default(now()) @db.Timestamptz(6)
+  default          Boolean
+  user             users[]
+}
+
+model generations {
+  id                  String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  generation          Int
+  amountOfCardsForged Int
+  createdAt           DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt           DateTime? @default(now()) @db.Timestamptz(6)
+}
+
+model gamestats {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  players   Json
+  decks     Json
+  game      String
+  createdAt DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime? @default(now()) @db.Timestamptz(6)
+}
+
+model defaultdecks {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  deckName      String
+  description   String
+  image         String
+  createdAt     DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt     DateTime? @default(now()) @db.Timestamptz(6)
+  isPublished   Boolean?
+  cards         Json[]
+  generation    Int
+  randomCards   Json[]
+  walletAddress String
+  price         Int
+}
+
+model defaultcards {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String
+  description String
+  image_url   String
+  createdAt   DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime? @default(now()) @db.Timestamptz(6)
+  isPublished Boolean?
+  metadataId  String    @unique @db.Uuid
+  metadata    metadata  @relation(fields: [metadataId], references: [id])
+}
+
+model metadata {
+  id                String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  health            Int
+  attackPower       Int
+  manaCost          Int
+  special           String
+  creatorPlayerName String
+  creatorAddress    String
+  creatorLoreName   String
+  cardType          String
+  cardTypeId        String
+  collection        String?
+  generation        Int
+  imageId           String
+  default           Boolean
+  defaultcards      defaultcards?
+}
+
+model decks {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  walletAddress String
+  cards         String[]
+  deckName      String
+  image         String
+  default       Boolean
+}
+
+model classes {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  creatorAddress   String
+  name             String
+  description      String
+  image            String
+  playedBy         Int
+  nameCombinations String[]
+  playedByAmount   Int
+  createdAt        DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt        DateTime? @default(now()) @db.Timestamptz(6)
+  default          Boolean
+}
+
+model cardtypes {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String
+  power     Int
+  createdAt DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime? @default(now()) @db.Timestamptz(6)
+}
+
+model authtokens {
+  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  validUntil        DateTime
+  userId            String
+  userWalletAddress String
+  createdAt         DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt         DateTime? @default(now()) @db.Timestamptz(6)
+}
+
+enum user_role {
+  user
+  admin
+}
+
+enum alignment {
+  ligth
+  darkness
+}

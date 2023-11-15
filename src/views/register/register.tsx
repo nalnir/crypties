@@ -5,7 +5,6 @@ import { Step2 } from "./steps/step_2/step_2";
 import { Stepper } from "@/shared/components/stepper";
 import { Step1 } from "./steps/step_1/step_1";
 import { Step3 } from "./steps/step_3/step_3";
-import { trpc } from "@/utils/trpc";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { UserDocument } from "@/pages/api/schemas/user_schema";
 import { useRecoilValue } from "recoil";
@@ -17,6 +16,7 @@ import { generateFantasyName } from '@/utils/functions/generate_fantasy_name';
 import { useOnboardingHeroActions } from '@/recoil-state/onboarding_hero/onboarding_hero.actions';
 import { useProgressiveLoaderActions } from '@/recoil-state/progressive_loader/progressive_loader.actions';
 import MainMenu from "../main_menu/main_menu";
+import { api } from "@/utils/api";
 
 function Register() {
     const [activeStep, setActiveStep] = useState(0)
@@ -30,12 +30,12 @@ function Register() {
     const onboardingHeroActions = useOnboardingHeroActions();
     const { data: user, isLoading, isError } = useQuery<UserDocument>(['user']);
 
-    const getUser = trpc.getUser.useMutation()
-    const registerUser = trpc.register.useMutation()
-    const generateUserAvatarImages = trpc.generateImages.useMutation()
-    const bumpPlayedByAmountFantasyRace = trpc.bumpPlayedByAmountFantasyRace.useMutation();
-    const bumpPlayedByAmoungPlayerClass = trpc.bumpPlayedByAmoungPlayerClass.useMutation();
-    const onboardFuture = trpc.onboardUser.useMutation()
+    const getUser = api.user.getUser.useMutation()
+    const registerUser = api.user.register.useMutation()
+    const generateUserAvatarImages = api.ai.generateImages.useMutation()
+    const bumpPlayedByAmountFantasyRace = api.fatansyRace.bumpPlayedByAmountFantasyRace.useMutation();
+    const bumpPlayedByAmoungPlayerClass = api.playerClass.bumpPlayedByAmoungPlayerClass.useMutation();
+    const onboardFuture = api.user.onboardUser.useMutation()
 
     const imxWallet = localStorage.getItem('WALLET_ADDRESS')
 

@@ -2,23 +2,23 @@ import { UserDocument } from "@/pages/api/schemas/user_schema";
 import { useErrorSuccessActions } from "@/recoil-state/error_success/error_success.actions";
 import { ErrorSuccessType } from "@/recoil-state/error_success/error_success.atom";
 import { ButtonCustom, PText, allowOnlyNumbersDecimals } from "@/shared";
-import { trpc } from "@/utils/trpc";
 import { Input } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import DefaultDeck from "./components/default_deck";
 import { calculateEthToDollar } from "@/utils/functions/calculate_eth_to_usd";
+import { api } from "@/utils/api";
 
 export default function DefaultDeckGenerator() {
     const { data: user, isLoading, isError } = useQuery<UserDocument>(['user']);
 
     const errorSuccessActions = useErrorSuccessActions();
 
-    const getAllDefaultDecks = trpc.getAllDefaultDecks.useQuery({});
-    const getCurrentGeneration = trpc.getCurrentGeneration.useQuery();
-    const createNewDefaultDeck = trpc.createNewDefaultDeck.useMutation();
-    const generateDeckImage = trpc.generateImages.useMutation();
-    const getETHprice = trpc.getETHprice.useQuery();
+    const getAllDefaultDecks = api.defaultDeck.getAllDefaultDecks.useQuery({});
+    const getCurrentGeneration = api.cardCreation.getCurrentGeneration.useQuery();
+    const createNewDefaultDeck = api.defaultDeck.createNewDefaultDeck.useMutation();
+    const generateDeckImage = api.ai.generateImages.useMutation();
+    const getETHprice = api.other.getETHprice.useQuery();
 
     const [deckName, setDeckName] = useState('');
     const [deckDescription, setDeckDescription] = useState('');

@@ -1,4 +1,4 @@
-import { Hero } from "./hero";
+import { Hero } from "./ab_types";
 import { OriginalCard } from "./original_card";
 
 export enum LingerEffectOperation {

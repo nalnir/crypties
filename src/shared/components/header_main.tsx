@@ -9,11 +9,11 @@ import { useState } from "react";
 import { UserRoles } from "@/pages/api/enums";
 import { useRouter } from "next/router";
 import { useAuthActions } from "@/recoil-state/auth/auth.actions";
-import { trpc } from "@/utils/trpc";
 import { useErrorSuccessActions } from "@/recoil-state/error_success/error_success.actions";
 import { ErrorSuccessType } from "@/recoil-state/error_success/error_success.atom";
 import { Link } from '@imtbl/imx-sdk';
 import { allowOnlyNumbersDecimals } from "../functions";
+import { api } from "@/utils/api";
 
 const NEXT_PUBLIC_IMX_LINK_ADDRESS = process.env.NEXT_PUBLIC_IMX_LINK_ADDRESS ?? '';
 const link = new Link(NEXT_PUBLIC_IMX_LINK_ADDRESS, null, 'v3');
@@ -27,10 +27,8 @@ export const HeaderMain = ({ onAdminSite }: HeaderMainProps) => {
     const authActions = useAuthActions();
     const globalModalActions = useGlobalModalActions();
     const errorSuccessActions = useErrorSuccessActions();
-    // const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-    const test = trpc.testAuth.useMutation();
 
-    const userBalance = trpc.getUserBalance.useQuery({ walletAddress: user?.walletAddress ?? '' });
+    const userBalance = api.imx.getUserBalance.useQuery({ walletAddress: user?.walletAddress ?? '' });
 
     const disconnectIMX = async () => {
         await authActions.logout()

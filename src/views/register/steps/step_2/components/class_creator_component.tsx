@@ -8,13 +8,13 @@ import { Button, CircularProgress, Input } from "@mui/material"
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ChangeEvent, useState } from "react";
 import { useRecoilValue } from "recoil";
-import { trpc } from "@/utils/trpc";
 import { capitalizeFirstLetter } from "@/utils/functions/capitalize_first_letter";
 import { removeSingleWhiteSpace } from "@/utils/functions/remove_single_white_space";
 import { ErrorSuccessType } from "@/recoil-state/error_success/error_success.atom";
 import { isSingleWord } from "@/utils/functions/is_single_word";
 import { stringCombinations } from "@/utils/functions/string_combinations";
 import { useProgressiveLoaderActions } from "@/recoil-state/progressive_loader/progressive_loader.actions";
+import { api } from "@/utils/api";
 
 export const ClassCreatorComponent = () => {
     const errorSuccessActions = useErrorSuccessActions();
@@ -23,18 +23,18 @@ export const ClassCreatorComponent = () => {
     const otherPlayersClassesActions = useOtherPlayersClassesActions();
     const otherPlayersClassesState = useRecoilValue(otherPlayersClassesAtom);
 
-    const getOtherPlayerClasses = trpc.getOtherPlayerClasses.useMutation()
-    const checkIfPlayerClassAlreadyCreated = trpc.checkIfPlayerClassAlreadyCreated.useMutation()
-    const checkIfRaceAlreadyCreated = trpc.checkIfRaceAlreadyCreated.useMutation()
-    const correctName = trpc.correctName.useMutation()
-    const checkIfPlayerClassExists = trpc.checkIfPlayerClassExists.useMutation()
-    const resetCreateTries = trpc.resetCreateTries.useMutation();
-    const setCreateCycle = trpc.setCreateCycle.useMutation();
-    const isPlayerClass = trpc.isPlayerClass.useMutation();
-    const bumpCreateTry = trpc.bumpCreateTry.useMutation();
-    const setUseCreatePower = trpc.setUseCreatePower.useMutation();
-    const generateFantasyPlayerClassImages = trpc.generateImages.useMutation();
-    const generateDescription = trpc.generateDescription.useMutation();
+    const getOtherPlayerClasses = api.playerClass.getOtherPlayerClasses.useMutation()
+    const checkIfPlayerClassAlreadyCreated = api.creation.checkIfPlayerClassAlreadyCreated.useMutation()
+    const checkIfRaceAlreadyCreated = api.creation.checkIfRaceAlreadyCreated.useMutation()
+    const correctName = api.ai.correctName.useMutation()
+    const checkIfPlayerClassExists = api.creation.checkIfPlayerClassExists.useMutation()
+    const resetCreateTries = api.creation.resetCreateTries.useMutation();
+    const setCreateCycle = api.creation.setCreateCycle.useMutation();
+    const isPlayerClass = api.ai.isPlayerClass.useMutation();
+    const bumpCreateTry = api.creation.bumpCreateTry.useMutation();
+    const setUseCreatePower = api.creation.setUseCreatePower.useMutation();
+    const generateFantasyPlayerClassImages = api.ai.generateImages.useMutation();
+    const generateDescription = api.ai.generateDescription.useMutation();
 
     const [name, setName] = useState('')
     const [loading, setLoading] = useState(false)

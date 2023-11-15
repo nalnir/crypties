@@ -3,7 +3,7 @@ import { useBattleActions } from "@/recoil-state/battle";
 import { useGlobalModalActions } from "@/recoil-state/global_modal/global_modal.actions";
 import { usePlayerDecksActions } from "@/recoil-state/player_decks/player_decks.actions";
 import { useUserActions } from "@/recoil-state/user/user.actions";
-import { trpc } from "@/utils/trpc";
+import { api } from "@/utils/api";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 
@@ -16,7 +16,7 @@ function BattleDeckChoiceModal({ playableDecks }: BattleDeckChoiceModalProps) {
     const globalModal = useGlobalModalActions();
     const playerDeckActions = usePlayerDecksActions();
     const battleActions = useBattleActions();
-    const getUserCards = trpc.getUserCards.useQuery({ walletAddress: user?.walletAddress ?? '' })
+    const getUserCards = api.imx.getUserCards.useQuery({ walletAddress: user?.walletAddress ?? '' })
 
     const allPlayerCards = getUserCards.data?.result ?? [];
 
@@ -32,11 +32,11 @@ function BattleDeckChoiceModal({ playableDecks }: BattleDeckChoiceModalProps) {
         router.push('/battle')
     }
 
-    return <div className="grid grid-cols-4 gap-3 items-center justify-center">
+    return <div className="grid items-center justify-center grid-cols-4 gap-3">
         {playableDecks.map((deck: any, index: number) => {
-            return <div onClick={() => enterBattleLobby(deck)} key={index} className="p-3 rounded-lg border border-black cursor-pointer">
+            return <div onClick={() => enterBattleLobby(deck)} key={index} className="p-3 border border-black rounded-lg cursor-pointer">
                 <img src={deck.image} />
-                <p className="text-black text-lg">{deck.deckName}</p>
+                <p className="text-lg text-black">{deck.deckName}</p>
             </div>
         })}
     </div>

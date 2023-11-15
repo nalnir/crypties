@@ -1,5 +1,4 @@
 import { ButtonCustom, PText } from "@/shared";
-import { trpc } from "@/utils/trpc";
 import { Dropdown } from "flowbite-react";
 import DefaultDeckDropdownItem from "./default_deck_dropdown_item";
 import { DefaultDeckDocument } from "@/pages/api/schemas/default_deck_schema";
@@ -7,16 +6,17 @@ import { CardInDefaultDeck } from "@/utils";
 import { ErrorSuccessType } from "@/recoil-state/error_success/error_success.atom";
 import { useErrorSuccessActions } from "@/recoil-state/error_success/error_success.actions";
 import { Select } from "@mui/material";
+import { api } from "@/utils/api";
 
 interface DefaultCardProps {
     defaultCard: any
 }
 export default function DefaultCard({ defaultCard }: DefaultCardProps) {
     const errorSuccessActions = useErrorSuccessActions();
-    const publishUnpublishCard = trpc.publishUnpublishDefaultCard.useMutation();
-    const updateDefaultDeck = trpc.updateDefaultDeck.useMutation();
-    const getAllDefaultCards = trpc.getAllDefaultCards.useQuery();
-    const getAllDefaultDecks = trpc.getAllDefaultDecks.useQuery({});
+    const publishUnpublishCard = api.defautlCard.publishUnpublishDefaultCard.useMutation();
+    const updateDefaultDeck = api.defaultDeck.updateDefaultDeck.useMutation();
+    const getAllDefaultCards = api.defautlCard.getAllDefaultCards.useQuery();
+    const getAllDefaultDecks = api.defaultDeck.getAllDefaultDecks.useQuery({});
 
     const allDefaultDecks = getAllDefaultDecks.data ?? [];
 

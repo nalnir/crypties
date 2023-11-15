@@ -69,6 +69,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on('join_battle_room', (players) => {
+    console.log('players: ', players)
     activePlayers.push({ id: socket.id, ...players });
 
     // Create a unique battle room for the two players

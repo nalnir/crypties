@@ -1,7 +1,6 @@
 import { UserDocument } from "@/pages/api/schemas/user_schema";
 import { ButtonCustom, PText } from "@/shared";
 import { OriginalCard } from "@/utils";
-import { trpc } from "@/utils/trpc";
 import { IMXAssetCrypties } from "@/utils/types/imx_asset";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from '@imtbl/imx-sdk';
@@ -10,16 +9,17 @@ import { ErrorSuccessType } from "@/recoil-state/error_success/error_success.ato
 import { useEffect, useState } from "react";
 import { useGlobalModalActions } from "@/recoil-state/global_modal/global_modal.actions";
 import { CardSaleModal } from "./components";
+import { api } from "@/utils/api";
 const NEXT_PUBLIC_IMX_LINK_ADDRESS = process.env.NEXT_PUBLIC_IMX_LINK_ADDRESS ?? '';
 const link = new Link(NEXT_PUBLIC_IMX_LINK_ADDRESS, null, 'v3');
 
 function CardMarketPlaceTab() {
     const errorSuccessActions = useErrorSuccessActions();
     const { data: user, isLoading, isError } = useQuery<UserDocument>(['user']);
-    const allCards = trpc.getAllCards.useQuery();
-    const userDecks = trpc.getUserDecks.useQuery({ walletAddress: user?.walletAddress ?? '' });
-    const updateUserDecks = trpc.updateUserDecks.useMutation();
-    const userBalance = trpc.getUserBalance.useQuery({ walletAddress: user?.walletAddress ?? '' });
+    const allCards = api.imx.getAllCards.useQuery();
+    const userDecks = api.user.getUserDecks.useQuery({ walletAddress: user?.walletAddress ?? '' });
+    const updateUserDecks = api.user.updateUserDecks.useMutation();
+    const userBalance = api.imx.getUserBalance.useQuery({ walletAddress: user?.walletAddress ?? '' });
     const globalModalActions = useGlobalModalActions();
     const [salePrice, setSalePrice] = useState('0');
 

@@ -2,20 +2,20 @@ import { useAuthActions } from "@/recoil-state/auth/auth.actions";
 import { authAtom } from "@/recoil-state/auth/auth.atom";
 import { useErrorSuccessActions } from "@/recoil-state/error_success/error_success.actions";
 import { ButtonCustom } from "@/shared";
-import { trpc } from "@/utils/trpc";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useRecoilValue } from "recoil";
 import { useQueryClient } from "@tanstack/react-query";
 import { ErrorSuccessType } from "@/recoil-state/error_success/error_success.atom";
 import { UserDocument } from "../api/schemas/user_schema";
+import { api } from "@/utils/api";
 
 export default function LoginPage() {
     const useAuth = useAuthActions();
     const authState = useRecoilValue(authAtom);
     const router = useRouter();
     const errorSuccessActions = useErrorSuccessActions();
-    const getUser = trpc.getUser.useMutation();
+    const getUser = api.user.getUser.useMutation();
     const queryClient = useQueryClient();
 
     useEffect(() => {

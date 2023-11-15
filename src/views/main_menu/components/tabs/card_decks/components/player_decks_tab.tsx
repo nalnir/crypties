@@ -4,7 +4,7 @@ import { useErrorSuccessActions } from "@/recoil-state/error_success/error_succe
 import { ErrorSuccessType } from "@/recoil-state/error_success/error_success.atom"
 import { usePlayerDecksActions } from "@/recoil-state/player_decks/player_decks.actions"
 import { ButtonCustom, PText } from "@/shared"
-import { trpc } from "@/utils/trpc"
+import { api } from "@/utils/api"
 import { Input } from "@mui/material"
 import { useQuery } from "@tanstack/react-query"
 import { useState } from "react"
@@ -15,10 +15,10 @@ export const PlayerDecksTab = () => {
     const playerDeckActions = usePlayerDecksActions();
     const [deckName, setDeckName] = useState('');
 
-    const createNewDeck = trpc.createUserDeck.useMutation();
-    const deleteUserDeck = trpc.deleteUserDeck.useMutation();
-    const getUserDecks = trpc.getUserDecks.useQuery({ walletAddress: user?.walletAddress ?? '' });
-    const generateDeckImage = trpc.generateImages.useMutation();
+    const createNewDeck = api.user.createUserDeck.useMutation();
+    const deleteUserDeck = api.user.deleteUserDeck.useMutation();
+    const getUserDecks = api.user.getUserDecks.useQuery({ walletAddress: user?.walletAddress ?? '' });
+    const generateDeckImage = api.ai.generateImages.useMutation();
 
     const userDecks = getUserDecks.data ?? [];
 

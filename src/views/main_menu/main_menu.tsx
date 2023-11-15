@@ -3,7 +3,6 @@ import { useStatsActions } from "@/recoil-state/stats/stats.actions";
 import { statsAtom } from "@/recoil-state/stats/stats.atom";
 import { ButtonCustom, PText } from "@/shared";
 import { capitalizeFirstLetter } from "@/utils/functions/capitalize_first_letter";
-import { trpc } from "@/utils/trpc";
 import { CircularProgress } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { Tooltip } from 'flowbite-react';
@@ -17,12 +16,13 @@ import { useRouter } from "next/router";
 import { useErrorSuccessActions } from "@/recoil-state/error_success/error_success.actions";
 import { useGlobalModalActions } from "@/recoil-state/global_modal/global_modal.actions";
 import BattleDeckChoiceModal from "./components/battle_deck_choice_modal";
+import { api } from "@/utils/api";
 
 
 function MainMenu() {
     const [activeTab, setActiveTab] = useState(2)
     const { data: user, isLoading, isError } = useQuery<UserDocument>(['user']);
-    const getUserDecks = trpc.getUserDecks.useQuery({ walletAddress: user?.walletAddress ?? '' })
+    const getUserDecks = api.user.getUserDecks.useQuery({ walletAddress: user?.walletAddress ?? '' })
     const errorSuccessActions = useErrorSuccessActions();
     const globalModal = useGlobalModalActions();
 

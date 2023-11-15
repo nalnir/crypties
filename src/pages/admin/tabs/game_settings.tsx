@@ -1,14 +1,14 @@
 import { useErrorSuccessActions } from "@/recoil-state/error_success/error_success.actions";
 import { ErrorSuccessType } from "@/recoil-state/error_success/error_success.atom";
 import { ButtonCustom, PText, allowOnlyNumbersDecimals } from "@/shared"
+import { api } from "@/utils/api";
 import { removeSingleWhiteSpace } from "@/utils/functions/remove_single_white_space";
-import { trpc } from "@/utils/trpc";
 import { useState } from "react";
 
 export default function GameSettings() {
     const [cardType, setCardType] = useState('');
     const [power, setPower] = useState(0);
-    const createCardType = trpc.createCardType.useMutation();
+    const createCardType = api.cardType.createCardType.useMutation();
     const errorSuccessActions = useErrorSuccessActions();
 
     const create = async () => {

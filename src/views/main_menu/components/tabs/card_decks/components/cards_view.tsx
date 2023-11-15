@@ -1,10 +1,10 @@
-import { trpc } from "@/utils/trpc"
+import { api } from "@/utils/api";
 
 interface CardsViewModalProps {
     deck: any
 }
 export const CardsViewModal = ({ deck }: CardsViewModalProps) => {
-    const getAllDefaultCards = trpc.getAllDefaultCards.useQuery();
+    const getAllDefaultCards = api.defautlCard.getAllDefaultCards.useQuery();
     const allDefaultCards = getAllDefaultCards.data ?? []
 
     const matchedCards = allDefaultCards.filter(defaultCard =>
