@@ -514,7 +514,7 @@ export default function BattlePage() {
                                     <p>Attack: {card.metadata.attackPower}</p>
                                     <p>Health: {card.metadata.health}</p>
                                     <p>Mana: {card.metadata.manaCost}</p>
-                                    {card.metadata.special ? <p className="text-xs">Power: {card.metadata.special} {card.specialPowerUsedTimes ?? 0}</p> : <></>}
+                                    {card.metadata.special ? <p className="text-xs">Power: {card.metadata.special} {card.specialPowerUsed ?? 0}</p> : <></>}
                                 </div>
                             </div>
                         })}
@@ -531,7 +531,7 @@ export default function BattlePage() {
                                     <p>Attack: {card.metadata.attackPower}</p>
                                     <p>Health: {card.metadata.health}</p>
                                     <p>Mana: {card.metadata.manaCost}</p>
-                                    {card.metadata.special ? <p className="text-xs">Power: {card.metadata.special} {card.specialPowerUsedTimes ?? 0}</p> : <></>}
+                                    {card.metadata.special ? <p className="text-xs">Power: {card.metadata.special} {card.specialPowerUsed ?? 0}</p> : <></>}
                                 </div>
                             </div>
                         })}
@@ -547,7 +547,7 @@ export default function BattlePage() {
                                             <p>Attack: {card.metadata.attackPower}</p>
                                             <p>Health: {card.metadata.health}</p>
                                             <p>Mana: {card.metadata.manaCost}</p>
-                                            {card.metadata.special ? <p className="text-xs">Power: {card.metadata.special} {card.specialPowerUsedTimes ?? 0}</p> : <></>}
+                                            {card.metadata.special ? <p className="text-xs">Power: {card.metadata.special} {card.specialPowerUsed ?? 0}</p> : <></>}
                                         </div>
                                     </div>
                                 }

@@ -15,22 +15,22 @@ export function executePower(move: EffectType, data: SpecialAttackData, card: Or
     console.log('equals power move: ', libraryPower.takesEffect === move)
 
     const usedCardPower: OriginalCard = JSON.parse(JSON.stringify(card))
-    if (!card.specialPowerUsedTimes) {
+    if (!card.specialPowerUsed) {
         console.log('NO USED POWER ONCE')
         const res = libraryPower.execute(data);
-        usedCardPower.specialPowerUsedTimes = 1;
+        usedCardPower.specialPowerUsed = 1;
         const usedCardIdx = res.attackerCardsOnBoard.findIndex((attackerCard) => attackerCard.token_id === card.token_id);
         if (usedCardIdx > -1) {
             res.attackerCardsOnBoard[usedCardIdx] = usedCardPower
         }
         return res
     } else {
-        console.log('USED: ', card.specialPowerUsedTimes)
+        console.log('USED: ', card.specialPowerUsed)
         console.log('CAN USE: ', libraryPower.usageTimes)
-        if (card.specialPowerUsedTimes < libraryPower.usageTimes) {
+        if (card.specialPowerUsed < libraryPower.usageTimes) {
 
             const res = libraryPower.execute(data);
-            usedCardPower.specialPowerUsedTimes = card.specialPowerUsedTimes + 1
+            usedCardPower.specialPowerUsed = card.specialPowerUsed + 1
 
             const usedCardIdx = res.attackerCardsOnBoard.findIndex((attackerCard) => attackerCard.token_id === card.token_id);
             if (usedCardIdx > -1) {
