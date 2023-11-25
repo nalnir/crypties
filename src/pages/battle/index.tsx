@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import socketIOClient from 'socket.io-client';
 import { UserDocument } from "../api/schemas/user_schema";
 import { useQuery } from "@tanstack/react-query";
-import { trpc } from "@/utils/trpc";
 import socket from "../../socket/socket";
 import { AuthGuard } from "@/recoil-state/auth/auth.guard";
 import { useRecoilValue } from "recoil";
@@ -25,6 +24,10 @@ import LooserComponent from "./components/looser_component";
 import powerRegistry from "arcane-blessings";
 import { arcaneAffinity, arcaneMastery, divineFury, divineShield, dragonBreath, frostNova, infernalRage, lycanthropy, ressurect, stealth, suddenStrike, thunderStrike, wisdomGaze } from "../../utils/demo_powers";
 import { SpecialAttackData } from "../../utils/types/special_attack_data";
+
+import { executePower } from "@/utils/functions/execute_power";
+import { EffectType } from "@/utils/types/ab_types";
+import { trpc } from "@/utils/trpc";
 
 interface IMyStateToOponent {
     opponent: {
@@ -168,6 +171,7 @@ export default function BattlePage() {
         if (!battleState.myTurn) {
             return;
         }
+
         deactivateCard()
         socket.emit("flip_turn")
     }
@@ -190,7 +194,7 @@ export default function BattlePage() {
         playerPlayableCards.splice(cardIdx, 1)
 
         battleActions.setPlayerPlayableCards(playerPlayableCards)
-        battleActions.setPlayerCardsOnTable(currentPlayerCardsOnTable)
+
 
         const specialPowerData: SpecialAttackData = {
             attackingCard: card,
@@ -207,25 +211,17 @@ export default function BattlePage() {
             opponentHero: battleState.opponent?.hero as any,
             lingerEffect: []
         }
-        if (card.metadata.special) {
-            const power = powerRegistry[card.metadata.special]
-            // if (power.takesEffect === EffectT)
-            // powerRegistry
-        }
 
-        // const powerData = powerRegistry['arcaneAffinity'].execute(specialPowerData)
-        // const demoPowerData = arcaneAffinity(specialPowerData)
-
-        // console.log('POWER DATA: ', powerData)
-        // console.log('DEMO POWER DATA: ', demoPowerData)
+        const executedPower = executePower(EffectType.ON_CARD_PLACEMENT, specialPowerData, card);
+        finalizeExecution(executedPower, currentPlayerCardsOnTable)
 
         const data: IMyStateToOponent = {
             opponent: {
                 socketId: battleState.mySocketId ?? '',
                 walletAddress: user?.walletAddress ?? '',
-                battleDeckAmount: battleState.activeBattleDeck.length,
-                playableCardsAmount: playerPlayableCards.length,
-                cardsOnTheTable: currentPlayerCardsOnTable,
+                battleDeckAmount: executedPower ? executedPower.attackerDeck.length : battleState.activeBattleDeck.length,
+                playableCardsAmount: executedPower ? executedPower.attackerCardInHand.length : playerPlayableCards.length,
+                cardsOnTheTable: executedPower ? executedPower.attackerCardsOnBoard : currentPlayerCardsOnTable,
                 activeCard: undefined,
                 totalMana: battleState.totalMana,
                 availableMana: battleState.availableMana,
@@ -297,12 +293,33 @@ export default function BattlePage() {
         if (!battleState.activeCard || hasEnoughMana(battleState.activeCard) === false || battleState.cardsHaveAttacked.includes(battleState.activeCard.token_id ?? '')) {
             return;
         }
+
+        const specialPowerData: SpecialAttackData = {
+            attackingCard: battleState.activeCard,
+            attackerCardsOnBoard: battleState.playerCardsOnTable,
+            attackerCardInHand: battleState.playerPlayableCards,
+            attackerDeck: battleState.activeBattleDeck,
+            attackerDiscardedCards: [],
+            attackerHero: battleState.hero as any,
+            attackedCard: opponentCard,
+            opponentCardsOnBoard: battleState.opponent?.cardsOnTheTable ?? [],
+            opponentCardInHand: [],
+            opponentDeck: [],
+            opponentDiscardedCards: [],
+            opponentHero: battleState.opponent?.hero as any,
+            lingerEffect: []
+        }
+
+        const executedPower = executePower(EffectType.AFTER_BASIC_ATTACK, specialPowerData, battleState.activeCard);
+        finalizeExecution(executedPower, battleState.playerCardsOnTable)
+
         const damagedCard: OriginalCard = JSON.parse(JSON.stringify(opponentCard))
         damagedCard.metadata.health -= battleState.activeCard?.metadata.attackPower;
         if (isCardDead(damagedCard)) {
             damageCard(damagedCard, true)
         } else {
             damageCard(damagedCard, false)
+            shouldExecute(EffectType.AFTER_OPPONENT_BASIC_ATTACK, executedPower ? executedPower : specialPowerData, damagedCard, battleState.playerCardsOnTable)
         }
         deactivateCard()
         takeMana(battleState.activeCard)
@@ -364,6 +381,39 @@ export default function BattlePage() {
         battleActions.setHaveAttacked(true)
     }
 
+    const shouldExecute = (move: EffectType, specialAttackData: SpecialAttackData, executingCard: OriginalCard, playerCardsOnTable: OriginalCard[]) => {
+        if (executingCard.metadata.special) {
+            const executedPower = executePower(move, specialAttackData, executingCard)
+            finalizeExecution(executedPower, playerCardsOnTable)
+        }
+    }
+
+    const finalizeExecution = (executedPower: SpecialAttackData | undefined, currentPlayerCardsOnTable: OriginalCard[]) => {
+        if (executedPower) {
+            console.log('executedPower: ', executedPower)
+            battleActions.setPlayerCardsOnTable(executedPower.attackerCardsOnBoard)
+            battleActions.setPlayerPlayableCards(executedPower.attackerCardInHand)
+            battleActions.setActiveBattleDeck(executedPower.attackerDeck)
+            battleActions.setHero({
+                image: battleState.hero?.image ?? '',
+                health: executedPower.attackerHero.health
+            })
+            socket.emit("damaged_cards_on_the_table", {
+                damagedCardsOnTheTable: executedPower.opponentCardsOnBoard,
+                to: battleState.opponent?.socketId ?? ''
+            })
+            socket.emit("damaged_hero", {
+                damagedHero: {
+                    image: battleState.opponent?.hero?.image ?? '',
+                    health: executedPower.opponentHero.health
+                },
+                to: battleState.opponent?.socketId ?? ''
+            })
+        } else {
+            battleActions.setPlayerCardsOnTable(currentPlayerCardsOnTable)
+        }
+    }
+
     socket.on("users", (users) => {
         if (users.length > 1) {
             const player1 = users.shift();
@@ -397,13 +447,16 @@ export default function BattlePage() {
     });
 
     socket.on("flip_turn", () => {
+        console.log('battleState.myturn: ', battleState.myTurn)
         if (battleState.myTurn) {
             battleActions.setHavePlacedOnBoard(true);
             battleActions.setHaveAttacked(true);
+            // shouldExecute(EffectType.AFTER_END_TURN) --> For further analysis
         } else {
             battleActions.setHavePlacedOnBoard(false);
             battleActions.setHaveAttacked(false);
             battleActions.resetCardsHaveAttacked();
+            // shouldExecute(EffectType.AFTER_OPPONENT_END_TURN) --> For further analysis
         }
         battleActions.setMyTurn(!battleState.myTurn)
     })
@@ -461,6 +514,7 @@ export default function BattlePage() {
                                     <p>Attack: {card.metadata.attackPower}</p>
                                     <p>Health: {card.metadata.health}</p>
                                     <p>Mana: {card.metadata.manaCost}</p>
+                                    {card.metadata.special ? <p className="text-xs">Power: {card.metadata.special} {card.specialPowerUsedTimes ?? 0}</p> : <></>}
                                 </div>
                             </div>
                         })}
@@ -477,6 +531,7 @@ export default function BattlePage() {
                                     <p>Attack: {card.metadata.attackPower}</p>
                                     <p>Health: {card.metadata.health}</p>
                                     <p>Mana: {card.metadata.manaCost}</p>
+                                    {card.metadata.special ? <p className="text-xs">Power: {card.metadata.special} {card.specialPowerUsedTimes ?? 0}</p> : <></>}
                                 </div>
                             </div>
                         })}
@@ -492,6 +547,7 @@ export default function BattlePage() {
                                             <p>Attack: {card.metadata.attackPower}</p>
                                             <p>Health: {card.metadata.health}</p>
                                             <p>Mana: {card.metadata.manaCost}</p>
+                                            {card.metadata.special ? <p className="text-xs">Power: {card.metadata.special} {card.specialPowerUsedTimes ?? 0}</p> : <></>}
                                         </div>
                                     </div>
                                 }
