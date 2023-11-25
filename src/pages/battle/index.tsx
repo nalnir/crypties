@@ -199,7 +199,7 @@ export default function BattlePage() {
         const specialPowerData: SpecialAttackData = {
             attackingCard: card,
             attackerCardsOnBoard: currentPlayerCardsOnTable,
-            attackerCardInHand: playerPlayableCards,
+            attackerCardsInHand: playerPlayableCards,
             attackerDeck: battleState.activeBattleDeck,
             attackerDiscardedCards: [],
             attackerHero: battleState.hero as any,
@@ -220,7 +220,7 @@ export default function BattlePage() {
                 socketId: battleState.mySocketId ?? '',
                 walletAddress: user?.walletAddress ?? '',
                 battleDeckAmount: executedPower ? executedPower.attackerDeck.length : battleState.activeBattleDeck.length,
-                playableCardsAmount: executedPower ? executedPower.attackerCardInHand.length : playerPlayableCards.length,
+                playableCardsAmount: executedPower ? executedPower.attackerCardsInHand.length : playerPlayableCards.length,
                 cardsOnTheTable: executedPower ? executedPower.attackerCardsOnBoard : currentPlayerCardsOnTable,
                 activeCard: undefined,
                 totalMana: battleState.totalMana,
@@ -297,7 +297,7 @@ export default function BattlePage() {
         const specialPowerData: SpecialAttackData = {
             attackingCard: battleState.activeCard,
             attackerCardsOnBoard: battleState.playerCardsOnTable,
-            attackerCardInHand: battleState.playerPlayableCards,
+            attackerCardsInHand: battleState.playerPlayableCards,
             attackerDeck: battleState.activeBattleDeck,
             attackerDiscardedCards: [],
             attackerHero: battleState.hero as any,
@@ -392,7 +392,7 @@ export default function BattlePage() {
         if (executedPower) {
             console.log('executedPower: ', executedPower)
             battleActions.setPlayerCardsOnTable(executedPower.attackerCardsOnBoard)
-            battleActions.setPlayerPlayableCards(executedPower.attackerCardInHand)
+            battleActions.setPlayerPlayableCards(executedPower.attackerCardsInHand)
             battleActions.setActiveBattleDeck(executedPower.attackerDeck)
             battleActions.setHero({
                 image: battleState.hero?.image ?? '',

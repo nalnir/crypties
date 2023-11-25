@@ -27,7 +27,7 @@ export interface LingerEffect {
 export interface SpecialAttackData {
     attackingCard: OriginalCard
     attackerCardsOnBoard: OriginalCard[]
-    attackerCardInHand: OriginalCard[]
+    attackerCardsInHand: OriginalCard[]
     attackerDeck: OriginalCard[]
     attackerDiscardedCards: OriginalCard[]
     attackerHero: Hero

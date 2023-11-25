@@ -18,7 +18,3 @@ export enum LingerEffectOpTarget {
     HEALTH = "HEALTH",
     POWER = "POWER"
 }
-
-export interface Hero {
-    health: number
-}
