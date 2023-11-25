@@ -103,7 +103,7 @@ export default function BattlePage() {
             },
             to: battleState.opponent?.socketId ?? ''
         }
-        socket.emit("set_opponent_state", data)
+        socket.emit("set_opponent_statee", data)
     }
 
     const selectPlayCard = () => {
