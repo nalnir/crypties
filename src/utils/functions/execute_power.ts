@@ -16,7 +16,7 @@ export function executePower(move: EffectType, data: SpecialAttackData, card: Or
 
     const usedCardPower: OriginalCard = JSON.parse(JSON.stringify(card))
     if (!card.specialPowerUsed) {
-        console.log('NO USED POWER ONCE')
+        console.log('NO USED POWER ONCE!')
         const res = libraryPower.execute(data);
         usedCardPower.specialPowerUsed = 1;
         const usedCardIdx = res.attackerCardsOnBoard.findIndex((attackerCard) => attackerCard.token_id === card.token_id);
