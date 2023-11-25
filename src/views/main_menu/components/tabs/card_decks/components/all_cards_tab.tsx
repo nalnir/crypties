@@ -73,8 +73,8 @@ export const AllCardsTab = () => {
                 <img src={card.image_url} className="border rounded-md border-secondary-400 w-30 h-30" />
                 <div>
                     <PText>{card.name}</PText>
-                    <PText>Attack: {card.metadata.attackPower}</PText>
-                    <PText>Health: {card.metadata.health}</PText>
+                    <PText>Attack: {card?.metadata?.attackPower}</PText>
+                    <PText>Health: {card?.metadata?.health}</PText>
                 </div>
                 {!isOnSale(card) ? <Dropdown disabled={saveDeck.isLoading} label="Add to deck" arrowIcon={false} className="rounded-lg">
                     {allUserDecks.length > 0 ? allUserDecks.map((deck: any, deckIndex: number) => {
