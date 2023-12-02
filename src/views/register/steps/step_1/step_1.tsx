@@ -55,7 +55,7 @@ export const Step1 = () => {
     console.log('user: ', user)
 
     useEffect(() => {
-        // getAllDefaultRaces()
+        getAllDefaultRaces()
     }, [])
 
     useEffect(() => {
