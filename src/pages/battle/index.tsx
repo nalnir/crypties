@@ -28,7 +28,31 @@ import { SpecialAttackData } from "../../utils/types/special_attack_data";
 import { executePower } from "@/utils/functions/execute_power";
 import { EffectType } from "@/utils/types/ab_types";
 import { trpc } from "@/utils/trpc";
+import { DEMO_PLAYERS, separatePlayersIntoGroups, shuffleArray } from "@/server/helper_functions";
 
+export interface ISocketUser {
+    socketId: string;
+    walletAddress: string;
+    battleDeckAmount: number;
+    hero: Hero;
+    battleDeckId: string;
+    userStats: {
+        opponents: {
+            [walletAddress: string]: {
+                winsAgainst: number
+                lossesAgainst: number
+                totalGames: number
+            }
+        },
+        totalWins: number
+        totalLosses: number
+        longestWinStreak: number
+        longestLossStreak: number
+        currentWinStreak: number
+        currentLossStreak: number
+        walletAddress: string
+    },
+}
 interface IMyStateToOponent {
     opponent: {
         socketId: string,
@@ -48,9 +72,11 @@ interface IMyStateToOponent {
 export default function BattlePage() {
     const { data: user, isLoading, isError } = useQuery<UserDocument>(['user']);
 
+    const getUserStats = trpc.getUserStats.useQuery({ walletAddress: user?.walletAddress ?? '' });
     const router = useRouter()
     const connectToLobby = trpc.connectToLobby.useMutation();
     const saveGameStats = trpc.saveGameStats.useMutation();
+    const saveUserStats = trpc.saveUserStats.useMutation();
     const battleLobbyState = useRecoilValue(battleLobbyAtom);
     const playerDecksState = useRecoilValue(playerDecksAtom);
     const playerCardsState = useRecoilValue(playerCardsAtom);
@@ -62,7 +88,7 @@ export default function BattlePage() {
     const globalModalActions = useGlobalModalActions();
 
     useEffect(() => {
-        if (user && playerDecksState.battleDeck.length === 30) {
+        if (user && playerDecksState.battleDeck.length === 30 && getUserStats.isFetched) {
             handleConnect(user)
         } else {
             router.push('/')
@@ -139,11 +165,12 @@ export default function BattlePage() {
         const walletAddress = user.walletAddress
         const battleDeckAmount = playerDecksState.battleDeck.length
         const battleDeckId = battleState.deckId
+        const userStats = getUserStats.data
         const hero: Hero = {
             image: user.profilePicture ?? '',
             health: 30
         }
-        socket.auth = { walletAddress, battleDeckAmount, hero, battleDeckId };
+        socket.auth = { walletAddress, battleDeckAmount, hero, battleDeckId, userStats };
         socket.connect();
     }
 
@@ -344,6 +371,18 @@ export default function BattlePage() {
                 },
                 game: 'FINISHED'
             })
+
+            await saveUserStats.mutateAsync({
+                walletAddress: user?.walletAddress ?? '',
+                opponentWalletAddress: opponent.walletAddress,
+                hasWon: true
+            })
+
+            await saveUserStats.mutateAsync({
+                walletAddress: opponent.walletAddress,
+                opponentWalletAddress: user?.walletAddress ?? '',
+                hasWon: false
+            })
             globalModalActions.openGlobalModal(<WinnerComponent />)
             socket.emit("defeated", {
                 to: battleState.opponent?.socketId ?? ''
@@ -414,15 +453,18 @@ export default function BattlePage() {
         }
     }
 
-    socket.on("users", (users) => {
+    socket.on("users", (users: ISocketUser[]) => {
         if (users.length > 1) {
-            const player1 = users.shift();
-            const player2 = users.shift();
-            const players = {
-                player1: player1,
-                player2: player2
-            }
-            socket.emit('join_battle_room', players);
+            const shuffled = shuffleArray([...users])
+            const groups = separatePlayersIntoGroups(shuffled, 30)
+
+            groups.forEach((group) => {
+                const players = {
+                    player1: group[0],
+                    player2: group[1]
+                }
+                socket.emit('join_battle_room', players);
+            })
         }
     });
 
@@ -473,7 +515,7 @@ export default function BattlePage() {
         battleActions.setHero(damagedHero)
     })
 
-    socket.on("defeated", () => {
+    socket.on("defeated", async () => {
         globalModalActions.openGlobalModal(<LooserComponent />)
         battleActions.setMyTurn(false)
     })

@@ -164,7 +164,7 @@ export const RaceCreatorComponent = () => {
                             prompt: `${correctedName} portrait, fantasy, centered, 4k resolution, bright color, beautiful background, male or female, pixar style`,
                             negative_prompt: 'logo, watermark, signature, cropped, zoomed, abnormal, bizzare, double heads, minimalistic, lowpoly, distortion, blur, flat, matte, dead, loud, tension. Extra Arms, extra limbs, long neck,teeth, long head',
                             modelId: 'd69c8273-6b17-4a30-a13e-d6637ae1c644',
-                            promptMagic: false
+                            promptMagic: true
                         })
                         const urls: string[] = []
                         if (images) {

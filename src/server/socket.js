@@ -11,6 +11,7 @@ io.use((socket, next) => {
   const battleDeckAmount = authObject.battleDeckAmount
   const hero = authObject.hero
   const battleDeckId = authObject.battleDeckId
+  const userStats = authObject.userStats
 
   if (!walletAddress) {
     return next(new Error("invalid walletAddress"));
@@ -20,6 +21,7 @@ io.use((socket, next) => {
   socket.cardsOnTheTable = [];
   socket.hero = hero
   socket.battleDeckId = battleDeckId
+  socket.userStats = userStats
   next();
 });
 
@@ -33,9 +35,12 @@ io.on("connection", (socket) => {
       walletAddress: userSocket.walletAddress,
       battleDeckAmount: userSocket.battleDeckAmount,
       hero: userSocket.hero,
-      battleDeckId: userSocket.battleDeckId
+      battleDeckId: userSocket.battleDeckId,
+      userStats: userSocket.userStats
     });
   }
+
+  console.log('users: ', users)
 
   const userNotConnected = users.findIndex((user) => user.walletAddress === socket.walletAddress && socket.id !== user.socketId) === -1
 
@@ -64,12 +69,17 @@ io.on("connection", (socket) => {
   // notify users upon disconnection
   socket.on("disconnect", () => {
     socket.broadcast.emit("user disconnected", socket.id);
+
     const disconnectedPlayerIdx = users.findIndex((user) => user.socketId === socket.id)
+    const disconnectedActivePlayerIdx = activePlayers.findIndex((user) => user.socketId === socket.id)
+    
     users.splice(disconnectedPlayerIdx, 1)
+    activePlayers.splice(disconnectedActivePlayerIdx, 1)
   });
 
   socket.on('join_battle_room', (players) => {
     activePlayers.push({ id: socket.id, ...players });
+    users.splice(users.findIndex((user) => user.socketId === socket.id), 1)
 
     // Create a unique battle room for the two players
     const battleRoom = `battle_${players.player1.walletAddress}_${players.player2.walletAddress}`;
@@ -85,7 +95,6 @@ io.on("connection", (socket) => {
   })
 
   socket.on('set_opponent_state', (data) => {
-    console.log('DATA: ', data)
     io.to(data.to).emit('set_opponent_state', data.opponent)
   })
 

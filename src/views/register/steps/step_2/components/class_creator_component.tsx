@@ -160,7 +160,7 @@ export const ClassCreatorComponent = () => {
                             negative_prompt: 'text, logo, out of aspect ratio, people, characters, animals, creatures, humans, face bad drawing, bad anatomy, ugly, abnormal anatomy, defects, noise, fuzzy, oversaturated, soft, blurry, out of focus, frame, Ugly face, bad body shape, blurred details, awkward poses, incorrect shadows, unrealistic expressions, lack of texture, poor composition, incorrect proportions,',
                             modelId: 'd69c8273-6b17-4a30-a13e-d6637ae1c644',
                             num_images: 2,
-                            promptMagic: false
+                            promptMagic: true
                         })
                         const urls: string[] = []
                         if (images) {

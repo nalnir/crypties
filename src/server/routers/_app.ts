@@ -16,6 +16,7 @@ import { createCardType, getAllCardTypes, getCardType } from './procedures/card_
 import { createDefaultCard, getAllDefaultCards, publishUnpublishDefaultCard } from './procedures/default_card_procedures';
 import { createNewDefaultDeck, deleteDefaultDeck, getAllDefaultDecks, publishUnpublishDeck, updateDefaultDeck } from './procedures/default_deck_procedures';
 import { getETHprice } from './procedures/other_procedures';
+import { getUserStats, saveUserStats } from './procedures/user_stats_procedures';
 
 // const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_BOT_TOKEN ?? '');
 const chatpgptConfig = new Configuration({
@@ -46,6 +47,10 @@ export const appRouter = router({
   saveUserDeck,
   deleteUserDeck,
   updateUserDecks,
+
+  // USER STATS PROCEDURES
+  getUserStats,
+  saveUserStats,
 
   // BATTLE PROCEDURES
   connectToLobby,

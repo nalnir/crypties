@@ -35,7 +35,7 @@ export const generateImages = publicProcedure
         modelId: opts.input.modelId ?? 'b7aa9939-abed-4d4e-96c4-140b8c65dd92',
         sd_version: 'v1_5',
         num_images: opts.input.num_images ?? 2,
-        promptMagic: opts.input.promptMagic ?? false,
+        promptMagic: opts.input.promptMagic ?? true,
         // width: 552, -> CARD DIMENSION
         // height: 256, -> CARD DIMENSION
         width: 1024,

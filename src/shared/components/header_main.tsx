@@ -14,6 +14,9 @@ import { useErrorSuccessActions } from "@/recoil-state/error_success/error_succe
 import { ErrorSuccessType } from "@/recoil-state/error_success/error_success.atom";
 import { Link } from '@imtbl/imx-sdk';
 import { allowOnlyNumbersDecimals } from "../functions";
+import { DEMO_PLAYERS, createRandomPlayer, matchPlayersInGroup, separatePlayersIntoGroups, shuffleArray } from "@/server/helper_functions";
+import { ISocketUser } from "@/pages/battle";
+import { faker } from "@faker-js/faker";
 
 const NEXT_PUBLIC_IMX_LINK_ADDRESS = process.env.NEXT_PUBLIC_IMX_LINK_ADDRESS ?? '';
 const link = new Link(NEXT_PUBLIC_IMX_LINK_ADDRESS, null, 'v3');
@@ -48,6 +51,21 @@ export const HeaderMain = ({ onAdminSite }: HeaderMainProps) => {
             errorSuccessActions.openErrorSuccess('Something went wrong. Please try again', ErrorSuccessType.ERROR)
         }
     }
+
+
+
+    const testyTest = async () => {
+        const DP: ISocketUser[] = faker.helpers.multiple(createRandomPlayer, {
+            count: 10,
+        });
+
+        const shuffled = shuffleArray([...DP])
+        const groups = separatePlayersIntoGroups(shuffled, 30)
+        console.log('groups: ', groups)
+        // const matched = matchPlayersInGroup([...groups[0]])
+        // console.log('matched: ', matched)
+    }
+    testyTest()
 
     return <div className="flex items-center justify-between p-5 bg-primary-500">
         <div className='flex items-center justify-start space-x-3'>
